@@ -26,19 +26,9 @@ Deno.serve(async (req) => {
 
     <!-- Header with logo -->
     <tr>
-      <td style="background:#0c7981;padding:32px 40px 28px;text-align:center;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-          <tr>
-            <td style="text-align:center;">
-              <span style="font-family:'Inter',Arial,sans-serif;font-size:30px;font-weight:800;color:#70F1DA;letter-spacing:-0.5px;">Clear</span><span style="font-family:'Inter',Arial,sans-serif;font-size:30px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">Bank</span>
-            </td>
-          </tr>
-          <tr>
-            <td style="text-align:center;padding-top:8px;">
-              <span style="display:inline-block;width:48px;height:3px;background:#70F1DA;border-radius:2px;"></span>
-            </td>
-          </tr>
-        </table>
+      <td style="background:#ffffff;padding:36px 40px 28px;text-align:center;">
+        <img src="https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/1d6f5be18_LOGOIM.png" alt="ClearBank" width="180" style="display:block;margin:0 auto;max-width:180px;height:auto;border:none;" />
+        <div style="margin-top:14px;display:inline-block;width:60px;height:3px;background:#0c7981;border-radius:2px;"></div>
       </td>
     </tr>
 
@@ -81,9 +71,9 @@ Deno.serve(async (req) => {
 
     <!-- Footer -->
     <tr>
-      <td style="background:#0c7981;padding:24px 40px;text-align:center;">
-        <p style="font-family:'Inter',Arial,sans-serif;color:#70F1DA;font-size:18px;font-weight:700;margin:0 0 8px;letter-spacing:-0.3px;">ClearBank</p>
-        <p style="font-family:'Inter',Arial,sans-serif;color:rgba(255,255,255,0.7);font-size:11px;line-height:1.6;margin:0;">ClearBank Limited — Level 27, The Broadgate Tower, 20 Primrose Street, London, EC2A 2EW, United Kingdom.<br>Authorised by the PRA. Regulated by the FCA and PRA (FRN: 754568).</p>
+      <td style="background:#0c7981;padding:28px 40px;text-align:center;">
+        <img src="https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/1d6f5be18_LOGOIM.png" alt="ClearBank" width="140" style="display:block;margin:0 auto 14px;max-width:140px;height:auto;border:none;filter:brightness(0) invert(1);" />
+        <p style="font-family:'Inter',Arial,sans-serif;color:rgba(255,255,255,0.75);font-size:11px;line-height:1.6;margin:0;">ClearBank Limited — Level 27, The Broadgate Tower, 20 Primrose Street, London, EC2A 2EW, United Kingdom.<br>Authorised by the PRA. Regulated by the FCA and PRA (FRN: 754568).</p>
       </td>
     </tr>
   </table>
