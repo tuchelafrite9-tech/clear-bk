@@ -120,7 +120,10 @@ export default function AdminLogin() {
             </button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-gray-100 text-center">
+          <div className="mt-4 flex items-center justify-between">
+            <Link to="/forgot-password" className="text-sm text-gray-500 hover:text-teal-dark transition">
+              Mot de passe oublié ?
+            </Link>
             <Link to="/" className="text-sm text-gray-500 hover:text-teal-dark transition">
               ← Retour au site
             </Link>
