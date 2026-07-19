@@ -9,100 +9,28 @@ const ArrowRight = () => (
   </svg>
 );
 
-const PartnerLogo = ({ name, color = "#1a1a1a" }) => {
-  const icons = {
-    Tide: (
-      <svg viewBox="0 0 80 80" className="w-8 h-8 md:w-10 md:h-10" fill="none">
-        <circle cx="40" cy="40" r="36" fill={color} />
-        <path d="M40 18c-8 12-16 18-16 28a16 16 0 0032 0c0-10-8-16-16-28z" fill="white" />
-      </svg>
-    ),
-    "Allica Bank": (
-      <svg viewBox="0 0 80 80" className="w-8 h-8 md:w-10 md:h-10" fill="none">
-        <rect width="80" height="80" rx="16" fill={color} />
-        <path d="M40 16l20 12v24l-20 12-20-12V28z" stroke="white" strokeWidth="3" fill="none" />
-        <path d="M32 40h16M40 32v16" stroke="white" strokeWidth="3" />
-      </svg>
-    ),
-    Airwallex: (
-      <svg viewBox="0 0 80 80" className="w-8 h-8 md:w-10 md:h-10" fill="none">
-        <circle cx="40" cy="40" r="36" fill={color} />
-        <path d="M24 52L40 20l16 32M30 40h20" stroke="white" strokeWidth="3" fill="none" />
-      </svg>
-    ),
-    TrueLayer: (
-      <svg viewBox="0 0 80 80" className="w-8 h-8 md:w-10 md:h-10" fill="none">
-        <rect width="80" height="80" rx="16" fill={color} />
-        <path d="M20 30h40M20 40h40M20 50h40" stroke="white" strokeWidth="3" />
-      </svg>
-    ),
-    "Capital on Tap": (
-      <svg viewBox="0 0 80 80" className="w-8 h-8 md:w-10 md:h-10" fill="none">
-        <circle cx="40" cy="40" r="36" fill={color} />
-        <rect x="30" y="24" width="20" height="32" rx="3" stroke="white" strokeWidth="3" fill="none" />
-        <circle cx="40" cy="54" r="3" fill="white" />
-      </svg>
-    ),
-    Wealthify: (
-      <svg viewBox="0 0 80 80" className="w-8 h-8 md:w-10 md:h-10" fill="none">
-        <rect width="80" height="80" rx="16" fill={color} />
-        <path d="M40 20l8 16 16 2-12 12 4 16-16-8-16 8 4-16-12-12 16-2z" fill="white" />
-      </svg>
-    ),
-    Coinbase: (
-      <svg viewBox="0 0 80 80" className="w-8 h-8 md:w-10 md:h-10" fill="none">
-        <circle cx="40" cy="40" r="36" fill={color} />
-        <circle cx="40" cy="40" r="14" stroke="white" strokeWidth="3" fill="none" />
-        <path d="M40 26v28" stroke="white" strokeWidth="3" />
-      </svg>
-    ),
-    eToro: (
-      <svg viewBox="0 0 80 80" className="w-8 h-8 md:w-10 md:h-10" fill="none">
-        <rect width="80" height="80" rx="16" fill={color} />
-        <path d="M20 40c0-8 8-14 20-14s20 6 20 14-8 14-20 14-20-6-20-14z" stroke="white" strokeWidth="3" fill="none" />
-        <circle cx="32" cy="36" r="2" fill="white" />
-        <circle cx="48" cy="36" r="2" fill="white" />
-      </svg>
-    ),
-    Lemfi: (
-      <svg viewBox="0 0 80 80" className="w-8 h-8 md:w-10 md:h-10" fill="none">
-        <circle cx="40" cy="40" r="36" fill={color} />
-        <path d="M28 28v24M28 40h18M46 28v24" stroke="white" strokeWidth="3" />
-      </svg>
-    ),
-    Raisin: (
-      <svg viewBox="0 0 80 80" className="w-8 h-8 md:w-10 md:h-10" fill="none">
-        <rect width="80" height="80" rx="16" fill={color} />
-        <circle cx="30" cy="40" r="8" fill="white" />
-        <circle cx="48" cy="32" r="6" fill="white" />
-        <circle cx="50" cy="50" r="7" fill="white" />
-      </svg>
-    ),
-    Kraken: (
-      <svg viewBox="0 0 80 80" className="w-8 h-8 md:w-10 md:h-10" fill="none">
-        <circle cx="40" cy="40" r="36" fill={color} />
-        <path d="M40 20v40M24 30c4 8 12 8 16 0M40 40c8 0 12-4 16-10M40 50c8 0 12 4 16 10" stroke="white" strokeWidth="3" fill="none" />
-      </svg>
-    ),
-    Paypoint: (
-      <svg viewBox="0 0 80 80" className="w-8 h-8 md:w-10 md:h-10" fill="none">
-        <rect width="80" height="80" rx="16" fill={color} />
-        <path d="M28 40l10 10 16-20" stroke="white" strokeWidth="4" fill="none" />
-      </svg>
-    ),
-    Pingpong: (
-      <svg viewBox="0 0 80 80" className="w-8 h-8 md:w-10 md:h-10" fill="none">
-        <circle cx="40" cy="40" r="36" fill={color} />
-        <circle cx="32" cy="32" r="10" stroke="white" strokeWidth="3" fill="none" />
-        <circle cx="50" cy="50" r="10" stroke="white" strokeWidth="3" fill="none" />
-      </svg>
-    ),
-  };
+const partnerLogos = {
+  Tide: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/3b3edea86_logo9tide.svg",
+  "Allica Bank": "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/37bbbdc7f_logo2allica.svg",
+  Airwallex: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/3455fd4a1_logo3airwallex.svg",
+  TrueLayer: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/8c2149521_logo10truelayer.svg",
+  "Capital on Tap": "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/17424d3e2_logo3capital.svg",
+  Wealthify: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/3192ff4fa_logo11Wealthify-logo.svg",
+  eToro: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/c31eb6bef_logo12eToro-logo.svg",
+  Lemfi: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/8050c0345_logo6lemfi.svg",
+  Raisin: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/0e9b287d4_logo8raisin.svg",
+  Pingpong: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/a29488ae6_logo7pingpong.svg",
+};
 
+const PartnerLogo = ({ name }) => {
+  const src = partnerLogos[name];
   return (
-    <div className="flex items-center gap-3 px-14 shrink-0">
-      {icons[name] || <div className="w-8 h-8 rounded-full bg-gray-300" />}
-      <span className="text-xl md:text-2xl font-bold text-gray-700">{name}</span>
+    <div className="flex items-center px-14 shrink-0">
+      {src ? (
+        <img src={src} alt={name} className="h-10 md:h-12 w-auto object-contain" />
+      ) : (
+        <span className="text-xl md:text-2xl font-bold text-gray-700">{name}</span>
+      )}
     </div>
   );
 };
