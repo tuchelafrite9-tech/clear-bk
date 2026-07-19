@@ -159,6 +159,11 @@ export default function Header() {
                   Learn
                 </Link>
               </li>
+              <li>
+                <Link to="/my-account" className="block text-lg py-2 md:py-0 border-b md:border-b-0 border-transparent hover:border-black transition">
+                  Mon compte
+                </Link>
+              </li>
 
               <li>
                 <Link to="/begin" className="inline-flex items-center bg-teal text-black px-5 py-2 text-lg rounded-full hover:bg-teal-dark hover:text-white transition">

@@ -1,0 +1,83 @@
+{
+  "name": "Client",
+  "type": "object",
+  "properties": {
+    "nom": {
+      "type": "string",
+      "title": "Nom"
+    },
+    "prenom": {
+      "type": "string",
+      "title": "Pr\u00e9nom"
+    },
+    "mail": {
+      "type": "string",
+      "title": "Email",
+      "format": "email"
+    },
+    "iban": {
+      "type": "string",
+      "title": "IBAN"
+    },
+    "numero_de_compte": {
+      "type": "string",
+      "title": "Num\u00e9ro de compte"
+    },
+    "numero_de_compte_sequestre": {
+      "type": "string",
+      "title": "Num\u00e9ro de compte s\u00e9questre"
+    },
+    "reference_dossier_sequestre": {
+      "type": "string",
+      "title": "R\u00e9f\u00e9rence du dossier s\u00e9questre"
+    },
+    "date_liberation_comite_sequestre": {
+      "type": "string",
+      "title": "Date de lib\u00e9ration du comit\u00e9 s\u00e9questre",
+      "format": "date"
+    },
+    "remarque": {
+      "type": "string",
+      "title": "Remarque"
+    },
+    "derniere_connexion": {
+      "type": "string",
+      "title": "Derni\u00e8re connexion",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "nom",
+    "prenom",
+    "mail"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.mail": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

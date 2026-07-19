@@ -15,6 +15,8 @@ import Learn from './pages/Learn';
 import Begin from './pages/Begin';
 import SubCategory from './pages/SubCategory';
 import BusinessAccount from './pages/BusinessAccount';
+import Admin from './pages/Admin';
+import ClientSpace from './pages/ClientSpace';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -56,6 +58,8 @@ const AuthenticatedApp = () => {
         <Route path="/learn/:slug" element={<SubCategory />} />
         <Route path="/begin" element={<Begin />} />
         <Route path="/business-account" element={<BusinessAccount />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/my-account" element={<ClientSpace />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
