@@ -17,6 +17,10 @@ import SubCategory from './pages/SubCategory';
 import BusinessAccount from './pages/BusinessAccount';
 import Admin from './pages/Admin';
 import ClientSpace from './pages/ClientSpace';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -46,6 +50,10 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       {/* Add your page Route elements here */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/" element={<Home />} />
       <Route element={<Layout />}>
         <Route path="/products" element={<Products />} />
