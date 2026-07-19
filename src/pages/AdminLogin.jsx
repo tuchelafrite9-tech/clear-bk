@@ -121,9 +121,16 @@ export default function AdminLogin() {
           </form>
 
           <div className="mt-4 flex items-center justify-between">
-            <Link to="/forgot-password" className="text-sm text-gray-500 hover:text-teal-dark transition">
+            <button
+              type="button"
+              onClick={async () => {
+                try { await base44.auth.logout(); } catch (e) {}
+                window.location.href = "/forgot-password";
+              }}
+              className="text-sm text-gray-500 hover:text-teal-dark transition"
+            >
               Mot de passe oublié ?
-            </Link>
+            </button>
             <Link to="/" className="text-sm text-gray-500 hover:text-teal-dark transition">
               ← Retour au site
             </Link>
