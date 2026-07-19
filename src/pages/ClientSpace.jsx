@@ -37,7 +37,6 @@ export default function ClientSpace() {
     } catch (e) {
       // ignore errors
     }
-    navigate("/login", { replace: true });
     window.location.href = "/login";
   };
 
