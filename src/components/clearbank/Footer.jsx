@@ -55,7 +55,7 @@ export default function Footer() {
                 { label: "Fintechs", to: "/use-cases/fintech" },
                 { label: "Non-bank financial institutions", to: "/use-cases/non-bank-financial-institutions" },
                 { label: "Pre-regulated firms", to: "/use-cases/pre-regulated" },
-                { label: "Partners", to: "/partners" },
+                { label: "Partners", to: "/use-cases/partners" },
               ]}
             />
             <FooterColumn
@@ -85,13 +85,21 @@ export default function Footer() {
                 { label: "Digital Assets", to: "/products/digital-assets" },
               ]}
             />
-            <FooterColumn
-              title="Follow us"
-              links={[
-                { label: "LinkedIn", to: "/linkedin" },
-                { label: "X.com", to: "/twitter" },
-              ]}
-            />
+            <div className="mb-9 lg:mb-10 break-inside-avoid">
+              <div className="text-base leading-tight text-white mb-1">Follow us</div>
+              <ul className="list-none p-0 m-0">
+                <li className="mb-2">
+                  <a href="https://www.linkedin.com/company/clearbank" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-white transition">
+                    LinkedIn
+                  </a>
+                </li>
+                <li className="mb-2">
+                  <a href="https://twitter.com/clearbank" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-white transition">
+                    X.com
+                  </a>
+                </li>
+              </ul>
+            </div>
             <FooterColumn
               title="Customer support"
               links={[
