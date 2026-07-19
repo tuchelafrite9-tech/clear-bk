@@ -29,78 +29,80 @@ export default function BusinessAccount() {
     <div className="min-h-screen bg-white">
       <Header />
       <main className="relative pt-[80px]">
-        {/* Full-width animation */}
-        <section className="w-full overflow-hidden">
-          <video
-            className="w-full h-auto object-cover"
-            src="https://media.base44.com/videos/public/6a5ca42fae10cd7334263f3b/e3a1e4537_animation.mp4"
-            autoPlay
-            playsInline
-            loop
-            muted
-          />
-        </section>
-
-        {/* Login section */}
-        <section className="py-16 md:py-24">
+        <section className="py-12 md:py-20">
           <div className="max-w-[1440px] mx-auto px-5 lg:px-8">
-            <div className="max-w-[480px] mx-auto">
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">Business Account</h1>
-              <p className="text-lg text-gray-600 mb-8">Connectez-vous à votre compte professionnel.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
+              {/* Animation on the side */}
+              <div className="order-2 md:order-1 rounded-[30px] overflow-hidden">
+                <video
+                  className="w-full h-auto object-cover"
+                  src="https://media.base44.com/videos/public/6a5ca42fae10cd7334263f3b/e3a1e4537_animation.mp4"
+                  autoPlay
+                  playsInline
+                  loop
+                  muted
+                />
+              </div>
 
-              {submitted ? (
-                <div className="bg-teal/20 border border-teal-dark rounded-2xl p-6 text-center">
-                  <p className="text-lg font-medium text-teal-dark">Connexion réussie !</p>
-                  <p className="text-gray-600 mt-2">Bienvenue, {email}.</p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  {error && (
-                    <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">
-                      {error}
+              {/* Login form */}
+              <div className="order-1 md:order-2 max-w-[480px] mx-auto w-full">
+                <h1 className="text-3xl md:text-4xl font-bold mb-2">Business Account</h1>
+                <p className="text-lg text-gray-600 mb-8">Connectez-vous à votre compte professionnel.</p>
+
+                {submitted ? (
+                  <div className="bg-teal/20 border border-teal-dark rounded-2xl p-6 text-center">
+                    <p className="text-lg font-medium text-teal-dark">Connexion réussie !</p>
+                    <p className="text-gray-600 mt-2">Bienvenue, {email}.</p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    {error && (
+                      <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">
+                        {error}
+                      </div>
+                    )}
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Email</label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="vous@entreprise.com"
+                        className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:border-teal-dark focus:ring-1 focus:ring-teal-dark"
+                      />
                     </div>
-                  )}
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Email</label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="vous@entreprise.com"
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:border-teal-dark focus:ring-1 focus:ring-teal-dark"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Mot de passe</label>
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:border-teal-dark focus:ring-1 focus:ring-teal-dark"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" className="rounded" />
-                      <span className="text-gray-600">Se souvenir de moi</span>
-                    </label>
-                    <a href="#forgot" className="text-teal-dark hover:underline">Mot de passe oublié ?</a>
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full inline-flex items-center justify-center bg-black text-white rounded-full px-6 py-3 text-lg font-medium hover:bg-teal-dark transition"
-                  >
-                    Se connecter <ArrowRight />
-                  </button>
-                </form>
-              )}
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Mot de passe</label>
+                      <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:border-teal-dark focus:ring-1 focus:ring-teal-dark"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" className="rounded" />
+                        <span className="text-gray-600">Se souvenir de moi</span>
+                      </label>
+                      <a href="#forgot" className="text-teal-dark hover:underline">Mot de passe oublié ?</a>
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full inline-flex items-center justify-center bg-black text-white rounded-full px-6 py-3 text-lg font-medium hover:bg-teal-dark transition"
+                    >
+                      Se connecter <ArrowRight />
+                    </button>
+                  </form>
+                )}
 
-              <div className="mt-8 text-center text-sm text-gray-600">
-                Pas encore de compte ?{" "}
-                <Link to="/begin" className="text-teal-dark hover:underline font-medium">
-                  Commencez ici
-                </Link>
+                <div className="mt-8 text-center text-sm text-gray-600">
+                  Pas encore de compte ?{" "}
+                  <Link to="/begin" className="text-teal-dark hover:underline font-medium">
+                    Commencez ici
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
