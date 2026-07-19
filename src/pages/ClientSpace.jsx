@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import Header from "@/components/clearbank/Header";
-import Footer from "@/components/clearbank/Footer";
 import ClientSidebar, { navItems } from "@/components/clearbank/ClientSidebar";
 import { InfoRow, SectionHeader, PlaceholderSection } from "@/components/clearbank/ClientSpaceParts";
 import { Home, User, ArrowLeftRight, CreditCard, Wallet, PiggyBank, ShieldCheck, TrendingUp, FileText, ArrowUpRight, ArrowDownLeft, ArrowRight, Download, Bell, Phone, LogOut } from "lucide-react";
@@ -159,8 +157,7 @@ export default function ClientSpace() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Header />
-      <main className="pt-[80px]">
+      <main>
         <div className="w-full mx-auto flex">
           <ClientSidebar active={activeSection} onSelect={selectSection} />
 
@@ -676,7 +673,6 @@ export default function ClientSpace() {
           </div>
         </div>
       )}
-      <Footer />
     </div>
   );
 }
