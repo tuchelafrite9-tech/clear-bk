@@ -12,9 +12,21 @@ Deno.serve(async (req) => {
     if (!clientEmail) return Response.json({ error: 'client_email requis' }, { status: 400 });
 
     // Find the user by email
-    const users = await base44.asServiceRole.entities.User.list();
-    const targetUser = users.find(u => u.email === clientEmail);
-    if (!targetUser) return Response.json({ error: 'Utilisateur introuvable' }, { status: 404 });
+    let users = await base44.asServiceRole.entities.User.list();
+    let targetUser = users.find(u => u.email === clientEmail);
+
+    // If user doesn't exist yet, invite them (creates the account)
+    if (!targetUser) {
+      try {
+        await base44.asServiceRole.users.inviteUser(clientEmail, 'user');
+      } catch (inviteErr) {
+        // If invite fails, user may already exist
+      }
+      // Re-fetch to get the newly created user
+      users = await base44.asServiceRole.entities.User.list();
+      targetUser = users.find(u => u.email === clientEmail);
+      if (!targetUser) return Response.json({ error: 'Impossible de créer le compte utilisateur' }, { status: 500 });
+    }
 
     // Generate a 6-char alphanumeric code (uppercase, no ambiguous chars)
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';

@@ -193,12 +193,7 @@ export default function Admin() {
             remarque: dm.motif || "",
             derniere_connexion: null,
           });
-          try {
-            await base44.users.inviteUser(dm.mail, "user");
-          } catch (inviteErr) {
-            // User may already exist
-          }
-          setSuccess(`Compte client créé pour ${dm.prenom} ${dm.nom}.`);
+          setSuccess(`Compte client créé pour ${dm.prenom} ${dm.nom}. Générez un code à usage unique pour lui envoyer ses identifiants.`);
         } else {
           setSuccess(`Le client ${dm.prenom} ${dm.nom} existe déjà.`);
         }
