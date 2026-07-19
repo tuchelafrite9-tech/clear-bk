@@ -52,6 +52,20 @@ export default function Admin() {
       setAuthChecked(true);
     };
     checkAuth();
+
+    // Real-time subscription for new demandes
+    const unsubscribe = base44.entities.Demande.subscribe((event) => {
+      if (event.type === "create") {
+        setDemandes((prev) => [event.data, ...prev]);
+      } else if (event.type === "update") {
+        setDemandes((prev) => prev.map((d) => (d.id === event.data.id ? event.data : d)));
+      } else if (event.type === "delete") {
+        setDemandes((prev) => prev.filter((d) => d.id !== event.data.id));
+      }
+    });
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   const loadClients = async () => {
@@ -200,9 +214,19 @@ export default function Admin() {
       <Header />
       <main className="pt-[120px] pb-20">
         <div className="max-w-[1440px] mx-auto px-5 lg:px-8">
-          <div className="mb-8 md:mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-2">Administration</h1>
-            <p className="text-lg md:text-xl text-gray-600">Gérez vos clients et créez de nouveaux comptes.</p>
+          <div className="mb-8 md:mb-12 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold mb-2">Administration</h1>
+              <p className="text-lg md:text-xl text-gray-600">Gérez vos clients et créez de nouveaux comptes.</p>
+            </div>
+            {demandes.filter((d) => d.statut === "en_attente").length > 0 && (
+              <div className="inline-flex items-center gap-2 bg-yellow-50 border border-yellow-200 rounded-full px-4 py-2">
+                <span className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
+                <span className="text-sm font-medium text-yellow-700">
+                  {demandes.filter((d) => d.statut === "en_attente").length} demande(s) en attente
+                </span>
+              </div>
+            )}
           </div>
 
           {error && (
