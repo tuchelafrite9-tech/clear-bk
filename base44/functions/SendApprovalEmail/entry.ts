@@ -14,7 +14,7 @@ Deno.serve(async (req) => {
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
 
     const subject = `=?UTF-8?B?${btoa('Votre compte ClearBank a été ouvert')}?=`;
-    const fromName = 'ClearBank';
+    const fromName = 'ClearBank No-Reply';
     const fromEmail = user.email;
     const fullName = `${client_prenom || ''} ${client_nom || ''}`.trim();
 
