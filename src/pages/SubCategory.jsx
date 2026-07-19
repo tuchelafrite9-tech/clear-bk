@@ -1,6 +1,8 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { siteData } from "@/components/clearbank/data";
+import { interiorPages } from "@/components/clearbank/interiorData";
+import InteriorPage from "@/components/clearbank/InteriorPage";
 
 const ArrowRight = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="13" fill="none" className="inline-block ml-2">
@@ -26,7 +28,11 @@ export default function SubCategory() {
   const catData = siteData[category];
   const item = catData ? findItem(catData, slug) : null;
 
-  if (!item) {
+  // Check if we have rich interior page data
+  const pageKey = `${category === "useCases" ? "use-cases" : category}/${slug}`;
+  const interiorData = interiorPages[pageKey];
+
+  if (!item && !interiorData) {
     return (
       <section className="pt-[140px] pb-20">
         <div className="cb-container">
@@ -38,6 +44,12 @@ export default function SubCategory() {
     );
   }
 
+  // Render rich interior page if data exists
+  if (interiorData) {
+    return <InteriorPage data={interiorData} />;
+  }
+
+  // Fallback: simple layout for pages without rich data
   return (
     <>
       <section className="pt-[120px] md:pt-[180px] pb-12 md:pb-20">
