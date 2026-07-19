@@ -71,9 +71,9 @@ Deno.serve(async (req) => {
 
     <!-- Footer -->
     <tr>
-      <td style="background:#0c7981;padding:28px 40px;text-align:center;">
-        <img src="https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/1d6f5be18_LOGOIM.png" alt="ClearBank" width="140" style="display:block;margin:0 auto 14px;max-width:140px;height:auto;border:none;filter:brightness(0) invert(1);" />
-        <p style="font-family:'Inter',Arial,sans-serif;color:rgba(255,255,255,0.75);font-size:11px;line-height:1.6;margin:0;">ClearBank Limited — Level 27, The Broadgate Tower, 20 Primrose Street, London, EC2A 2EW, United Kingdom.<br>Authorised by the PRA. Regulated by the FCA and PRA (FRN: 754568).</p>
+      <td style="background:#f9fbfb;padding:28px 40px;text-align:center;border-top:3px solid #0c7981;">
+        <img src="https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/1d6f5be18_LOGOIM.png" alt="ClearBank" width="130" style="display:block;margin:0 auto 12px;max-width:130px;height:auto;border:none;" />
+        <p style="font-family:'Inter',Arial,sans-serif;color:#999999;font-size:11px;line-height:1.6;margin:0;">ClearBank Limited — Level 27, The Broadgate Tower, 20 Primrose Street, London, EC2A 2EW, United Kingdom.<br>Authorised by the PRA. Regulated by the FCA and PRA (FRN: 754568).</p>
       </td>
     </tr>
   </table>
