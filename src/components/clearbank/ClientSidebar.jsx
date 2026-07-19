@@ -1,9 +1,10 @@
 import React from "react";
-import { Home, User, ArrowLeftRight, CreditCard, Wallet, PiggyBank, ShieldCheck, TrendingUp, FileText } from "lucide-react";
+import { Home, User, ArrowLeftRight, CreditCard, Wallet, PiggyBank, ShieldCheck, TrendingUp, FileText, Receipt } from "lucide-react";
 
 const navItems = [
   { id: "accueil", label: "Accueil", icon: Home },
   { id: "compte", label: "Compte", icon: User },
+  { id: "transactions", label: "Transactions", icon: Receipt },
   { id: "virement", label: "Virement", icon: ArrowLeftRight },
   { id: "paiement", label: "Paiement", icon: CreditCard },
   { id: "carte", label: "Carte", icon: Wallet },

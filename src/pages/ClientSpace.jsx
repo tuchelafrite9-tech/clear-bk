@@ -3,13 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import ClientSidebar, { navItems } from "@/components/clearbank/ClientSidebar";
 import { InfoRow, SectionHeader, PlaceholderSection } from "@/components/clearbank/ClientSpaceParts";
-import { Home, User, ArrowLeftRight, CreditCard, Wallet, PiggyBank, ShieldCheck, TrendingUp, FileText, ArrowUpRight, ArrowDownLeft, ArrowRight, Download, Bell, Phone, LogOut } from "lucide-react";
+import { Home, User, ArrowLeftRight, CreditCard, Wallet, PiggyBank, ShieldCheck, TrendingUp, FileText, ArrowUpRight, ArrowDownLeft, ArrowRight, Download, Bell, Phone, LogOut, Receipt, Search } from "lucide-react";
 
 const sectionMeta = {
   accueil: { title: "Accueil", icon: Home },
   compte: { title: "Mon compte", icon: User },
   virement: { title: "Virement", icon: ArrowLeftRight },
   paiement: { title: "Paiements", icon: CreditCard },
+  transactions: { title: "Historique des transactions", icon: Receipt },
   carte: { title: "Carte bancaire", icon: Wallet },
   epargne: { title: "Épargne", icon: PiggyBank },
   assurance: { title: "Assurance", icon: ShieldCheck },
@@ -28,6 +29,7 @@ export default function ClientSpace() {
   const [showModal, setShowModal] = useState(null);
   const [dmForm, setDmForm] = useState({ montant: "", motif: "" });
   const [activeSection, setActiveSection] = useState("accueil");
+  const [txSearch, setTxSearch] = useState("");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -522,6 +524,97 @@ export default function ClientSpace() {
                         </div>
                       </div>
                     )}
+                  </div>
+                )}
+
+                {/* TRANSACTIONS */}
+                {activeSection === "transactions" && (
+                  <div>
+                    <SectionHeader meta={meta} />
+
+                    {/* Summary cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                      <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                        <p className="text-sm text-gray-500 mb-1">Solde total</p>
+                        <p className="text-2xl font-bold text-slate-900">{computeSolde().toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</p>
+                      </div>
+                      <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-sm text-gray-500">Entrées</p>
+                          <ArrowDownLeft className="w-4 h-4 text-green-600" />
+                        </div>
+                        <p className="text-2xl font-bold text-green-600">
+                          {transactions.filter(t => t.montant >= 0).reduce((s, t) => s + (t.montant || 0), 0).toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                        </p>
+                      </div>
+                      <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-sm text-gray-500">Sorties</p>
+                          <ArrowUpRight className="w-4 h-4 text-red-600" />
+                        </div>
+                        <p className="text-2xl font-bold text-red-600">
+                          {Math.abs(transactions.filter(t => t.montant < 0).reduce((s, t) => s + (t.montant || 0), 0)).toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Search and filter */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                        <h2 className="text-lg font-bold">Historique des transactions</h2>
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                          <input
+                            type="text"
+                            placeholder="Rechercher une transaction..."
+                            value={txSearch}
+                            onChange={(e) => setTxSearch(e.target.value)}
+                            className="pl-10 pr-4 py-2 rounded-xl border border-gray-300 text-sm focus:outline-none focus:border-teal-dark w-full sm:w-64"
+                          />
+                        </div>
+                      </div>
+
+                      {transactions.length === 0 ? (
+                        <p className="text-gray-400 text-center py-8 text-sm">Aucune transaction pour le moment.</p>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="w-full">
+                            <thead>
+                              <tr className="border-b border-gray-100 text-left">
+                                <th className="pb-3 text-xs font-medium text-gray-400 uppercase tracking-wider">Opération</th>
+                                <th className="pb-3 text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
+                                <th className="pb-3 text-xs font-medium text-gray-400 uppercase tracking-wider text-right">Montant</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {transactions
+                                .filter((tx) =>
+                                  !txSearch ||
+                                  tx.transaction?.toLowerCase().includes(txSearch.toLowerCase())
+                                )
+                                .map((tx) => (
+                                  <tr key={tx.id} className="border-b border-gray-50 hover:bg-gray-50 transition">
+                                    <td className="py-4">
+                                      <div className="flex items-center gap-3">
+                                        <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${tx.montant >= 0 ? "bg-green-50" : "bg-red-50"}`}>
+                                          {tx.montant >= 0 ? <ArrowDownLeft className="w-4 h-4 text-green-600" /> : <ArrowUpRight className="w-4 h-4 text-red-600" />}
+                                        </div>
+                                        <span className="text-sm font-medium text-gray-800">{tx.transaction}</span>
+                                      </div>
+                                    </td>
+                                    <td className="py-4 text-sm text-gray-500">
+                                      {tx.date ? new Date(tx.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" }) : "—"}
+                                    </td>
+                                    <td className={`py-4 text-sm font-semibold text-right ${tx.montant >= 0 ? "text-green-600" : "text-red-600"}`}>
+                                      {tx.montant >= 0 ? "+" : ""}{tx.montant?.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                                    </td>
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
 
