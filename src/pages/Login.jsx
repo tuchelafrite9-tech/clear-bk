@@ -37,7 +37,7 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <main className="relative pt-[100px]">
+      <main className="relative pt-[60px]">
         <section className="flex flex-col md:flex-row min-h-[calc(100vh-100px)]">
           {/* Video — desktop only */}
           <div className="hidden md:block md:w-1/2 overflow-hidden">

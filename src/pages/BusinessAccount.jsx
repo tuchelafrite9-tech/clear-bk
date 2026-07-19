@@ -28,11 +28,11 @@ export default function BusinessAccount() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <main className="relative pt-[80px]">
+      <main className="relative pt-[60px]">
         <section>
           <div className="flex flex-col md:flex-row">
             {/* Animation full height left side */}
-            <div className="md:w-1/2 md:h-[calc(100vh-80px)] md:sticky md:top-[80px] overflow-hidden">
+            <div className="md:w-1/2 md:h-[calc(100vh-60px)] overflow-hidden">
               <video
                 className="w-full h-full object-cover"
                 src="https://media.base44.com/videos/public/6a5ca42fae10cd7334263f3b/e3a1e4537_animation.mp4"

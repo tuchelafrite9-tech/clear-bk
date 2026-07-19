@@ -311,7 +311,7 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <main className="pt-[120px] pb-20">
+      <main className="pt-[60px] pb-20">
         <div className="max-w-[1440px] mx-auto px-5 lg:px-8">
           <div className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>

@@ -241,7 +241,7 @@ export default function Home() {
         {/* Hero Section */}
         <section>
           <div className="max-w-[1440px] mx-auto px-5 lg:px-8">
-            <div className="flex flex-col items-start md:flex-row justify-between pt-[120px] mb-10 md:items-end xl:pt-[240px] min-h-[333px]">
+            <div className="flex flex-col items-start md:flex-row justify-between pt-[80px] mb-10 md:items-end xl:pt-[180px] min-h-[333px]">
               <div>
                 <h1 className="text-5xl md:text-7xl xl:text-8xl font-bold leading-tight">
                   <span className="block">Innovate.</span>

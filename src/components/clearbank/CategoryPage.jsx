@@ -13,7 +13,7 @@ export default function CategoryPage({ category }) {
   return (
     <>
       {/* Hero */}
-      <section className="pt-[120px] md:pt-[180px] pb-12 md:pb-20">
+      <section className="pt-[80px] md:pt-[120px] pb-12 md:pb-20">
         <div className="cb-container">
           <h1 className="cb-h1 mb-6 md:mb-8">{category.title}</h1>
           <p className="cb-h6 max-w-[813px] text-gray-600">{category.intro}</p>

@@ -66,7 +66,7 @@ export default function Header() {
       <div className="max-w-[1440px] mx-auto px-5 lg:px-8">
         <div className="flex flex-wrap items-center justify-between">
           <Link to="/" aria-label="Home" className="z-10">
-            <Logo className="w-[125px] md:w-[180px] py-[25px]" />
+            <Logo className="w-[100px] md:w-[140px] py-[14px]" />
           </Link>
 
           <button onClick={() => setMobileOpen(!mobileOpen)} className="relative md:hidden w-[36px] h-[36px] z-10">

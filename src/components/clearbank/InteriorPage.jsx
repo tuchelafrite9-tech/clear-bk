@@ -10,7 +10,7 @@ const ArrowRight = () => (
 const Hero = ({ data }) => (
   <section>
     <div className="max-w-[1440px] mx-auto px-5 lg:px-8">
-      <div className="pt-[120px] md:pt-[180px] pb-8 md:pb-12">
+      <div className="pt-[80px] md:pt-[120px] pb-8 md:pb-12">
         <h1 className="text-4xl md:text-6xl xl:text-7xl font-bold leading-tight max-w-[900px]">
           {data.heroTitle}
         </h1>
