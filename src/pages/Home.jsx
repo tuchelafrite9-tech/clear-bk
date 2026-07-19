@@ -56,14 +56,14 @@ const products = [
 ];
 
 const useCases = [
-  { title: "Acquirers", desc: "Speeding up settlements for merchants and end customers so everyone can access their money quickly." },
-  { title: "Banks", desc: "Enhancing legacy banking systems with our innovative technology." },
-  { title: "Corporates", desc: "Accounts and real-time payments powering large-scale corporates." },
-  { title: "Digital asset platforms", desc: "Facilitating real-time, scalable accounts that seamlessly clear transactions on and off ramp between fiat and crypto." },
-  { title: "Fintechs", desc: "Powering the banking infrastructure of fintechs to live up to customer expectations and keep up with demand." },
-  { title: "Pre-regulated firms", desc: "Helping to navigate the journey of becoming a regulated business so that you're set up for success as you launch your proposition in the market." },
-  { title: "Non-bank financial institutions", desc: "Give your customers a clear picture of their investments and a smoother journey to wealth." },
-  { title: "Building societies and credit unions", desc: "Making the customer experience faster and more efficient for next generation building society and credit union customers." },
+  { title: "Acquirers", slug: "acquirers", desc: "Speeding up settlements for merchants and end customers so everyone can access their money quickly." },
+  { title: "Banks", slug: "banks", desc: "Enhancing legacy banking systems with our innovative technology." },
+  { title: "Corporates", slug: "corporates", desc: "Accounts and real-time payments powering large-scale corporates." },
+  { title: "Digital asset platforms", slug: "digital-assets", desc: "Facilitating real-time, scalable accounts that seamlessly clear transactions on and off ramp between fiat and crypto." },
+  { title: "Fintechs", slug: "fintech", desc: "Powering the banking infrastructure of fintechs to live up to customer expectations and keep up with demand." },
+  { title: "Pre-regulated firms", slug: "pre-regulated", desc: "Helping to navigate the journey of becoming a regulated business so that you're set up for success as you launch your proposition in the market." },
+  { title: "Non-bank financial institutions", slug: "non-bank-financial-institutions", desc: "Give your customers a clear picture of their investments and a smoother journey to wealth." },
+  { title: "Building societies and credit unions", slug: "building-societies-and-credit-unions", desc: "Making the customer experience faster and more efficient for next generation building society and credit union customers." },
 ];
 
 const news = [
@@ -176,9 +176,9 @@ const ProductSlider = () => {
                     <div className="text-lg">
                       <p>{product.desc}</p>
                     </div>
-                    <a href={`#${product.id}`} className="inline-flex items-center text-black border border-black rounded-full px-5 py-2 mt-4 hover:bg-black hover:text-white transition">
+                    <Link to={`/products/${product.id}`} className="inline-flex items-center text-black border border-black rounded-full px-5 py-2 mt-4 hover:bg-black hover:text-white transition">
                       Get started <ArrowRight />
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -231,9 +231,9 @@ const UseCaseCarousel = () => {
               <div className="text-base text-gray-600 max-w-[428px] flex-grow group-hover:text-black transition">
                 <p>{item.desc}</p>
               </div>
-              <a href="#" className="inline-flex items-center border border-black rounded-full px-4 py-2 mt-4 group-hover:border-transparent text-sm">
+              <Link to={`/use-cases/${item.slug}`} className="inline-flex items-center border border-black rounded-full px-4 py-2 mt-4 group-hover:border-transparent text-sm">
                 Learn more <ArrowRight />
-              </a>
+              </Link>
             </div>
           ))}
         </div>
@@ -259,9 +259,9 @@ export default function Home() {
                 </h1>
               </div>
               <div className="mt-6 md:mt-0">
-                <a href="#begin" className="inline-flex items-center bg-black text-white rounded-full px-6 py-3 text-lg hover:bg-teal-dark transition">
+                <Link to="/begin" className="inline-flex items-center bg-black text-white rounded-full px-6 py-3 text-lg hover:bg-teal-dark transition">
                   Begin <ArrowRight />
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -314,9 +314,9 @@ export default function Home() {
             <div className="text-xl w-full max-w-[813px] text-gray-600">
               With our cloud-based API, we offer banking infrastructure so financial institutions can focus on providing the best service for their customers and stay relevant in a fast-paced market.
             </div>
-            <a href="#api" className="inline-flex items-center border border-black rounded-full px-6 py-3 mt-6 text-lg hover:bg-black hover:text-white transition">
+            <Link to="/products/explore-our-api" className="inline-flex items-center border border-black rounded-full px-6 py-3 mt-6 text-lg hover:bg-black hover:text-white transition">
               Explore our API <ArrowRight />
-            </a>
+            </Link>
           </div>
         </section>
 
@@ -408,7 +408,7 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-12 lg:gap-x-14 gap-y-14">
             {news.map((item) => (
-              <div key={item.title} className="col-span-full lg:col-span-4 group cursor-pointer">
+            <Link to="/learn/news" key={item.title} className="col-span-full lg:col-span-4 group cursor-pointer">
                 <div className="relative pb-[56%] w-full rounded-2xl overflow-hidden mb-3 md:mb-6">
                   <img
                     className="absolute w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -423,14 +423,14 @@ export default function Home() {
                 <div className="text-sm text-gray-500">
                   <span>{item.date}</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
 
         {/* Collaborate Block */}
-        <section className="relative group">
-          <div className="relative">
+        <section className="relative">
+          <div className="relative group">
             <div className="absolute w-full">
               <img
                 className="object-cover w-full h-[372px] md:h-[512px] transition-all duration-500"
@@ -449,14 +449,14 @@ export default function Home() {
                     <div className="text-xl mb-4 md:mb-6 w-full max-w-[666px]">
                       Experience the ClearBank difference and begin your journey today.
                     </div>
-                    <a href="#begin" className="inline-flex items-center bg-black text-white rounded-full px-6 py-3 text-lg group-hover:bg-teal-dark transition">
+                    <Link to="/begin" className="inline-flex items-center bg-black text-white rounded-full px-6 py-3 text-lg group-hover:bg-teal-dark transition">
                       Begin <ArrowRight />
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
             </div>
-            <a href="#begin" className="absolute inset-0" aria-label="Begin"></a>
+            <Link to="/begin" className="absolute inset-0" aria-label="Begin"></Link>
           </div>
         </section>
       </main>

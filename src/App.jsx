@@ -7,6 +7,13 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
+import Layout from '@/components/clearbank/Layout';
+import Products from './pages/Products';
+import UseCases from './pages/UseCases';
+import About from './pages/About';
+import Learn from './pages/Learn';
+import Begin from './pages/Begin';
+import SubCategory from './pages/SubCategory';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -37,6 +44,17 @@ const AuthenticatedApp = () => {
     <Routes>
       {/* Add your page Route elements here */}
       <Route path="/" element={<Home />} />
+      <Route element={<Layout />}>
+        <Route path="/products" element={<Products />} />
+        <Route path="/products/:slug" element={<SubCategory />} />
+        <Route path="/use-cases" element={<UseCases />} />
+        <Route path="/use-cases/:slug" element={<SubCategory />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/about/:slug" element={<SubCategory />} />
+        <Route path="/learn" element={<Learn />} />
+        <Route path="/learn/:slug" element={<SubCategory />} />
+        <Route path="/begin" element={<Begin />} />
+      </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

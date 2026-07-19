@@ -38,10 +38,11 @@ export default function Footer() {
             <FooterColumn
               title="Products"
               links={[
-                { label: "Accounts", to: "/accounts" },
-                { label: "Clearing", to: "/clearing" },
-                { label: "Embedded Banking", to: "/embedded-banking" },
-                { label: "Explore our API", to: "/explore-our-api" },
+                { label: "Accounts", to: "/products/accounts" },
+                { label: "Clearing", to: "/products/clearing" },
+                { label: "Embedded Banking", to: "/products/embedded-banking" },
+                { label: "Digital Assets", to: "/products/digital-assets" },
+                { label: "Explore our API", to: "/products/explore-our-api" },
               ]}
             />
             <FooterColumn
@@ -60,12 +61,12 @@ export default function Footer() {
             <FooterColumn
               title="About"
               links={[
-                { label: "Our company", to: "/our-company" },
-                { label: "Join ClearBank", to: "/join-clearbank" },
-                { label: "Regulatory and governance", to: "/regulatory-governance" },
-                { label: "Reports and accounts", to: "/report-and-accounts" },
-                { label: "Press", to: "/press-kit" },
-                { label: "Contact us", to: "/contact-us" },
+                { label: "Our company", to: "/about/our-company" },
+                { label: "Join ClearBank", to: "/about/join-clearbank" },
+                { label: "Regulatory and governance", to: "/about/regulatory-governance" },
+                { label: "Reports and accounts", to: "/about/reports-and-accounts" },
+                { label: "Press", to: "/about/press-kit" },
+                { label: "Contact us", to: "/about/contact-us" },
               ]}
             />
             <FooterColumn
@@ -76,6 +77,12 @@ export default function Footer() {
                 { label: "Case studies", to: "/learn/case-studies" },
                 { label: "News", to: "/learn/news" },
                 { label: "Buyer's guide", to: "/learn/buyers-guide" },
+              ]}
+            />
+            <FooterColumn
+              title="Products"
+              links={[
+                { label: "Digital Assets", to: "/products/digital-assets" },
               ]}
             />
             <FooterColumn

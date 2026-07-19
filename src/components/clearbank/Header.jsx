@@ -20,26 +20,33 @@ const ChevronDown = () => (
 );
 
 const ProductMenu = [
-  { label: "Accounts", desc: "" },
-  { label: "Clearing", desc: "" },
-  { label: "Digital Assets", desc: "" },
-  { label: "Embedded Banking", desc: "" },
+  { label: "Accounts", path: "/products/accounts" },
+  { label: "Clearing", path: "/products/clearing" },
+  { label: "Digital Assets", path: "/products/digital-assets" },
+  { label: "Embedded Banking", path: "/products/embedded-banking" },
 ];
 
 const UseCaseMenu = [
-  "Acquirers",
-  "Banks",
-  "Building societies and credit unions",
-  "Corporates",
-  "Digital asset platforms",
-  "Fintechs",
-  "Non-bank financial institutions",
-  "Pre-regulated firms",
+  { label: "Acquirers", path: "/use-cases/acquirers" },
+  { label: "Banks", path: "/use-cases/banks" },
+  { label: "Building societies and credit unions", path: "/use-cases/building-societies-and-credit-unions" },
+  { label: "Corporates", path: "/use-cases/corporates" },
+  { label: "Digital asset platforms", path: "/use-cases/digital-assets" },
+  { label: "Fintechs", path: "/use-cases/fintech" },
+  { label: "Non-bank financial institutions", path: "/use-cases/non-bank-financial-institutions" },
+  { label: "Pre-regulated firms", path: "/use-cases/pre-regulated" },
 ];
 
 const AboutMenu = [
-  { section: "Mission", items: ["Our company", "Our leadership", "Join ClearBank"] },
-  { section: "Documentation and enquiries", items: ["Regulatory and governance", "Contact us"] },
+  { section: "Mission", items: [
+    { label: "Our company", path: "/about/our-company" },
+    { label: "Our leadership", path: "/about/leadership" },
+    { label: "Join ClearBank", path: "/about/join-clearbank" },
+  ] },
+  { section: "Documentation and enquiries", items: [
+    { label: "Regulatory and governance", path: "/about/regulatory-governance" },
+    { label: "Contact us", path: "/about/contact-us" },
+  ] },
 ];
 
 export default function Header() {
@@ -81,13 +88,13 @@ export default function Header() {
                 {openMenu === "products" && (
                   <div className="md:absolute md:top-full md:left-0 md:mt-2 md:bg-white md:shadow-lg md:rounded-2xl md:p-6 md:min-w-[280px]">
                     {ProductMenu.map((item) => (
-                      <Link key={item.label} to="/products" className="block text-lg py-2 hover:text-teal-dark transition">
+                      <Link key={item.label} to={item.path} className="block text-lg py-2 hover:text-teal-dark transition">
                         {item.label}
                       </Link>
                     ))}
                     <div className="border-t border-black my-4 hidden md:block" />
                     <div className="text-sm text-gray-500 mb-2 hidden md:block">For Developers</div>
-                    <Link to="/explore-our-api" className="block text-lg hover:text-teal-dark transition">
+                    <Link to="/products/explore-our-api" className="block text-lg hover:text-teal-dark transition">
                       Explore our API
                     </Link>
                     <div className="text-sm text-gray-600 mt-1 hidden md:block">
@@ -109,13 +116,13 @@ export default function Header() {
                   <div className="md:absolute md:top-full md:left-0 md:mt-2 md:bg-white md:shadow-lg md:rounded-2xl md:p-6 md:min-w-[280px]">
                     <div className="text-sm text-gray-500 mb-2 hidden md:block">Who we work with</div>
                     {UseCaseMenu.map((item) => (
-                      <Link key={item} to="/use-cases" className="block text-lg py-2 hover:text-teal-dark transition">
-                        {item}
+                      <Link key={item.label} to={item.path} className="block text-lg py-2 hover:text-teal-dark transition">
+                        {item.label}
                       </Link>
                     ))}
                     <div className="border-t border-black my-4 hidden md:block" />
                     <div className="text-sm text-gray-500 mb-2 hidden md:block">Collaborate with us</div>
-                    <Link to="/partners" className="block text-lg hover:text-teal-dark transition">
+                    <Link to="/use-cases/partners" className="block text-lg hover:text-teal-dark transition">
                       Partners
                     </Link>
                   </div>
@@ -136,8 +143,8 @@ export default function Header() {
                       <div key={group.section}>
                         <div className="text-sm text-gray-500 mb-2 hidden md:block">{group.section}</div>
                         {group.items.map((item) => (
-                          <Link key={item} to="/about" className="block text-lg py-2 hover:text-teal-dark transition">
-                            {item}
+                          <Link key={item.label} to={item.path} className="block text-lg py-2 hover:text-teal-dark transition">
+                            {item.label}
                           </Link>
                         ))}
                       </div>
@@ -153,10 +160,10 @@ export default function Header() {
               </li>
 
               <li>
-                <a href="#begin" className="inline-flex items-center bg-teal text-white px-5 py-2 text-lg rounded-full hover:bg-teal-dark transition">
+                <Link to="/begin" className="inline-flex items-center bg-teal text-black px-5 py-2 text-lg rounded-full hover:bg-teal-dark hover:text-white transition">
                   <span>Begin</span>
                   <span className="ml-2"><ArrowIcon /></span>
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>

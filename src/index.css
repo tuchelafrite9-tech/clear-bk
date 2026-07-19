@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -31,9 +33,16 @@
     --radius: 0.5rem;
     --teal: #70F1DA;
     --teal-dark: #0c7981;
-    --font-heading: ui-sans-serif, system-ui, sans-serif;
-    --font-body: ui-sans-serif, system-ui, sans-serif;
-    --font-display: ui-sans-serif, system-ui, sans-serif;
+    --teal-text: #0c7981;
+    --grey-200: #f3f3f3;
+    --grey-300: #e1e1e1;
+    --grey-400: #b8b8b8;
+    --grey-500: #999999;
+    --grey-600: #666666;
+    --grey-700: #4a4a4a;
+    --font-heading: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -81,14 +90,69 @@
   }
 }
 
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
 
   body {
-    @apply bg-background text-foreground font-body;
+    @apply bg-background text-foreground font-body antialiased;
   }
+}
+
+@layer components {
+  .cb-container {
+    @apply max-w-[1440px] mx-auto px-5 lg:px-8;
+  }
+  .cb-h1 {
+    @apply text-5xl md:text-7xl xl:text-8xl font-bold leading-[1.05] tracking-tight;
+  }
+  .cb-h2 {
+    @apply text-4xl md:text-5xl font-semibold leading-tight tracking-tight;
+  }
+  .cb-h3 {
+    @apply text-2xl md:text-3xl font-semibold leading-tight;
+  }
+  .cb-h4 {
+    @apply text-xl md:text-2xl font-semibold leading-tight;
+  }
+  .cb-h5 {
+    @apply text-lg md:text-xl font-medium leading-tight;
+  }
+  .cb-h6 {
+    @apply text-base md:text-lg font-medium leading-relaxed;
+  }
+  .cb-body1 {
+    @apply text-base md:text-lg leading-relaxed;
+  }
+  .cb-body2 {
+    @apply text-sm md:text-base leading-relaxed;
+  }
+  .cb-body3 {
+    @apply text-xs md:text-sm leading-relaxed;
+  }
+  .cb-btn-teal {
+    @apply inline-flex items-center bg-teal text-black rounded-full px-5 py-2 text-lg font-medium hover:bg-teal-dark hover:text-white transition;
+  }
+  .cb-btn-black {
+    @apply inline-flex items-center bg-black text-white rounded-full px-6 py-3 text-lg font-medium hover:bg-teal-dark transition;
+  }
+  .cb-btn-outline {
+    @apply inline-flex items-center border border-black text-black rounded-full px-6 py-3 text-lg font-medium hover:bg-black hover:text-white transition;
+  }
+}
+
+@keyframes cb-marquee-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes cb-marquee-right {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+.cb-marquee-left {
+  animation: cb-marquee-left 40s linear infinite;
+}
+.cb-marquee-right {
+  animation: cb-marquee-right 30s linear infinite;
 }
