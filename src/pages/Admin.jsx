@@ -30,6 +30,8 @@ export default function Admin() {
   const [success, setSuccess] = useState("");
   const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const [txForm, setTxForm] = useState({ client_id: "", montant: "", transaction: "", date: "" });
+  const [txLoading, setTxLoading] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -61,6 +63,45 @@ export default function Admin() {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleTxChange = (e) => {
+    setTxForm({ ...txForm, [e.target.name]: e.target.value });
+  };
+
+  const handleTxSubmit = async (e) => {
+    e.preventDefault();
+    setTxLoading(true);
+    setError("");
+    setSuccess("");
+
+    if (!txForm.client_id || !txForm.montant || !txForm.transaction || !txForm.date) {
+      setError("Tous les champs de la transaction sont obligatoires.");
+      setTxLoading(false);
+      return;
+    }
+
+    const selectedClient = clients.find((c) => c.id === txForm.client_id);
+    if (!selectedClient) {
+      setError("Client introuvable.");
+      setTxLoading(false);
+      return;
+    }
+
+    try {
+      await base44.entities.Transaction.create({
+        montant: parseFloat(txForm.montant),
+        transaction: txForm.transaction,
+        date: txForm.date,
+        client_id: txForm.client_id,
+        client_email: selectedClient.mail,
+      });
+      setSuccess(`Transaction ajoutée pour ${selectedClient.prenom} ${selectedClient.nom}.`);
+      setTxForm({ client_id: "", montant: "", transaction: "", date: "" });
+    } catch (err) {
+      setError("Erreur lors de la création de la transaction: " + (err.message || err));
+    }
+    setTxLoading(false);
   };
 
   const handleSubmit = async (e) => {
@@ -250,6 +291,74 @@ export default function Admin() {
                     className="w-full inline-flex items-center justify-center bg-teal text-black rounded-full px-6 py-3 text-lg font-medium hover:bg-teal-dark hover:text-white transition disabled:opacity-50"
                   >
                     {loading ? "Création..." : "Créer le client"}
+                  </button>
+                </form>
+              </div>
+
+              {/* Transaction Form */}
+              <div className="bg-gray-50 rounded-3xl p-6 md:p-8 mt-6">
+                <h2 className="text-2xl md:text-3xl font-bold mb-6">Nouvelle transaction</h2>
+                <form onSubmit={handleTxSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Client *</label>
+                    <select
+                      name="client_id"
+                      value={txForm.client_id}
+                      onChange={handleTxChange}
+                      required
+                      className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-teal-dark bg-white"
+                    >
+                      <option value="">Sélectionner un client</option>
+                      {clients.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.prenom} {c.nom} — {c.mail}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Montant (€) *</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        name="montant"
+                        value={txForm.montant}
+                        onChange={handleTxChange}
+                        required
+                        className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-teal-dark"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Date *</label>
+                      <input
+                        type="date"
+                        name="date"
+                        value={txForm.date}
+                        onChange={handleTxChange}
+                        required
+                        className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-teal-dark"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Transaction (description) *</label>
+                    <input
+                      type="text"
+                      name="transaction"
+                      value={txForm.transaction}
+                      onChange={handleTxChange}
+                      required
+                      placeholder="Ex: Virement reçu, Paiement fournisseur..."
+                      className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-teal-dark"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={txLoading}
+                    className="w-full inline-flex items-center justify-center bg-black text-white rounded-full px-6 py-3 text-lg font-medium hover:bg-teal-dark transition disabled:opacity-50"
+                  >
+                    {txLoading ? "Ajout..." : "Ajouter la transaction"}
                   </button>
                 </form>
               </div>

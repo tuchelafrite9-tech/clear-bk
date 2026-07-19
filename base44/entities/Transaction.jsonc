@@ -1,0 +1,63 @@
+{
+  "name": "Transaction",
+  "type": "object",
+  "properties": {
+    "montant": {
+      "type": "number",
+      "title": "Montant"
+    },
+    "transaction": {
+      "type": "string",
+      "title": "Transaction"
+    },
+    "date": {
+      "type": "string",
+      "title": "Date",
+      "format": "date"
+    },
+    "client_id": {
+      "type": "string",
+      "title": "Client"
+    },
+    "client_email": {
+      "type": "string",
+      "title": "Email client"
+    }
+  },
+  "required": [
+    "montant",
+    "transaction",
+    "date",
+    "client_id",
+    "client_email"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.client_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

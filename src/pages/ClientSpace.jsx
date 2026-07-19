@@ -12,6 +12,7 @@ const ArrowRight = () => (
 
 export default function ClientSpace() {
   const [client, setClient] = useState(null);
+  const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -25,6 +26,8 @@ export default function ClientSpace() {
           await base44.entities.Client.update(records[0].id, {
             derniere_connexion: new Date().toISOString(),
           });
+          const txs = await base44.entities.Transaction.filter({ client_id: records[0].id }, "-date", 100);
+          setTransactions(txs || []);
         } else {
           setError("Aucun compte client trouvé pour votre adresse email. Contactez votre administrateur.");
         }
@@ -97,6 +100,33 @@ export default function ClientSpace() {
                           : "Première connexion"
                       }
                     />
+                  </div>
+
+                  {/* Transactions History */}
+                  <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-8 mt-6">
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="text-2xl md:text-3xl font-bold">Transactions</h2>
+                      <span className="text-sm text-gray-500">{transactions.length} transaction(s)</span>
+                    </div>
+                    {transactions.length === 0 ? (
+                      <p className="text-gray-500 text-center py-8">Aucune transaction pour le moment.</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {transactions.map((tx) => (
+                          <div key={tx.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+                            <div>
+                              <p className="text-sm font-medium text-black">{tx.transaction}</p>
+                              <p className="text-xs text-gray-500">
+                                {tx.date ? new Date(tx.date).toLocaleDateString("fr-FR") : "—"}
+                              </p>
+                            </div>
+                            <div className={`text-lg font-semibold ${tx.montant >= 0 ? "text-green-600" : "text-red-600"}`}>
+                              {tx.montant >= 0 ? "+" : ""}{tx.montant?.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
