@@ -9,24 +9,9 @@ const ArrowRight = () => (
   </svg>
 );
 
-const partners = [
-  "https://clear.bank/uploads/images/logo-ticker/_300x80_crop_center-center_none/Tide-logo.svg",
-  "https://clear.bank/uploads/images/logo-ticker/_300x80_crop_center-center_none/Allica-Bank-Logo.svg",
-  "https://clear.bank/uploads/images/logo-ticker/_300x80_crop_center-center_none/Airwallex-Logo.svg",
-  "https://clear.bank/uploads/images/logo-ticker/_300x80_crop_center-center_none/Truelayer-logo.svg",
-  "https://clear.bank/uploads/images/logo-ticker/_300x80_crop_center-center_none/Capital-on-Tap-Logo.svg",
-  "https://clear.bank/uploads/images/logo-ticker/_300x80_crop_center-center_none/Wealthify-logo.svg",
-];
+const partners = ["Tide", "Allica Bank", "Airwallex", "TrueLayer", "Capital on Tap", "Wealthify"];
 
-const partners2 = [
-  "https://clear.bank/uploads/images/logo-ticker/_300x80_crop_center-center_none/Coinbase-Logo.svg",
-  "https://clear.bank/uploads/images/logo-ticker/_300x80_crop_center-center_none/eToro-logo.svg",
-  "https://clear.bank/uploads/images/logo-ticker/_300x80_crop_center-center_none/Lemfi-logo.svg",
-  "https://clear.bank/uploads/images/logo-ticker/_300x80_crop_center-center_none/Raisin-logo.svg",
-  "https://clear.bank/uploads/images/logo-ticker/_300x80_crop_center-center_none/Kraken-logo.svg",
-  "https://clear.bank/uploads/images/logo-ticker/_300x80_crop_center-center_none/Paypoint-Logo.svg",
-  "https://clear.bank/uploads/images/logo-ticker/_300x80_crop_center-center_none/Pingpong-logo.svg",
-];
+const partners2 = ["Coinbase", "eToro", "Lemfi", "Raisin", "Kraken", "Paypoint", "Pingpong"];
 
 const products = [
   {
@@ -87,10 +72,12 @@ const news = [
 const LogoTicker = ({ logos, direction }) => {
   const doubled = [...logos, ...logos];
   return (
-    <div className="overflow-hidden py-2">
-      <div className={`flex items-center gap-14 whitespace-nowrap w-max ${direction === "left" ? "cb-marquee-left" : "cb-marquee-right"}`}>
-        {doubled.map((src, i) => (
-          <img key={i} src={src} alt="partner logo" className="h-8 md:h-12 w-auto opacity-60 hover:opacity-100 transition" />
+    <div className="overflow-hidden py-3">
+      <div className={`flex items-center whitespace-nowrap w-max ${direction === "left" ? "cb-marquee-left" : "cb-marquee-right"}`}>
+        {doubled.map((name, i) => (
+          <span key={i} className="text-2xl md:text-3xl font-semibold text-gray-400 px-14 hover:text-black transition-colors">
+            {name}
+          </span>
         ))}
       </div>
     </div>
