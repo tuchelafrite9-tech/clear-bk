@@ -49,24 +49,28 @@ Deno.serve(async (req) => {
     try {
       const emailBody = `
         <div style="font-family: Inter, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc; padding: 40px 20px;">
-          <div style="background: #0f172a; border-radius: 24px 24px 0 0; padding: 32px; text-align: center;">
-            <h1 style="color: #70F1DA; font-size: 28px; margin: 0; font-weight: 700;">ClearBank</h1>
-            <p style="color: #94a3b8; font-size: 14px; margin-top: 8px;">Votre code de connexion à usage unique</p>
+          <div style="background: #ffffff; border-radius: 24px 24px 0 0; padding: 32px; text-align: center; border-bottom: 3px solid #70F1DA;">
+            <img src="https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/1d6f5be18_LOGOIM.png" alt="Clear.Bank" style="width: 200px; max-width: 60%; height: auto; margin: 0 auto 12px; display: block;" />
+            <p style="color: #0c7981; font-size: 14px; margin: 0; font-weight: 500; letter-spacing: 1px; text-transform: uppercase;">Votre code de connexion à usage unique</p>
           </div>
-          <div style="background: #ffffff; border-radius: 0 0 24px 24px; padding: 40px; text-align: center;">
+          <div style="background: #ffffff; border-radius: 0 0 24px 24px; padding: 40px; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.04);">
             <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
-              Voici votre code de connexion sécurisé :
+              Bonjour,<br/>
+              Voici votre code de connexion sécurisé pour accéder à votre espace client :
             </p>
-            <div style="display: inline-block; background: #f1f5f9; border: 2px dashed #0c7981; border-radius: 16px; padding: 20px 40px; margin: 0 auto 24px;">
-              <span style="font-size: 36px; font-weight: 700; letter-spacing: 8px; color: #0f172a; font-family: monospace;">${code}</span>
+            <div style="display: inline-block; background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border: 2px dashed #0c7981; border-radius: 16px; padding: 24px 48px; margin: 0 auto 24px;">
+              <span style="font-size: 40px; font-weight: 800; letter-spacing: 10px; color: #0f172a; font-family: monospace;">${code}</span>
             </div>
+            <a href="https://clear-bank.app/my-account" style="display: inline-block; background: #0f172a; color: #70F1DA; text-decoration: none; font-size: 16px; font-weight: 600; padding: 14px 40px; border-radius: 999px; margin: 8px 0 24px;">
+              Accéder à mon espace
+            </a>
             <p style="color: #475569; font-size: 14px; line-height: 1.6;">
               Ce code est à usage unique. Il sera invalide après votre première connexion.<br/>
               Rendez-vous sur votre espace client pour vous connecter.
             </p>
             <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
               <p style="color: #94a3b8; font-size: 12px; margin: 0;">Cet email a été envoyé automatiquement, merci de ne pas y répondre.</p>
-              <p style="color: #94a3b8; font-size: 12px; margin: 8px 0 0;">© ClearBank Limited ${new Date().getFullYear()}</p>
+              <p style="color: #94a3b8; font-size: 12px; margin: 8px 0 0;">© Clear.Bank Limited ${new Date().getFullYear()}</p>
             </div>
           </div>
         </div>
