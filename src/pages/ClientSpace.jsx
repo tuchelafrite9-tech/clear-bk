@@ -366,16 +366,74 @@ export default function ClientSpace() {
 
                 {/* COMPTE */}
                 {activeSection === "compte" && (
-                  <div>
+                  <div className="space-y-6">
                     <SectionHeader meta={meta} />
+
+                    {/* Profile header card */}
+                    <div className="bg-gradient-to-br from-slate-900 to-slate-700 rounded-3xl p-6 md:p-8 text-white relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-40 h-40 bg-teal/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+                      <div className="relative flex items-center gap-5">
+                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-teal/20 flex items-center justify-center text-2xl md:text-3xl font-bold text-teal shrink-0">
+                          {(client.prenom?.[0] || "")}{(client.nom?.[0] || "")}
+                        </div>
+                        <div>
+                          <h2 className="text-xl md:text-2xl font-bold">{client.prenom} {client.nom}</h2>
+                          <p className="text-sm text-slate-300">{client.mail}</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className="inline-flex items-center gap-1 text-xs bg-white/10 px-2.5 py-1 rounded-full">
+                              <ShieldCheck className="w-3 h-3 text-teal" />
+                              Compte vérifié
+                            </span>
+                            <span className="text-xs text-slate-400">
+                              {client.derniere_connexion
+                                ? `Connecté le ${new Date(client.derniere_connexion).toLocaleDateString("fr-FR")}`
+                                : "Première connexion"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Informations personnelles */}
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-                      <h2 className="text-lg font-bold mb-4 text-gray-800">Informations personnelles</h2>
+                      <div className="flex items-center gap-2 mb-5">
+                        <User className="w-5 h-5 text-teal-dark" />
+                        <h2 className="text-lg font-bold text-gray-800">Informations personnelles</h2>
+                      </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
                         <InfoRow label="Nom" value={client.nom} />
                         <InfoRow label="Prénom" value={client.prenom} />
                         <InfoRow label="Email" value={client.mail} />
+                        <InfoRow
+                          label="Dernière connexion"
+                          value={
+                            client.derniere_connexion
+                              ? new Date(client.derniere_connexion).toLocaleString("fr-FR")
+                              : "Première connexion"
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    {/* Coordonnées bancaires */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                      <div className="flex items-center gap-2 mb-5">
+                        <CreditCard className="w-5 h-5 text-teal-dark" />
+                        <h2 className="text-lg font-bold text-gray-800">Coordonnées bancaires</h2>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
                         <InfoRow label="IBAN" value={client.iban} />
                         <InfoRow label="Numéro de compte" value={client.numero_de_compte} />
+                      </div>
+                    </div>
+
+                    {/* Dossier séquestre */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                      <div className="flex items-center gap-2 mb-5">
+                        <ShieldCheck className="w-5 h-5 text-teal-dark" />
+                        <h2 className="text-lg font-bold text-gray-800">Dossier séquestre</h2>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
                         <InfoRow label="Numéro de compte séquestre" value={client.numero_de_compte_sequestre} />
                         <InfoRow label="Référence du dossier séquestre" value={client.reference_dossier_sequestre} />
                         <InfoRow
@@ -386,18 +444,10 @@ export default function ClientSpace() {
                               : null
                           }
                         />
-                        <InfoRow
-                          label="Dernière connexion"
-                          value={
-                            client.derniere_connexion
-                              ? new Date(client.derniere_connexion).toLocaleString("fr-FR")
-                              : "Première connexion"
-                          }
-                        />
                       </div>
                       {client.remarque && (
-                        <div className="mt-4 p-4 rounded-2xl bg-teal/5 border border-teal/20">
-                          <p className="text-sm font-semibold mb-1 text-teal-dark">Remarque</p>
+                        <div className="mt-5 p-4 rounded-2xl bg-teal/5 border border-teal/20">
+                          <p className="text-sm font-semibold mb-1 text-teal-dark">Remarque de l'administrateur</p>
                           <p className="text-sm text-gray-700">{client.remarque}</p>
                         </div>
                       )}
