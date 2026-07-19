@@ -38,6 +38,8 @@ export default function Admin() {
   const [demandesOuverture, setDemandesOuverture] = useState([]);
   const [uploadingFor, setUploadingFor] = useState(null);
   const [activeTab, setActiveTab] = useState("ouverture");
+  const [generatedCode, setGeneratedCode] = useState(null);
+  const [codeLoading, setCodeLoading] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -119,6 +121,21 @@ export default function Admin() {
     } catch (e) {
       setError("Erreur lors du chargement des clients: " + (e.message || e));
     }
+  };
+
+  const handleGenerateCode = async (clientEmail) => {
+    setCodeLoading(clientEmail);
+    setError("");
+    setSuccess("");
+    setGeneratedCode(null);
+    try {
+      const res = await base44.functions.invoke("GenerateLoginCode", { client_email: clientEmail });
+      setGeneratedCode({ email: clientEmail, code: res.data.code });
+      setSuccess(`Code à usage unique généré pour ${clientEmail}.`);
+    } catch (err) {
+      setError("Erreur lors de la génération du code: " + (err?.response?.data?.error || err.message || err));
+    }
+    setCodeLoading(null);
   };
 
   const handleUploadContrat = async (clientId, file) => {
@@ -624,6 +641,21 @@ export default function Admin() {
                       {client.remarque && (
                         <p className="text-sm text-gray-500 mt-2 italic">{client.remarque}</p>
                       )}
+                      <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap items-center gap-3">
+                        <button
+                          onClick={() => handleGenerateCode(client.mail)}
+                          disabled={codeLoading === client.mail}
+                          className="inline-flex items-center gap-2 bg-slate-900 text-white rounded-full px-4 py-2 text-xs font-medium hover:bg-teal-dark transition disabled:opacity-50"
+                        >
+                          {codeLoading === client.mail ? "Génération..." : "Générer un code à usage unique"}
+                        </button>
+                        {generatedCode && generatedCode.email === client.mail && (
+                          <div className="inline-flex items-center gap-2 bg-teal/10 border border-teal-dark rounded-full px-4 py-2">
+                            <span className="text-xs text-gray-600">Code :</span>
+                            <span className="text-sm font-bold text-teal-dark tracking-widest">{generatedCode.code}</span>
+                          </div>
+                        )}
+                      </div>
                       <div className="mt-3 pt-3 border-t border-gray-100">
                         <label className="block text-sm font-medium mb-1">Contrat PDF</label>
                         {client.contrat_pdf ? (
