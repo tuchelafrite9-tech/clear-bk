@@ -15,8 +15,11 @@ const navItems = [
 
 export default function ClientSidebar({ active, onSelect }) {
   return (
-    <aside className="flex flex-col w-56 md:w-64 shrink-0 bg-white border-r border-gray-200 min-h-[calc(100vh-80px)] sticky top-[80px] py-6">
-      <nav className="flex-1 px-3">
+    <aside className="flex flex-col w-56 md:w-64 shrink-0 bg-gradient-to-b from-slate-900 to-slate-800 text-white min-h-[calc(100vh-80px)] sticky top-[80px] py-6 px-3">
+      <div className="px-3 mb-6">
+        <p className="text-xs uppercase tracking-wider text-slate-400 font-medium">Menu</p>
+      </div>
+      <nav className="flex-1">
         <ul className="space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -25,13 +28,13 @@ export default function ClientSidebar({ active, onSelect }) {
               <li key={item.id}>
                 <button
                   onClick={() => onSelect(item.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition ${
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 relative ${
                     isActive
-                      ? "bg-teal/10 text-teal-dark"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-black"
+                      ? "bg-teal text-black shadow-lg shadow-teal/20"
+                      : "text-slate-300 hover:bg-white/5 hover:text-white"
                   }`}
                 >
-                  <Icon className={`w-5 h-5 ${isActive ? "text-teal-dark" : "text-gray-400"}`} />
+                  <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-black" : "text-slate-400"}`} />
                   <span>{item.label}</span>
                 </button>
               </li>
@@ -39,6 +42,12 @@ export default function ClientSidebar({ active, onSelect }) {
           })}
         </ul>
       </nav>
+      <div className="px-3 pt-6 mt-6 border-t border-white/10">
+        <div className="bg-white/5 rounded-2xl p-4">
+          <p className="text-xs text-slate-400 mb-1">Besoin d'aide ?</p>
+          <p className="text-sm text-white font-medium">Contactez votre conseiller</p>
+        </div>
+      </div>
     </aside>
   );
 }

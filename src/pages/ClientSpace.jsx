@@ -4,12 +4,19 @@ import { base44 } from "@/api/base44Client";
 import Header from "@/components/clearbank/Header";
 import Footer from "@/components/clearbank/Footer";
 import ClientSidebar, { navItems } from "@/components/clearbank/ClientSidebar";
+import { Home, User, ArrowLeftRight, CreditCard, Wallet, PiggyBank, ShieldCheck, TrendingUp, FileText, ArrowUpRight, ArrowDownLeft, ArrowRight, Download, Bell, Phone } from "lucide-react";
 
-const ArrowRight = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="13" fill="none" className="inline-block ml-2">
-    <path d="M15.597 6.78a.9.9 0 0 0-.28-.648L10.182.999C9.98.804 9.77.718 9.55.718c-.5 0-.859.351-.859.828 0 .25.102.46.258.617l1.758 1.781 2.265 2.07-1.812-.109H1.69c-.523 0-.883.36-.883.875 0 .508.36.867.883.867h9.469l1.812-.109-2.265 2.07-1.758 1.782a.86.86 0 0 0-.258.617c0 .476.36.828.86.828a.88.88 0 0 0 .617-.266l5.148-5.148a.896.896 0 0 0 .281-.64Z" fill="currentColor" />
-  </svg>
-);
+const sectionMeta = {
+  accueil: { title: "Accueil", icon: Home },
+  compte: { title: "Mon compte", icon: User },
+  virement: { title: "Virement", icon: ArrowLeftRight },
+  paiement: { title: "Paiements", icon: CreditCard },
+  carte: { title: "Carte bancaire", icon: Wallet },
+  epargne: { title: "Épargne", icon: PiggyBank },
+  assurance: { title: "Assurance", icon: ShieldCheck },
+  bourse: { title: "Bourse", icon: TrendingUp },
+  document: { title: "Documents", icon: FileText },
+};
 
 export default function ClientSpace() {
   const [client, setClient] = useState(null);
@@ -97,15 +104,31 @@ export default function ClientSpace() {
   const computeSolde = () =>
     transactions.reduce((sum, tx) => sum + (tx.montant || 0), 0);
 
-  const PlaceholderSection = ({ title, desc }) => (
-    <div className="bg-white border border-gray-200 rounded-3xl p-8 md:p-12 text-center">
+  const PlaceholderSection = ({ title, desc, icon: Icon }) => (
+    <div className="bg-white border border-gray-200 rounded-3xl p-8 md:p-12 text-center shadow-sm">
+      <div className="w-16 h-16 rounded-2xl bg-teal/10 flex items-center justify-center mx-auto mb-4">
+        {Icon && <Icon className="w-8 h-8 text-teal-dark" />}
+      </div>
       <h2 className="text-2xl md:text-3xl font-bold mb-3">{title}</h2>
-      <p className="text-gray-500">{desc}</p>
+      <p className="text-gray-500 max-w-md mx-auto">{desc}</p>
     </div>
   );
 
+  const meta = sectionMeta[activeSection];
+  const SectionHeader = ({ meta }) => {
+    const Icon = meta.icon;
+    return (
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-11 h-11 rounded-xl bg-teal/10 flex items-center justify-center">
+          <Icon className="w-6 h-6 text-teal-dark" />
+        </div>
+        <h1 className="text-2xl md:text-3xl font-bold">{meta.title}</h1>
+      </div>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-slate-50">
       <Header />
       <main className="pt-[80px]">
         <div className="max-w-[1440px] mx-auto flex">
@@ -115,7 +138,7 @@ export default function ClientSpace() {
           <div className="lg:hidden fixed bottom-4 right-4 z-40">
             <button
               onClick={() => setMobileNavOpen(!mobileNavOpen)}
-              className="w-12 h-12 rounded-full bg-black text-white shadow-lg flex items-center justify-center"
+              className="w-12 h-12 rounded-full bg-teal text-black shadow-lg flex items-center justify-center"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -149,7 +172,7 @@ export default function ClientSpace() {
             </div>
           )}
 
-          <div className="flex-1 px-5 lg:px-8 py-6 md:py-10 min-w-0">
+          <div className="flex-1 px-5 lg:px-8 py-6 md:py-8 min-w-0">
             {loading ? (
               <div className="flex items-center justify-center py-20">
                 <div className="w-8 h-8 border-4 border-slate-200 border-t-teal-dark rounded-full animate-spin"></div>
@@ -159,16 +182,25 @@ export default function ClientSpace() {
                 <h1 className="text-3xl md:text-4xl font-bold mb-4">Espace client</h1>
                 <p className="text-lg text-gray-600 mb-8">{error}</p>
                 <Link to="/" className="inline-flex items-center bg-black text-white rounded-full px-6 py-3 text-lg hover:bg-teal-dark transition">
-                  Retour à l'accueil <ArrowRight />
+                  Retour à l'accueil <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </div>
             ) : client ? (
               <>
-                <div className="mb-6 md:mb-8">
-                  <p className="text-lg md:text-xl mb-1">Bienvenue</p>
-                  <h1 className="text-3xl md:text-4xl font-bold">
-                    {client.prenom} {client.nom}
-                  </h1>
+                {/* Top bar */}
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <p className="text-sm text-gray-500 mb-0.5">Bonjour,</p>
+                    <h1 className="text-2xl md:text-3xl font-bold">
+                      {client.prenom} {client.nom}
+                    </h1>
+                  </div>
+                  <div className="hidden md:flex items-center gap-2">
+                    <button className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:border-teal-dark transition relative">
+                      <Bell className="w-5 h-5 text-gray-600" />
+                      <span className="absolute top-2 right-2 w-2 h-2 bg-teal-dark rounded-full"></span>
+                    </button>
+                  </div>
                 </div>
 
                 {error && (
@@ -177,7 +209,8 @@ export default function ClientSpace() {
                   </div>
                 )}
                 {actionSuccess && (
-                  <div className="mb-6 p-4 rounded-2xl bg-green-50 border border-green-200 text-green-700 text-sm">
+                  <div className="mb-6 p-4 rounded-2xl bg-green-50 border border-green-200 text-green-700 text-sm flex items-center gap-2">
+                    <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                     {actionSuccess}
                   </div>
                 )}
@@ -185,32 +218,76 @@ export default function ClientSpace() {
                 {/* ACCUEIL */}
                 {activeSection === "accueil" && (
                   <div className="space-y-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div className="bg-gradient-to-br from-teal/20 to-teal/5 rounded-3xl p-6">
-                        <p className="text-sm text-gray-500 mb-1">Solde du compte</p>
-                        <p className="text-2xl font-bold">{computeSolde().toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</p>
-                      </div>
-                      <div className="bg-gray-50 rounded-3xl p-6">
-                        <p className="text-sm text-gray-500 mb-1">Transactions</p>
-                        <p className="text-2xl font-bold">{transactions.length}</p>
-                      </div>
-                      <div className="bg-gray-50 rounded-3xl p-6">
-                        <p className="text-sm text-gray-500 mb-1">Demandes en cours</p>
-                        <p className="text-2xl font-bold">{demandes.filter((d) => d.statut === "en_attente").length}</p>
+                    {/* Hero balance card */}
+                    <div className="bg-gradient-to-br from-slate-900 to-slate-700 rounded-3xl p-6 md:p-8 text-white relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-48 h-48 bg-teal/10 rounded-full -mr-20 -mt-20 blur-2xl"></div>
+                      <div className="relative">
+                        <p className="text-sm text-slate-300 mb-1">Solde du compte</p>
+                        <p className="text-3xl md:text-4xl font-bold mb-4">{computeSolde().toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</p>
+                        <div className="flex flex-wrap gap-4 text-sm">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-slate-400">N° de compte:</span>
+                            <span className="font-medium">{client.numero_de_compte || "—"}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="bg-gray-50 rounded-3xl p-6 md:p-8">
-                      <h2 className="text-xl font-bold mb-4">Dernières transactions</h2>
+                    {/* Quick stats */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-sm text-gray-500">Transactions</p>
+                          <div className="w-8 h-8 rounded-lg bg-teal/10 flex items-center justify-center">
+                            <ArrowLeftRight className="w-4 h-4 text-teal-dark" />
+                          </div>
+                        </div>
+                        <p className="text-2xl font-bold">{transactions.length}</p>
+                      </div>
+                      <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-sm text-gray-500">Demandes en cours</p>
+                          <div className="w-8 h-8 rounded-lg bg-yellow-50 flex items-center justify-center">
+                            <Bell className="w-4 h-4 text-yellow-600" />
+                          </div>
+                        </div>
+                        <p className="text-2xl font-bold">{demandes.filter((d) => d.statut === "en_attente").length}</p>
+                      </div>
+                      <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-sm text-gray-500">Dernière connexion</p>
+                          <div className="w-8 h-8 rounded-lg bg-teal/10 flex items-center justify-center">
+                            <User className="w-4 h-4 text-teal-dark" />
+                          </div>
+                        </div>
+                        <p className="text-sm font-bold mt-1">
+                          {client.derniere_connexion ? new Date(client.derniere_connexion).toLocaleDateString("fr-FR") : "Aujourd'hui"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Recent transactions */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-bold">Dernières transactions</h2>
+                        <button onClick={() => selectSection("paiement")} className="text-sm text-teal-dark hover:underline flex items-center gap-1">
+                          Tout voir <ArrowRight className="w-3 h-3" />
+                        </button>
+                      </div>
                       {transactions.length === 0 ? (
-                        <p className="text-gray-500 text-center py-6">Aucune transaction pour le moment.</p>
+                        <p className="text-gray-400 text-center py-6 text-sm">Aucune transaction pour le moment.</p>
                       ) : (
-                        <div className="space-y-2">
+                        <div className="space-y-1">
                           {transactions.slice(0, 5).map((tx) => (
-                            <div key={tx.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
-                              <div>
-                                <p className="text-sm font-medium">{tx.transaction}</p>
-                                <p className="text-xs text-gray-500">{tx.date ? new Date(tx.date).toLocaleDateString("fr-FR") : "—"}</p>
+                            <div key={tx.id} className="flex items-center justify-between py-3 hover:bg-gray-50 rounded-xl px-2 transition">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-9 h-9 rounded-full flex items-center justify-center ${tx.montant >= 0 ? "bg-green-50" : "bg-red-50"}`}>
+                                  {tx.montant >= 0 ? <ArrowDownLeft className="w-4 h-4 text-green-600" /> : <ArrowUpRight className="w-4 h-4 text-red-600" />}
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium">{tx.transaction}</p>
+                                  <p className="text-xs text-gray-400">{tx.date ? new Date(tx.date).toLocaleDateString("fr-FR") : "—"}</p>
+                                </div>
                               </div>
                               <span className={`text-sm font-semibold ${tx.montant >= 0 ? "text-green-600" : "text-red-600"}`}>
                                 {tx.montant >= 0 ? "+" : ""}{tx.montant?.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
@@ -225,68 +302,74 @@ export default function ClientSpace() {
 
                 {/* COMPTE */}
                 {activeSection === "compte" && (
-                  <div className="bg-gray-50 rounded-3xl p-6 md:p-8">
-                    <h2 className="text-2xl md:text-3xl font-bold mb-6">Informations du compte</h2>
-                    <InfoRow label="Nom" value={client.nom} />
-                    <InfoRow label="Prénom" value={client.prenom} />
-                    <InfoRow label="Email" value={client.mail} />
-                    <InfoRow label="IBAN" value={client.iban} />
-                    <InfoRow label="Numéro de compte" value={client.numero_de_compte} />
-                    <InfoRow label="Numéro de compte séquestre" value={client.numero_de_compte_sequestre} />
-                    <InfoRow label="Référence du dossier séquestre" value={client.reference_dossier_sequestre} />
-                    <InfoRow
-                      label="Date de libération du comité séquestre"
-                      value={
-                        client.date_liberation_comite_sequestre
-                          ? new Date(client.date_liberation_comite_sequestre).toLocaleDateString("fr-FR")
-                          : null
-                      }
-                    />
-                    <InfoRow
-                      label="Dernière connexion"
-                      value={
-                        client.derniere_connexion
-                          ? new Date(client.derniere_connexion).toLocaleString("fr-FR")
-                          : "Première connexion"
-                      }
-                    />
-                    {client.remarque && (
-                      <div className="mt-4 p-4 rounded-2xl bg-teal/10 border border-teal">
-                        <p className="text-sm font-semibold mb-1">Remarque</p>
-                        <p className="text-sm text-gray-700">{client.remarque}</p>
+                  <div>
+                    <SectionHeader meta={meta} />
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                      <h2 className="text-lg font-bold mb-4 text-gray-800">Informations personnelles</h2>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
+                        <InfoRow label="Nom" value={client.nom} />
+                        <InfoRow label="Prénom" value={client.prenom} />
+                        <InfoRow label="Email" value={client.mail} />
+                        <InfoRow label="IBAN" value={client.iban} />
+                        <InfoRow label="Numéro de compte" value={client.numero_de_compte} />
+                        <InfoRow label="Numéro de compte séquestre" value={client.numero_de_compte_sequestre} />
+                        <InfoRow label="Référence du dossier séquestre" value={client.reference_dossier_sequestre} />
+                        <InfoRow
+                          label="Date de libération du comité séquestre"
+                          value={
+                            client.date_liberation_comite_sequestre
+                              ? new Date(client.date_liberation_comite_sequestre).toLocaleDateString("fr-FR")
+                              : null
+                          }
+                        />
+                        <InfoRow
+                          label="Dernière connexion"
+                          value={
+                            client.derniere_connexion
+                              ? new Date(client.derniere_connexion).toLocaleString("fr-FR")
+                              : "Première connexion"
+                          }
+                        />
                       </div>
-                    )}
+                      {client.remarque && (
+                        <div className="mt-4 p-4 rounded-2xl bg-teal/5 border border-teal/20">
+                          <p className="text-sm font-semibold mb-1 text-teal-dark">Remarque</p>
+                          <p className="text-sm text-gray-700">{client.remarque}</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
 
                 {/* VIREMENT */}
                 {activeSection === "virement" && (
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <SectionHeader meta={meta} />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                       <button
                         onClick={() => { setShowModal("liberation_fournisseur"); setActionSuccess(""); }}
-                        className="flex flex-col items-center text-center bg-white border border-gray-200 rounded-3xl p-8 hover:border-teal-dark hover:bg-gray-50 transition"
+                        className="group flex flex-col items-center text-center bg-white border border-gray-200 rounded-2xl p-8 hover:border-teal-dark hover:shadow-lg transition-all"
                       >
-                        <svg className="w-12 h-12 text-teal-dark mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 8h18M3 8v10a2 2 0 002 2h14a2 2 0 002-2V8M3 8l2-4h14l2 4M9 12h6M9 16h6" />
-                        </svg>
+                        <div className="w-14 h-14 rounded-2xl bg-teal/10 flex items-center justify-center mb-4 group-hover:bg-teal group-hover:text-white transition">
+                          <ArrowUpRight className="w-7 h-7 text-teal-dark group-hover:text-white" />
+                        </div>
                         <span className="text-sm font-semibold">Libérer le montant du compte séquestre vers le fournisseur</span>
                       </button>
                       <button
                         onClick={() => { setShowModal("recuperation_compte_courant"); setActionSuccess(""); }}
-                        className="flex flex-col items-center text-center bg-white border border-gray-200 rounded-3xl p-8 hover:border-teal-dark hover:bg-gray-50 transition"
+                        className="group flex flex-col items-center text-center bg-white border border-gray-200 rounded-2xl p-8 hover:border-teal-dark hover:shadow-lg transition-all"
                       >
-                        <svg className="w-12 h-12 text-teal-dark mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v6h6M20 20v-6h-6M20 10A8 8 0 006 6M4 14a8 8 0 0014 4" />
-                        </svg>
+                        <div className="w-14 h-14 rounded-2xl bg-teal/10 flex items-center justify-center mb-4 group-hover:bg-teal group-hover:text-white transition">
+                          <ArrowDownLeft className="w-7 h-7 text-teal-dark group-hover:text-white" />
+                        </div>
                         <span className="text-sm font-semibold">Demander la récupération du montant séquestre vers le compte courant</span>
                       </button>
                     </div>
 
                     {demandes.length > 0 && (
-                      <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-8">
-                        <h3 className="text-lg font-semibold mb-4">Mes demandes</h3>
-                        <div className="space-y-3">
+                      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <h3 className="text-lg font-bold mb-4">Mes demandes</h3>
+                        <div className="space-y-2">
                           {demandes.map((dm) => {
                             const label =
                               dm.type === "liberation_fournisseur"
@@ -294,27 +377,27 @@ export default function ClientSpace() {
                                 : "Récupération vers compte courant";
                             const statutColor =
                               dm.statut === "approuve"
-                                ? "bg-green-100 text-green-700"
+                                ? "bg-green-50 text-green-700"
                                 : dm.statut === "refuse"
-                                ? "bg-red-100 text-red-700"
-                                : "bg-yellow-100 text-yellow-700";
+                                ? "bg-red-50 text-red-700"
+                                : "bg-yellow-50 text-yellow-700";
                             return (
-                              <div key={dm.id} className="py-3 border-b border-gray-100 last:border-b-0">
-                                <div className="flex items-center justify-between">
+                              <div key={dm.id} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-b-0">
+                                <div>
                                   <p className="text-sm font-medium">{label}</p>
-                                  <span className={`text-xs px-2 py-1 rounded-full ${statutColor}`}>
-                                    {dm.statut === "en_attente" ? "En attente" : dm.statut === "approuve" ? "Approuvée" : "Refusée"}
-                                  </span>
-                                </div>
-                                {dm.montant != null && (
-                                  <p className="text-sm text-gray-600 mt-1">
-                                    {dm.montant.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                                  {dm.montant != null && (
+                                    <p className="text-sm text-gray-500 mt-0.5">
+                                      {dm.montant.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                                    </p>
+                                  )}
+                                  {dm.motif && <p className="text-xs text-gray-400 mt-0.5 italic">{dm.motif}</p>}
+                                  <p className="text-xs text-gray-300 mt-0.5">
+                                    {dm.date_demande ? new Date(dm.date_demande).toLocaleDateString("fr-FR") : ""}
                                   </p>
-                                )}
-                                {dm.motif && <p className="text-xs text-gray-500 mt-1 italic">{dm.motif}</p>}
-                                <p className="text-xs text-gray-400 mt-1">
-                                  {dm.date_demande ? new Date(dm.date_demande).toLocaleDateString("fr-FR") : ""}
-                                </p>
+                                </div>
+                                <span className={`text-xs px-3 py-1 rounded-full font-medium ${statutColor}`}>
+                                  {dm.statut === "en_attente" ? "En attente" : dm.statut === "approuve" ? "Approuvée" : "Refusée"}
+                                </span>
                               </div>
                             );
                           })}
@@ -326,90 +409,116 @@ export default function ClientSpace() {
 
                 {/* PAIEMENT */}
                 {activeSection === "paiement" && (
-                  <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-8">
-                    <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-2xl md:text-3xl font-bold">Transactions</h2>
-                      <span className="text-sm text-gray-500">{transactions.length} transaction(s)</span>
-                    </div>
-                    {transactions.length === 0 ? (
-                      <p className="text-gray-500 text-center py-8">Aucune transaction pour le moment.</p>
-                    ) : (
-                      <div className="space-y-3">
-                        {transactions.map((tx) => (
-                          <div key={tx.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
-                            <div>
-                              <p className="text-sm font-medium text-black">{tx.transaction}</p>
-                              <p className="text-xs text-gray-500">
-                                {tx.date ? new Date(tx.date).toLocaleDateString("fr-FR") : "—"}
-                              </p>
-                            </div>
-                            <div className={`text-lg font-semibold ${tx.montant >= 0 ? "text-green-600" : "text-red-600"}`}>
-                              {tx.montant >= 0 ? "+" : ""}{tx.montant?.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
-                            </div>
-                          </div>
-                        ))}
+                  <div>
+                    <SectionHeader meta={meta} />
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                      <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-lg font-bold">Historique des transactions</h2>
+                        <span className="text-sm text-gray-400">{transactions.length} transaction(s)</span>
                       </div>
-                    )}
+                      {transactions.length === 0 ? (
+                        <p className="text-gray-400 text-center py-8 text-sm">Aucune transaction pour le moment.</p>
+                      ) : (
+                        <div className="space-y-1">
+                          {transactions.map((tx) => (
+                            <div key={tx.id} className="flex items-center justify-between py-3 hover:bg-gray-50 rounded-xl px-2 transition">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${tx.montant >= 0 ? "bg-green-50" : "bg-red-50"}`}>
+                                  {tx.montant >= 0 ? <ArrowDownLeft className="w-5 h-5 text-green-600" /> : <ArrowUpRight className="w-5 h-5 text-red-600" />}
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium text-black">{tx.transaction}</p>
+                                  <p className="text-xs text-gray-400">
+                                    {tx.date ? new Date(tx.date).toLocaleDateString("fr-FR") : "—"}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className={`text-lg font-semibold ${tx.montant >= 0 ? "text-green-600" : "text-red-600"}`}>
+                                {tx.montant >= 0 ? "+" : ""}{tx.montant?.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
 
                 {/* CARTE */}
                 {activeSection === "carte" && (
-                  <PlaceholderSection title="Carte bancaire" desc="Gérez vos cartes bancaires et leurs limites. Cette section sera disponible prochainement." />
+                  <PlaceholderSection title="Carte bancaire" desc="Gérez vos cartes bancaires et leurs limites. Cette section sera disponible prochainement." icon={Wallet} />
                 )}
 
                 {/* EPARGNE */}
                 {activeSection === "epargne" && (
-                  <PlaceholderSection title="Épargne" desc="Consultez et gérez vos produits d'épargne. Cette section sera disponible prochainement." />
+                  <PlaceholderSection title="Épargne" desc="Consultez et gérez vos produits d'épargne. Cette section sera disponible prochainement." icon={PiggyBank} />
                 )}
 
                 {/* ASSURANCE */}
                 {activeSection === "assurance" && (
-                  <PlaceholderSection title="Assurance" desc="Découvrez nos offres d'assurance. Cette section sera disponible prochainement." />
+                  <PlaceholderSection title="Assurance" desc="Découvrez nos offres d'assurance. Cette section sera disponible prochainement." icon={ShieldCheck} />
                 )}
 
                 {/* BOURSE */}
                 {activeSection === "bourse" && (
-                  <PlaceholderSection title="Bourse" desc="Suivez vos investissements et opérez sur les marchés. Cette section sera disponible prochainement." />
+                  <PlaceholderSection title="Bourse" desc="Suivez vos investissements et opérez sur les marchés. Cette section sera disponible prochainement." icon={TrendingUp} />
                 )}
 
                 {/* DOCUMENT */}
                 {activeSection === "document" && (
-                  <div className="space-y-6">
+                  <div>
+                    <SectionHeader meta={meta} />
                     {client.contrat_pdf ? (
-                      <a
-                        href={client.contrat_pdf}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-between bg-teal/10 border border-teal rounded-3xl p-6 md:p-8 hover:bg-teal/20 transition"
-                      >
-                        <div>
-                          <h3 className="text-lg font-semibold mb-1">Contrat</h3>
-                          <p className="text-sm text-gray-700">Téléchargez votre contrat au format PDF.</p>
+                      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 rounded-2xl bg-teal/10 flex items-center justify-center">
+                              <FileText className="w-7 h-7 text-teal-dark" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold">Contrat</h3>
+                              <p className="text-sm text-gray-500">Document PDF disponible</p>
+                            </div>
+                          </div>
+                          <a
+                            href={client.contrat_pdf}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 bg-teal text-black rounded-full px-5 py-2.5 text-sm font-medium hover:bg-teal-dark hover:text-white transition"
+                          >
+                            <Download className="w-4 h-4" />
+                            Télécharger
+                          </a>
                         </div>
-                        <svg className="w-8 h-8 text-teal-dark shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.9A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3 3-3M12 12v9" />
-                        </svg>
-                      </a>
+                      </div>
                     ) : (
-                      <div className="bg-white border border-gray-200 rounded-3xl p-8 md:p-12 text-center">
-                        <h2 className="text-2xl md:text-3xl font-bold mb-3">Documents</h2>
+                      <div className="bg-white border border-gray-200 rounded-2xl p-8 md:p-12 text-center">
+                        <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
+                          <FileText className="w-8 h-8 text-gray-300" />
+                        </div>
+                        <h2 className="text-xl font-bold mb-2">Aucun document</h2>
                         <p className="text-gray-500">Aucun document disponible pour le moment.</p>
                       </div>
                     )}
                   </div>
                 )}
 
-                <div className="mt-8 bg-black text-white rounded-3xl p-6 md:p-8">
-                  <h3 className="text-xl font-semibold mb-3">Besoin d'aide ?</h3>
-                  <p className="text-gray-400 mb-6">
-                    Pour toute question concernant votre compte, contactez votre administrateur ClearBank.
-                  </p>
+                {/* Help banner */}
+                <div className="mt-8 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                      <Phone className="w-6 h-6 text-teal" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold mb-1">Besoin d'aide ?</h3>
+                      <p className="text-sm text-slate-300">Pour toute question, contactez votre administrateur ClearBank.</p>
+                    </div>
+                  </div>
                   <Link
                     to="/about/contact-us"
-                    className="inline-flex items-center bg-teal text-black rounded-full px-5 py-2 text-base font-medium hover:bg-white transition"
+                    className="inline-flex items-center bg-teal text-black rounded-full px-5 py-2.5 text-sm font-medium hover:bg-white transition whitespace-nowrap"
                   >
-                    Nous contacter <ArrowRight />
+                    Nous contacter <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
                 </div>
               </>
