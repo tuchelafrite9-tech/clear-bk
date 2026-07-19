@@ -29,23 +29,23 @@ export default function BusinessAccount() {
     <div className="min-h-screen bg-white">
       <Header />
       <main className="relative pt-[80px]">
-        <section className="py-12 md:py-20">
-          <div className="max-w-[1440px] mx-auto px-5 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
-              {/* Animation on the side */}
-              <div className="order-2 md:order-1 rounded-[30px] overflow-hidden">
-                <video
-                  className="w-full h-auto object-cover"
-                  src="https://media.base44.com/videos/public/6a5ca42fae10cd7334263f3b/e3a1e4537_animation.mp4"
-                  autoPlay
-                  playsInline
-                  loop
-                  muted
-                />
-              </div>
+        <section>
+          <div className="flex flex-col md:flex-row">
+            {/* Animation full height left side */}
+            <div className="md:w-1/2 md:h-[calc(100vh-80px)] md:sticky md:top-[80px] overflow-hidden">
+              <video
+                className="w-full h-full object-cover"
+                src="https://media.base44.com/videos/public/6a5ca42fae10cd7334263f3b/e3a1e4537_animation.mp4"
+                autoPlay
+                playsInline
+                loop
+                muted
+              />
+            </div>
 
-              {/* Login form */}
-              <div className="order-1 md:order-2 max-w-[480px] mx-auto w-full">
+            {/* Login form */}
+            <div className="md:w-1/2 py-16 md:py-0 md:flex md:items-center">
+            <div className="max-w-[480px] mx-auto w-full px-5 lg:px-8">
                 <h1 className="text-3xl md:text-4xl font-bold mb-2">Business Account</h1>
                 <p className="text-lg text-gray-600 mb-8">Connectez-vous à votre compte professionnel.</p>
 
@@ -101,7 +101,7 @@ export default function BusinessAccount() {
                 </div>
               </div>
             </div>
-          </div>
+            </div>
         </section>
       </main>
       <Footer />
