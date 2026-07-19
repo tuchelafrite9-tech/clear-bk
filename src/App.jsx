@@ -14,6 +14,7 @@ import About from './pages/About';
 import Learn from './pages/Learn';
 import Begin from './pages/Begin';
 import SubCategory from './pages/SubCategory';
+import BusinessAccount from './pages/BusinessAccount';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -54,6 +55,7 @@ const AuthenticatedApp = () => {
         <Route path="/learn" element={<Learn />} />
         <Route path="/learn/:slug" element={<SubCategory />} />
         <Route path="/begin" element={<Begin />} />
+        <Route path="/business-account" element={<BusinessAccount />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
