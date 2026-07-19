@@ -81,11 +81,7 @@ export default function BusinessAccount() {
                         className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:border-teal-dark focus:ring-1 focus:ring-teal-dark"
                       />
                     </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" className="rounded" />
-                        <span className="text-gray-600">Se souvenir de moi</span>
-                      </label>
+                    <div className="text-right text-sm">
                       <a href="#forgot" className="text-teal-dark hover:underline">Mot de passe oublié ?</a>
                     </div>
                     <button
