@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { base44 } from "@/api/base44Client";
 
 const ArrowRight = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="13" fill="none" className="inline-block ml-2">
@@ -9,10 +10,33 @@ const ArrowRight = () => (
 
 export default function Begin() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [form, setForm] = useState({ prenom: "", nom: "", email: "", entreprise: "", message: "" });
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    setError("");
+    try {
+      await base44.entities.Contact.create({
+        prenom: form.prenom,
+        nom: form.nom,
+        email: form.email,
+        entreprise: form.entreprise,
+        message: form.message,
+        statut: "nouveau",
+      });
+      setSubmitted(true);
+      setForm({ prenom: "", nom: "", email: "", entreprise: "", message: "" });
+    } catch (err) {
+      setError("Une erreur est survenue lors de l'envoi du formulaire. Veuillez réessayer.");
+    }
+    setSubmitting(false);
   };
 
   return (
@@ -36,33 +60,36 @@ export default function Begin() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
+                {error && (
+                  <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">{error}</div>
+                )}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="cb-body2 text-gray-600 mb-2 block">First name *</label>
-                    <input required type="text" placeholder="Enter your first name" className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition" />
+                    <input required type="text" name="prenom" value={form.prenom} onChange={handleChange} placeholder="Enter your first name" className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition" />
                   </div>
                   <div>
                     <label className="cb-body2 text-gray-600 mb-2 block">Last name *</label>
-                    <input required type="text" placeholder="Enter your last name" className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition" />
+                    <input required type="text" name="nom" value={form.nom} onChange={handleChange} placeholder="Enter your last name" className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition" />
                   </div>
                 </div>
                 <div>
                   <label className="cb-body2 text-gray-600 mb-2 block">Email *</label>
-                  <input required type="email" placeholder="Enter your email address" className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition" />
+                  <input required type="email" name="email" value={form.email} onChange={handleChange} placeholder="Enter your email address" className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition" />
                 </div>
                 <div>
                   <label className="cb-body2 text-gray-600 mb-2 block">Company</label>
-                  <input type="text" placeholder="Enter your company name" className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition" />
+                  <input type="text" name="entreprise" value={form.entreprise} onChange={handleChange} placeholder="Enter your company name" className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition" />
                 </div>
                 <div>
                   <label className="cb-body2 text-gray-600 mb-2 block">How can we help?</label>
-                  <textarea rows={4} placeholder="Tell us about your requirements" className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition resize-none" />
+                  <textarea required name="message" value={form.message} onChange={handleChange} rows={4} placeholder="Tell us about your requirements" className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition resize-none" />
                 </div>
                 <p className="cb-body3 text-gray-500">
                   Learn how we use your information in our Privacy Notice. You can opt out at any time.
                 </p>
-                <button type="submit" className="cb-btn-black">
-                  Submit <ArrowRight />
+                <button type="submit" disabled={submitting} className="cb-btn-black disabled:opacity-50">
+                  {submitting ? "Sending..." : "Submit"} <ArrowRight />
                 </button>
               </form>
             )}

@@ -1,0 +1,61 @@
+{
+  "name": "Contact",
+  "type": "object",
+  "properties": {
+    "prenom": {
+      "type": "string",
+      "title": "Pr\u00e9nom"
+    },
+    "nom": {
+      "type": "string",
+      "title": "Nom"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email",
+      "format": "email"
+    },
+    "entreprise": {
+      "type": "string",
+      "title": "Entreprise"
+    },
+    "message": {
+      "type": "string",
+      "title": "Message"
+    },
+    "statut": {
+      "type": "string",
+      "title": "Statut",
+      "enum": [
+        "nouveau",
+        "lu",
+        "traite"
+      ],
+      "default": "nouveau"
+    }
+  },
+  "required": [
+    "prenom",
+    "nom",
+    "email",
+    "message"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

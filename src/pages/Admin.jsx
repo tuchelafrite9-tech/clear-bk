@@ -33,6 +33,7 @@ export default function Admin() {
   const [txForm, setTxForm] = useState({ client_id: "", montant: "", transaction: "", date: "" });
   const [txLoading, setTxLoading] = useState(false);
   const [demandes, setDemandes] = useState([]);
+  const [contacts, setContacts] = useState([]);
   const [uploadingFor, setUploadingFor] = useState(null);
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export default function Admin() {
     checkAuth();
 
     // Real-time subscription for new demandes
-    const unsubscribe = base44.entities.Demande.subscribe((event) => {
+    const unsubscribeDemandes = base44.entities.Demande.subscribe((event) => {
       if (event.type === "create") {
         setDemandes((prev) => [event.data, ...prev]);
       } else if (event.type === "update") {
@@ -63,8 +64,19 @@ export default function Admin() {
         setDemandes((prev) => prev.filter((d) => d.id !== event.data.id));
       }
     });
+    // Real-time subscription for new contact messages
+    const unsubscribeContacts = base44.entities.Contact.subscribe((event) => {
+      if (event.type === "create") {
+        setContacts((prev) => [event.data, ...prev]);
+      } else if (event.type === "update") {
+        setContacts((prev) => prev.map((c) => (c.id === event.data.id ? event.data : c)));
+      } else if (event.type === "delete") {
+        setContacts((prev) => prev.filter((c) => c.id !== event.data.id));
+      }
+    });
     return () => {
-      if (unsubscribe) unsubscribe();
+      if (unsubscribeDemandes) unsubscribeDemandes();
+      if (unsubscribeContacts) unsubscribeContacts();
     };
   }, []);
 
@@ -77,6 +89,12 @@ export default function Admin() {
         setDemandes(dms || []);
       } catch (e2) {
         setDemandes([]);
+      }
+      try {
+        const msgs = await base44.entities.Contact.list("-created_date", 200);
+        setContacts(msgs || []);
+      } catch (e3) {
+        setContacts([]);
       }
     } catch (e) {
       setError("Erreur lors du chargement des clients: " + (e.message || e));
@@ -104,6 +122,14 @@ export default function Admin() {
       await loadClients();
     } catch (err) {
       setError("Erreur lors de la mise à jour de la demande: " + (err.message || err));
+    }
+  };
+
+  const handleContactStatut = async (contactId, nouveauStatut) => {
+    try {
+      await base44.entities.Contact.update(contactId, { statut: nouveauStatut });
+    } catch (err) {
+      setError("Erreur lors de la mise à jour du message: " + (err.message || err));
     }
   };
 
@@ -219,14 +245,24 @@ export default function Admin() {
               <h1 className="text-4xl md:text-5xl font-bold mb-2">Administration</h1>
               <p className="text-lg md:text-xl text-gray-600">Gérez vos clients et créez de nouveaux comptes.</p>
             </div>
-            {demandes.filter((d) => d.statut === "en_attente").length > 0 && (
-              <div className="inline-flex items-center gap-2 bg-yellow-50 border border-yellow-200 rounded-full px-4 py-2">
-                <span className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
-                <span className="text-sm font-medium text-yellow-700">
-                  {demandes.filter((d) => d.statut === "en_attente").length} demande(s) en attente
-                </span>
-              </div>
-            )}
+            <div className="flex flex-wrap items-center gap-3">
+              {demandes.filter((d) => d.statut === "en_attente").length > 0 && (
+                <div className="inline-flex items-center gap-2 bg-yellow-50 border border-yellow-200 rounded-full px-4 py-2">
+                  <span className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
+                  <span className="text-sm font-medium text-yellow-700">
+                    {demandes.filter((d) => d.statut === "en_attente").length} demande(s) en attente
+                  </span>
+                </div>
+              )}
+              {contacts.filter((c) => c.statut === "nouveau").length > 0 && (
+                <div className="inline-flex items-center gap-2 bg-teal/10 border border-teal-dark rounded-full px-4 py-2">
+                  <span className="w-2 h-2 bg-teal-dark rounded-full animate-pulse"></span>
+                  <span className="text-sm font-medium text-teal-dark">
+                    {contacts.filter((c) => c.statut === "nouveau").length} nouveau(s) message(s) contact
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
 
           {error && (
@@ -495,6 +531,63 @@ export default function Admin() {
               )}
             </div>
           </div>
+
+          {/* Contact Messages Section */}
+          {contacts.length > 0 && (
+            <div className="mt-12 md:mt-16">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6">
+                Messages de contact ({contacts.length})
+              </h2>
+              <div className="space-y-3">
+                {contacts.map((ct) => {
+                  const statutColor =
+                    ct.statut === "traite"
+                      ? "bg-green-100 text-green-700"
+                      : ct.statut === "lu"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-teal/10 text-teal-dark";
+                  return (
+                    <div key={ct.id} className={`bg-white border rounded-2xl p-5 ${ct.statut === "nouveau" ? "border-teal-dark" : "border-gray-200"}`}>
+                      <div className="flex items-start justify-between flex-wrap gap-2">
+                        <div>
+                          <h3 className="text-lg font-semibold">
+                            {ct.prenom} {ct.nom}
+                          </h3>
+                          <p className="text-sm text-gray-500">{ct.email}</p>
+                          {ct.entreprise && <p className="text-sm text-gray-600 mt-0.5">Entreprise: {ct.entreprise}</p>}
+                          <p className="text-sm mt-2 text-gray-700">{ct.message}</p>
+                          <p className="text-xs text-gray-400 mt-1">
+                            {ct.created_date ? new Date(ct.created_date).toLocaleString("fr-FR") : ""}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xs px-3 py-1 rounded-full ${statutColor}`}>
+                            {ct.statut === "nouveau" ? "Nouveau" : ct.statut === "lu" ? "Lu" : "Traité"}
+                          </span>
+                          {ct.statut === "nouveau" && (
+                            <button
+                              onClick={() => handleContactStatut(ct.id, "lu")}
+                              className="text-xs bg-blue-600 text-white rounded-full px-3 py-1 hover:bg-blue-700 transition"
+                            >
+                              Marquer comme lu
+                            </button>
+                          )}
+                          {ct.statut !== "traite" && (
+                            <button
+                              onClick={() => handleContactStatut(ct.id, "traite")}
+                              className="text-xs bg-green-600 text-white rounded-full px-3 py-1 hover:bg-green-700 transition"
+                            >
+                              Traiter
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Demandes Section */}
           {demandes.length > 0 && (
