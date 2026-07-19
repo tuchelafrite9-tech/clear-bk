@@ -193,9 +193,18 @@ export default function Admin() {
             remarque: dm.motif || "",
             derniere_connexion: null,
           });
-          setSuccess(`Compte client créé pour ${dm.prenom} ${dm.nom}. Générez un code à usage unique pour lui envoyer ses identifiants.`);
-        } else {
-          setSuccess(`Le client ${dm.prenom} ${dm.nom} existe déjà.`);
+        }
+
+        // Send branded confirmation email via Gmail
+        try {
+          await base44.functions.invoke("SendApprovalEmail", {
+            client_email: dm.mail,
+            client_prenom: dm.prenom,
+            client_nom: dm.nom,
+          });
+          setSuccess(`Compte validé et email de confirmation envoyé à ${dm.mail}. Générez un code à usage unique pour finaliser l'accès.`);
+        } catch (emailErr) {
+          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. L'email n'a pas pu être envoyé: ${emailErr.message || emailErr}`);
         }
       }
 
