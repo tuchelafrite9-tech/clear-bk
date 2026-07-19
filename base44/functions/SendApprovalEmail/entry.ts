@@ -16,33 +16,78 @@ Deno.serve(async (req) => {
     const subject = `=?UTF-8?B?${btoa('Votre compte ClearBank a été ouvert')}?=`;
     const fromName = 'ClearBank';
     const fromEmail = user.email;
+    const fullName = `${client_prenom || ''} ${client_nom || ''}`.trim();
 
     const html = `<!DOCTYPE html>
-<html><body style="margin:0;padding:0;background:#f4f4f4;font-family:Inter,Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;">
-    <tr style="background:#0c7981;height:80px;">
-      <td style="text-align:center;padding:20px;">
-        <span style="color:#fff;font-size:28px;font-weight:800;letter-spacing:1px;">ClearBank</span>
+<html><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f3f3f3;font-family:'Inter',Arial,Helvetica,sans-serif;">
+  <!--[if mso]><table role="presentation" width="600" align="center" cellpadding="0" cellspacing="0" style="border:none;"><tr><td><![endif]-->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(12,121,129,0.10);">
+
+    <!-- Header with logo -->
+    <tr>
+      <td style="background:#0c7981;padding:32px 40px 28px;text-align:center;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="text-align:center;">
+              <span style="font-family:'Inter',Arial,sans-serif;font-size:30px;font-weight:800;color:#70F1DA;letter-spacing:-0.5px;">Clear</span><span style="font-family:'Inter',Arial,sans-serif;font-size:30px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">Bank</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align:center;padding-top:8px;">
+              <span style="display:inline-block;width:48px;height:3px;background:#70F1DA;border-radius:2px;"></span>
+            </td>
+          </tr>
+        </table>
       </td>
     </tr>
-    <tr><td style="padding:40px 32px;">
-      <h1 style="color:#0c7981;font-size:24px;margin:0 0 16px;">Bienvenue chez ClearBank, ${client_prenom || ''} ${client_nom || ''} !</h1>
-      <p style="color:#333;font-size:16px;line-height:1.6;">Votre demande d'ouverture de compte a été <strong>validée</strong> par notre équipe.</p>
-      <p style="color:#333;font-size:16px;line-height:1.6;">Votre compte est désormais actif. Vous pouvez vous connecter à votre espace client en utilisant le code à usage unique qui vous sera communiqué.</p>
-      <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;">
-        <tr><td style="text-align:center;">
-          <a href="https://app-clearbank.com/my-account" style="display:inline-block;background:#0c7981;color:#fff;text-decoration:none;padding:14px 32px;border-radius:9999px;font-weight:600;font-size:16px;">Accéder à mon compte</a>
-        </td></tr>
-      </table>
-      <p style="color:#666;font-size:14px;line-height:1.6;">Si vous avez des questions, notre équipe reste à votre disposition.</p>
-      <p style="color:#666;font-size:14px;line-height:1.6;margin-top:24px;">Cordialement,<br><strong style="color:#0c7981;">L'équipe ClearBank</strong></p>
-    </td></tr>
-    <tr style="background:#f9f9f9;">
-      <td style="padding:20px 32px;text-align:center;color:#999;font-size:12px;">
-        ClearBank Limited — Niveau 27, The Broadgate Tower, 20 Primrose Street, Londres, EC2A 2EW, Royaume-Uni.
+
+    <!-- Body -->
+    <tr>
+      <td style="padding:40px 40px 20px;">
+        <h1 style="font-family:'Inter',Arial,sans-serif;color:#0c7981;font-size:26px;font-weight:700;margin:0 0 8px;line-height:1.3;">Bienvenue chez ClearBank${fullName ? ', ' + fullName : ''} !</h1>
+        <p style="font-family:'Inter',Arial,sans-serif;color:#4a4a4a;font-size:16px;line-height:1.65;margin:0 0 20px;">Votre demande d'ouverture de compte a été <strong style="color:#0c7981;">validée</strong> par notre équipe. Votre compte est désormais actif.</p>
+        
+        <!-- Info card -->
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f9fbfb;border-left:4px solid #70F1DA;border-radius:8px;margin:0 0 24px;">
+          <tr><td style="padding:20px 24px;">
+            <p style="font-family:'Inter',Arial,sans-serif;color:#0c7981;font-size:14px;font-weight:600;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.5px;">Prochaine étape</p>
+            <p style="font-family:'Inter',Arial,sans-serif;color:#4a4a4a;font-size:15px;line-height:1.6;margin:0;">Vous recevrez un code à usage unique pour votre première connexion à votre espace client.</p>
+          </td></tr>
+        </table>
+
+        <!-- CTA button -->
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+          <tr><td style="text-align:center;">
+            <a href="https://app-clearbank.com/my-account" target="_blank" style="display:inline-block;background:#0c7981;color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:9999px;font-family:'Inter',Arial,sans-serif;font-weight:600;font-size:16px;letter-spacing:0.3px;">Accéder à mon compte</a>
+          </td></tr>
+        </table>
+
+        <p style="font-family:'Inter',Arial,sans-serif;color:#999999;font-size:14px;line-height:1.65;margin:0 0 0;">Si vous avez des questions, notre équipe reste à votre entière disposition.</p>
+      </td>
+    </tr>
+
+    <!-- Signature -->
+    <tr>
+      <td style="padding:0 40px 32px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #e1e1e1;padding-top:20px;">
+          <tr><td>
+            <p style="font-family:'Inter',Arial,sans-serif;color:#4a4a4a;font-size:15px;line-height:1.6;margin:0;">Cordialement,</p>
+            <p style="font-family:'Inter',Arial,sans-serif;color:#0c7981;font-size:16px;font-weight:600;margin:4px 0 0;">L'équipe ClearBank</p>
+          </td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+      <td style="background:#0c7981;padding:24px 40px;text-align:center;">
+        <p style="font-family:'Inter',Arial,sans-serif;color:#70F1DA;font-size:18px;font-weight:700;margin:0 0 8px;letter-spacing:-0.3px;">ClearBank</p>
+        <p style="font-family:'Inter',Arial,sans-serif;color:rgba(255,255,255,0.7);font-size:11px;line-height:1.6;margin:0;">ClearBank Limited — Level 27, The Broadgate Tower, 20 Primrose Street, London, EC2A 2EW, United Kingdom.<br>Authorised by the PRA. Regulated by the FCA and PRA (FRN: 754568).</p>
       </td>
     </tr>
   </table>
+  <!--[if mso]></td></tr></table><![endif]-->
 </body></html>`;
 
     const rawMessage = [
