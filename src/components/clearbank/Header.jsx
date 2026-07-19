@@ -22,8 +22,9 @@ const ChevronDown = () => (
 const ProductMenu = [
   { label: "Accounts", path: "/products/accounts" },
   { label: "Clearing", path: "/products/clearing" },
-  { label: "Digital Assets", path: "/products/digital-assets" },
   { label: "Embedded Banking", path: "/products/embedded-banking" },
+  { label: "Digital Assets", path: "/products/digital-assets" },
+  { label: "Business Account", path: "/business-account" },
 ];
 
 const UseCaseMenu = [
