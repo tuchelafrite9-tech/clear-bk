@@ -202,9 +202,17 @@ export default function Admin() {
             client_prenom: dm.prenom,
             client_nom: dm.nom,
           });
-          setSuccess(`Compte validé et email de confirmation envoyé à ${dm.mail}. Générez un code à usage unique pour finaliser l'accès.`);
         } catch (emailErr) {
-          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. L'email n'a pas pu être envoyé: ${emailErr.message || emailErr}`);
+          // continue even if email fails
+        }
+
+        // Auto-generate and send one-time login code
+        try {
+          const codeRes = await base44.functions.invoke("GenerateLoginCode", { client_email: dm.mail });
+          setGeneratedCode({ email: dm.mail, code: codeRes.data.code });
+          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email de confirmation et code de connexion envoyés à ${dm.mail}.`);
+        } catch (codeErr) {
+          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Code non envoyé: ${codeErr?.response?.data?.error || codeErr.message || codeErr}. Générez-le manuellement.`);
         }
       }
 
