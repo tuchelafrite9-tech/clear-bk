@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import ClientSidebar, { navItems } from "@/components/clearbank/ClientSidebar";
 import { InfoRow, SectionHeader, PlaceholderSection } from "@/components/clearbank/ClientSpaceParts";
@@ -29,6 +29,17 @@ export default function ClientSpace() {
   const [dmForm, setDmForm] = useState({ montant: "", motif: "" });
   const [activeSection, setActiveSection] = useState("accueil");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await base44.auth.logout();
+    } catch (e) {
+      // ignore errors
+    }
+    navigate("/login", { replace: true });
+    window.location.href = "/login";
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -238,7 +249,7 @@ export default function ClientSpace() {
                       <span className="absolute top-2 right-2 w-2 h-2 bg-teal-dark rounded-full"></span>
                     </button>
                     <button
-                      onClick={() => base44.auth.logout("/login")}
+                      onClick={handleLogout}
                       className="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-2 text-sm font-medium text-gray-600 hover:border-red-400 hover:text-red-600 transition"
                     >
                       <LogOut className="w-4 h-4" />
@@ -599,7 +610,7 @@ export default function ClientSpace() {
 
                 {/* Déconnexion mobile */}
                 <button
-                  onClick={() => base44.auth.logout("/login")}
+                  onClick={handleLogout}
                   className="md:hidden w-full inline-flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-3 text-sm font-medium text-gray-600 hover:border-red-400 hover:text-red-600 transition"
                 >
                   <LogOut className="w-4 h-4" />
