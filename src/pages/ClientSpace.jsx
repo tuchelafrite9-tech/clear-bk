@@ -83,6 +83,63 @@ export default function ClientSpace() {
           ? "Demande de libération vers le fournisseur envoyée."
           : "Demande de récupération vers le compte courant envoyée."
       );
+
+      // Send confirmation email to client
+      try {
+        const opLabel =
+          type === "liberation_fournisseur"
+            ? "Libération du montant séquestre vers le fournisseur"
+            : "Récupération du montant séquestre vers le compte courant";
+        const montantStr = dmForm.montant
+          ? parseFloat(dmForm.montant).toLocaleString("fr-FR", { style: "currency", currency: "EUR" })
+          : "Non précisé";
+        const emailBody = `
+          <div style="font-family: Inter, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc; padding: 40px 20px;">
+            <div style="background: #0f172a; border-radius: 24px 24px 0 0; padding: 32px; text-align: center;">
+              <h1 style="color: #70F1DA; font-size: 28px; margin: 0; font-weight: 700;">ClearBank</h1>
+              <p style="color: #94a3b8; font-size: 14px; margin-top: 8px;">Confirmation de votre demande</p>
+            </div>
+            <div style="background: #ffffff; border-radius: 0 0 24px 24px; padding: 40px;">
+              <h2 style="color: #0f172a; font-size: 22px; margin: 0 0 20px;">Bonjour ${client.prenom} ${client.nom},</h2>
+              <p style="color: #475569; font-size: 16px; line-height: 1.6;">
+                Nous confirmons la réception de votre demande d'opération. Voici le récapitulatif :
+              </p>
+              <div style="background: #f1f5f9; border-radius: 16px; padding: 24px; margin: 24px 0;">
+                <table style="width: 100%; border-collapse: collapse;">
+                  <tr>
+                    <td style="color: #64748b; font-size: 14px; padding: 8px 0;">Opération</td>
+                    <td style="color: #0f172a; font-size: 14px; font-weight: 600; text-align: right; padding: 8px 0;">${opLabel}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #64748b; font-size: 14px; padding: 8px 0;">Montant</td>
+                    <td style="color: #0f172a; font-size: 14px; font-weight: 600; text-align: right; padding: 8px 0;">${montantStr}</td>
+                  </tr>
+                  ${dmForm.motif ? `<tr><td style="color: #64748b; font-size: 14px; padding: 8px 0;">Motif</td><td style="color: #0f172a; font-size: 14px; text-align: right; padding: 8px 0;">${dmForm.motif}</td></tr>` : ""}
+                  <tr>
+                    <td style="color: #64748b; font-size: 14px; padding: 8px 0;">Statut</td>
+                    <td style="text-align: right; padding: 8px 0;"><span style="background: #fef9c3; color: #854d0e; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">En attente</span></td>
+                  </tr>
+                </table>
+              </div>
+              <p style="color: #475569; font-size: 14px; line-height: 1.6;">
+                Votre demande sera traitée par votre administrateur dans les meilleurs délais. Vous serez notifié(e) de toute mise à jour.
+              </p>
+              <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+                <p style="color: #94a3b8; font-size: 12px; margin: 0;">Cet email a été envoyé automatiquement, merci de ne pas y répondre.</p>
+                <p style="color: #94a3b8; font-size: 12px; margin: 8px 0 0;">© ClearBank Limited ${new Date().getFullYear()}</p>
+              </div>
+            </div>
+          </div>
+        `;
+        await base44.integrations.Core.SendEmail({
+          to: client.mail,
+          subject: `Confirmation de votre demande — ${opLabel}`,
+          body: emailBody,
+        });
+      } catch (emailErr) {
+        // Email failure should not block the operation
+        console.error("Email sending failed:", emailErr);
+      }
     } catch (err) {
       setError("Erreur lors de l'envoi de la demande: " + (err.message || err));
     }
