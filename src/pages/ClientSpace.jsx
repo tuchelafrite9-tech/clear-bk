@@ -161,7 +161,7 @@ export default function ClientSpace() {
     <div className="min-h-screen bg-slate-50">
       <Header />
       <main className="pt-[80px]">
-        <div className="max-w-[1440px] mx-auto flex">
+        <div className="w-full mx-auto flex">
           <ClientSidebar active={activeSection} onSelect={selectSection} />
 
           {/* Mobile nav toggle */}
