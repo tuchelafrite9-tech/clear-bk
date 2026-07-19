@@ -34,6 +34,7 @@ export default function Admin() {
   const [txLoading, setTxLoading] = useState(false);
   const [demandes, setDemandes] = useState([]);
   const [contacts, setContacts] = useState([]);
+  const [demandesOuverture, setDemandesOuverture] = useState([]);
   const [uploadingFor, setUploadingFor] = useState(null);
 
   useEffect(() => {
@@ -74,9 +75,20 @@ export default function Admin() {
         setContacts((prev) => prev.filter((c) => c.id !== event.data.id));
       }
     });
+    // Real-time subscription for account opening requests
+    const unsubscribeDemandesOuverture = base44.entities.DemandeOuverture.subscribe((event) => {
+      if (event.type === "create") {
+        setDemandesOuverture((prev) => [event.data, ...prev]);
+      } else if (event.type === "update") {
+        setDemandesOuverture((prev) => prev.map((d) => (d.id === event.data.id ? event.data : d)));
+      } else if (event.type === "delete") {
+        setDemandesOuverture((prev) => prev.filter((d) => d.id !== event.data.id));
+      }
+    });
     return () => {
       if (unsubscribeDemandes) unsubscribeDemandes();
       if (unsubscribeContacts) unsubscribeContacts();
+      if (unsubscribeDemandesOuverture) unsubscribeDemandesOuverture();
     };
   }, []);
 
@@ -89,6 +101,12 @@ export default function Admin() {
         setDemandes(dms || []);
       } catch (e2) {
         setDemandes([]);
+      }
+      try {
+        const dso = await base44.entities.DemandeOuverture.list("-created_date", 200);
+        setDemandesOuverture(dso || []);
+      } catch (e2b) {
+        setDemandesOuverture([]);
       }
       try {
         const msgs = await base44.entities.Contact.list("-created_date", 200);
@@ -130,6 +148,47 @@ export default function Admin() {
       await base44.entities.Contact.update(contactId, { statut: nouveauStatut });
     } catch (err) {
       setError("Erreur lors de la mise à jour du message: " + (err.message || err));
+    }
+  };
+
+  const handleDemandeOuverture = async (demandeId, action) => {
+    setError("");
+    setSuccess("");
+    try {
+      const dm = demandesOuverture.find((d) => d.id === demandeId);
+      if (!dm) return;
+
+      if (action === "approuve") {
+        // Check if a Client record already exists for this email
+        const existing = clients.filter((c) => c.mail === dm.mail);
+        if (existing.length === 0) {
+          await base44.entities.Client.create({
+            nom: dm.nom,
+            prenom: dm.prenom,
+            mail: dm.mail,
+            iban: dm.iban || "",
+            numero_de_compte: "",
+            numero_de_compte_sequestre: "",
+            reference_dossier_sequestre: "",
+            date_liberation_comite_sequestre: "",
+            remarque: dm.motif || "",
+            derniere_connexion: null,
+          });
+          try {
+            await base44.users.inviteUser(dm.mail, "user");
+          } catch (inviteErr) {
+            // User may already exist
+          }
+          setSuccess(`Compte client créé pour ${dm.prenom} ${dm.nom}.`);
+        } else {
+          setSuccess(`Le client ${dm.prenom} ${dm.nom} existe déjà.`);
+        }
+      }
+
+      await base44.entities.DemandeOuverture.update(demandeId, { statut: action });
+      await loadClients();
+    } catch (err) {
+      setError("Erreur lors du traitement de la demande: " + (err.message || err));
     }
   };
 
@@ -259,6 +318,14 @@ export default function Admin() {
                   <span className="w-2 h-2 bg-teal-dark rounded-full animate-pulse"></span>
                   <span className="text-sm font-medium text-teal-dark">
                     {contacts.filter((c) => c.statut === "nouveau").length} nouveau(s) message(s) contact
+                  </span>
+                </div>
+              )}
+              {demandesOuverture.filter((d) => d.statut === "en_attente").length > 0 && (
+                <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-full px-4 py-2">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+                  <span className="text-sm font-medium text-blue-700">
+                    {demandesOuverture.filter((d) => d.statut === "en_attente").length} demande(s) d'ouverture de compte
                   </span>
                 </div>
               )}
@@ -531,6 +598,64 @@ export default function Admin() {
               )}
             </div>
           </div>
+
+          {/* Demandes d'ouverture de compte Section */}
+          {demandesOuverture.length > 0 && (
+            <div className="mt-12 md:mt-16">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6">
+                Demandes d'ouverture de compte ({demandesOuverture.length})
+              </h2>
+              <div className="space-y-3">
+                {demandesOuverture.map((dm) => {
+                  const statutColor =
+                    dm.statut === "approuve"
+                      ? "bg-green-100 text-green-700"
+                      : dm.statut === "refuse"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-yellow-100 text-yellow-700";
+                  return (
+                    <div key={dm.id} className="bg-white border border-gray-200 rounded-2xl p-5">
+                      <div className="flex items-start justify-between flex-wrap gap-2">
+                        <div>
+                          <h3 className="text-lg font-semibold">
+                            {dm.prenom} {dm.nom}
+                          </h3>
+                          <p className="text-sm text-gray-500">{dm.mail}</p>
+                          {dm.telephone && <p className="text-sm text-gray-600 mt-0.5">Tél: {dm.telephone}</p>}
+                          {dm.iban && <p className="text-sm text-gray-600 mt-0.5">IBAN: {dm.iban}</p>}
+                          {dm.motif && <p className="text-sm text-gray-600 mt-1 italic">{dm.motif}</p>}
+                          <p className="text-xs text-gray-400 mt-1">
+                            {dm.date_demande ? new Date(dm.date_demande).toLocaleString("fr-FR") : ""}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xs px-3 py-1 rounded-full ${statutColor}`}>
+                            {dm.statut === "en_attente" ? "En attente" : dm.statut === "approuve" ? "Approuvée" : "Refusée"}
+                          </span>
+                          {dm.statut === "en_attente" && (
+                            <>
+                              <button
+                                onClick={() => handleDemandeOuverture(dm.id, "approuve")}
+                                className="text-xs bg-green-600 text-white rounded-full px-3 py-1 hover:bg-green-700 transition"
+                              >
+                                Valider
+                              </button>
+                              <button
+                                onClick={() => handleDemandeOuverture(dm.id, "refuse")}
+                                className="text-xs bg-red-600 text-white rounded-full px-3 py-1 hover:bg-red-700 transition"
+                              >
+                                Refuser
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Contact Messages Section */}
           {contacts.length > 0 && (

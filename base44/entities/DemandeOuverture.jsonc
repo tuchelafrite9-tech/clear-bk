@@ -1,0 +1,76 @@
+{
+  "name": "DemandeOuverture",
+  "type": "object",
+  "properties": {
+    "nom": {
+      "type": "string",
+      "title": "Nom"
+    },
+    "prenom": {
+      "type": "string",
+      "title": "Pr\u00e9nom"
+    },
+    "mail": {
+      "type": "string",
+      "title": "Email",
+      "format": "email"
+    },
+    "telephone": {
+      "type": "string",
+      "title": "T\u00e9l\u00e9phone"
+    },
+    "iban": {
+      "type": "string",
+      "title": "IBAN"
+    },
+    "motif": {
+      "type": "string",
+      "title": "Motif / Note"
+    },
+    "statut": {
+      "type": "string",
+      "title": "Statut",
+      "enum": [
+        "en_attente",
+        "approuve",
+        "refuse"
+      ],
+      "default": "en_attente"
+    },
+    "date_demande": {
+      "type": "string",
+      "title": "Date de la demande",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "nom",
+    "prenom",
+    "mail"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.mail": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

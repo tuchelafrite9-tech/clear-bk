@@ -49,7 +49,17 @@ export default function ClientSpace() {
             setDemandes([]);
           }
         } else {
-          setError("Aucun compte client trouvé pour votre adresse email. Contactez votre administrateur.");
+          // No Client record — check if there's a pending account opening request
+          try {
+            const dso = await base44.entities.DemandeOuverture.filter({ mail: me.email }, "-created_date", 5);
+            if (dso && dso.length > 0) {
+              window.location.href = "/pending-validation";
+              return;
+            }
+          } catch (e) {
+            // ignore
+          }
+          window.location.href = "/complete-profile";
         }
       } catch (err) {
         setError("Erreur lors du chargement de vos informations.");
