@@ -617,6 +617,15 @@ export default function ClientSpace() {
                   </div>
                 )}
 
+                {/* Déconnexion mobile */}
+                <button
+                  onClick={() => base44.auth.logout("/login")}
+                  className="md:hidden w-full inline-flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-3 text-sm font-medium text-gray-600 hover:border-red-400 hover:text-red-600 transition"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Déconnexion
+                </button>
+
                 {/* Help banner */}
                 <div className="mt-8 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
