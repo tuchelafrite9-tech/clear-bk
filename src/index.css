@@ -152,7 +152,9 @@
 }
 .cb-marquee-left {
   animation: cb-marquee-left 40s linear infinite;
+  will-change: transform;
 }
 .cb-marquee-right {
   animation: cb-marquee-right 35s linear infinite;
+  will-change: transform;
 }

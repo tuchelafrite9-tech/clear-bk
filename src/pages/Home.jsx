@@ -73,7 +73,7 @@ const LogoTicker = ({ logos, direction }) => {
   const doubled = [...logos, ...logos];
   return (
     <div className="overflow-hidden py-3">
-      <div className={`flex items-center whitespace-nowrap w-max ${direction === "left" ? "cb-marquee-left" : "cb-marquee-right"}`}>
+      <div className={`inline-flex items-center whitespace-nowrap ${direction === "left" ? "cb-marquee-left" : "cb-marquee-right"}`}>
         {doubled.map((name, i) => (
           <span key={i} className="text-2xl md:text-3xl font-semibold text-gray-400 px-14 hover:text-black transition-colors">
             {name}
