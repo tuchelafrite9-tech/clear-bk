@@ -32,6 +32,8 @@ export default function Admin() {
   const [authChecked, setAuthChecked] = useState(false);
   const [txForm, setTxForm] = useState({ client_id: "", montant: "", transaction: "", date: "" });
   const [txLoading, setTxLoading] = useState(false);
+  const [demandes, setDemandes] = useState([]);
+  const [uploadingFor, setUploadingFor] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -56,8 +58,38 @@ export default function Admin() {
     try {
       const list = await base44.entities.Client.list("-created_date", 200);
       setClients(list);
+      try {
+        const dms = await base44.entities.Demande.list("-created_date", 200);
+        setDemandes(dms || []);
+      } catch (e2) {
+        setDemandes([]);
+      }
     } catch (e) {
       setError("Erreur lors du chargement des clients: " + (e.message || e));
+    }
+  };
+
+  const handleUploadContrat = async (clientId, file) => {
+    setUploadingFor(clientId);
+    setError("");
+    setSuccess("");
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      await base44.entities.Client.update(clientId, { contrat_pdf: file_url });
+      setSuccess("Contrat PDF mis en ligne avec succès.");
+      await loadClients();
+    } catch (err) {
+      setError("Erreur lors de l'upload du contrat: " + (err.message || err));
+    }
+    setUploadingFor(null);
+  };
+
+  const handleDemandeStatut = async (demandeId, nouveauStatut) => {
+    try {
+      await base44.entities.Demande.update(demandeId, { statut: nouveauStatut });
+      await loadClients();
+    } catch (err) {
+      setError("Erreur lors de la mise à jour de la demande: " + (err.message || err));
     }
   };
 
@@ -399,12 +431,115 @@ export default function Admin() {
                       {client.remarque && (
                         <p className="text-sm text-gray-500 mt-2 italic">{client.remarque}</p>
                       )}
+                      <div className="mt-3 pt-3 border-t border-gray-100">
+                        <label className="block text-sm font-medium mb-1">Contrat PDF</label>
+                        {client.contrat_pdf ? (
+                          <div className="flex items-center gap-2">
+                            <a
+                              href={client.contrat_pdf}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm text-teal-dark underline"
+                            >
+                              Voir le contrat
+                            </a>
+                            <label className="cursor-pointer text-xs text-gray-500 hover:text-black underline">
+                              Remplacer
+                              <input
+                                type="file"
+                                accept="application/pdf"
+                                className="hidden"
+                                onChange={(e) => e.target.files[0] && handleUploadContrat(client.id, e.target.files[0])}
+                              />
+                            </label>
+                          </div>
+                        ) : (
+                          <label className="cursor-pointer inline-flex items-center text-sm bg-black text-white rounded-full px-4 py-2 hover:bg-teal-dark transition">
+                            {uploadingFor === client.id ? "Upload..." : "Téléverser le PDF"}
+                            <input
+                              type="file"
+                              accept="application/pdf"
+                              className="hidden"
+                              onChange={(e) => e.target.files[0] && handleUploadContrat(client.id, e.target.files[0])}
+                            />
+                          </label>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
               )}
             </div>
           </div>
+
+          {/* Demandes Section */}
+          {demandes.length > 0 && (
+            <div className="mt-12 md:mt-16">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6">
+                Demandes clients ({demandes.length})
+              </h2>
+              <div className="space-y-3">
+                {demandes.map((dm) => {
+                  const cli = clients.find((c) => c.id === dm.client_id);
+                  const label =
+                    dm.type === "liberation_fournisseur"
+                      ? "Libération vers fournisseur"
+                      : "Récupération vers compte courant";
+                  const statutColor =
+                    dm.statut === "approuve"
+                      ? "bg-green-100 text-green-700"
+                      : dm.statut === "refuse"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-yellow-100 text-yellow-700";
+                  return (
+                    <div key={dm.id} className="bg-white border border-gray-200 rounded-2xl p-5">
+                      <div className="flex items-start justify-between flex-wrap gap-2">
+                        <div>
+                          <h3 className="text-lg font-semibold">
+                            {cli ? `${cli.prenom} ${cli.nom}` : "Client"}
+                          </h3>
+                          <p className="text-sm text-gray-500">{cli?.mail || dm.client_email}</p>
+                          <p className="text-sm mt-1">
+                            <span className="font-medium">{label}</span>
+                            {dm.montant != null && (
+                              <span className="ml-2 font-semibold">
+                                {dm.montant.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                              </span>
+                            )}
+                          </p>
+                          {dm.motif && <p className="text-sm text-gray-600 mt-1 italic">{dm.motif}</p>}
+                          <p className="text-xs text-gray-400 mt-1">
+                            {dm.date_demande ? new Date(dm.date_demande).toLocaleString("fr-FR") : ""}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xs px-3 py-1 rounded-full ${statutColor}`}>
+                            {dm.statut === "en_attente" ? "En attente" : dm.statut === "approuve" ? "Approuvée" : "Refusée"}
+                          </span>
+                          {dm.statut === "en_attente" && (
+                            <>
+                              <button
+                                onClick={() => handleDemandeStatut(dm.id, "approuve")}
+                                className="text-xs bg-green-600 text-white rounded-full px-3 py-1 hover:bg-green-700 transition"
+                              >
+                                Approuver
+                              </button>
+                              <button
+                                onClick={() => handleDemandeStatut(dm.id, "refuse")}
+                                className="text-xs bg-red-600 text-white rounded-full px-3 py-1 hover:bg-red-700 transition"
+                              >
+                                Refuser
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </main>
       <Footer />

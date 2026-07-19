@@ -13,8 +13,13 @@ const ArrowRight = () => (
 export default function ClientSpace() {
   const [client, setClient] = useState(null);
   const [transactions, setTransactions] = useState([]);
+  const [demandes, setDemandes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [actionLoading, setActionLoading] = useState(false);
+  const [actionSuccess, setActionSuccess] = useState("");
+  const [showModal, setShowModal] = useState(null);
+  const [dmForm, setDmForm] = useState({ montant: "", motif: "" });
 
   useEffect(() => {
     const loadData = async () => {
@@ -28,6 +33,12 @@ export default function ClientSpace() {
           });
           const txs = await base44.entities.Transaction.filter({ client_id: records[0].id }, "-date", 100);
           setTransactions(txs || []);
+          try {
+            const dms = await base44.entities.Demande.filter({ client_id: records[0].id }, "-created_date", 50);
+            setDemandes(dms || []);
+          } catch (e) {
+            setDemandes([]);
+          }
         } else {
           setError("Aucun compte client trouvé pour votre adresse email. Contactez votre administrateur.");
         }
@@ -38,6 +49,35 @@ export default function ClientSpace() {
     };
     loadData();
   }, []);
+
+  const submitDemande = async (type) => {
+    setActionLoading(true);
+    setActionSuccess("");
+    setError("");
+    try {
+      await base44.entities.Demande.create({
+        type,
+        client_id: client.id,
+        client_email: client.mail,
+        montant: dmForm.montant ? parseFloat(dmForm.montant) : null,
+        motif: dmForm.motif || "",
+        date_demande: new Date().toISOString(),
+        statut: "en_attente",
+      });
+      const dms = await base44.entities.Demande.filter({ client_id: client.id }, "-created_date", 50);
+      setDemandes(dms || []);
+      setShowModal(null);
+      setDmForm({ montant: "", motif: "" });
+      setActionSuccess(
+        type === "liberation_fournisseur"
+          ? "Demande de libération vers le fournisseur envoyée."
+          : "Demande de récupération vers le compte courant envoyée."
+      );
+    } catch (err) {
+      setError("Erreur lors de l'envoi de la demande: " + (err.message || err));
+    }
+    setActionLoading(false);
+  };
 
   const InfoRow = ({ label, value }) => (
     <div className="flex flex-col sm:flex-row sm:items-center py-3 border-b border-gray-100 last:border-b-0">
@@ -132,10 +172,95 @@ export default function ClientSpace() {
 
                 {/* Remarks & Actions */}
                 <div className="col-span-12 lg:col-span-5">
+                  {client.contrat_pdf && (
+                    <a
+                      href={client.contrat_pdf}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between bg-teal/10 border border-teal rounded-3xl p-6 md:p-8 mb-6 hover:bg-teal/20 transition"
+                    >
+                      <div>
+                        <h3 className="text-lg font-semibold mb-1">Contrat</h3>
+                        <p className="text-sm text-gray-700">Téléchargez votre contrat au format PDF.</p>
+                      </div>
+                      <svg className="w-8 h-8 text-teal-dark shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.9A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3 3-3M12 12v9" />
+                      </svg>
+                    </a>
+                  )}
+
                   {client.remarque && (
                     <div className="bg-teal/10 border border-teal rounded-3xl p-6 md:p-8 mb-6">
                       <h3 className="text-lg font-semibold mb-3">Remarque</h3>
                       <p className="text-base text-gray-700">{client.remarque}</p>
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <button
+                      onClick={() => { setShowModal("liberation_fournisseur"); setActionSuccess(""); }}
+                      className="flex flex-col items-center text-center bg-white border border-gray-200 rounded-3xl p-6 hover:border-teal-dark hover:bg-gray-50 transition"
+                    >
+                      <svg className="w-10 h-10 text-teal-dark mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 8h18M3 8v10a2 2 0 002 2h14a2 2 0 002-2V8M3 8l2-4h14l2 4M9 12h6M9 16h6" />
+                      </svg>
+                      <span className="text-sm font-semibold">Libérer le montant du compte séquestre vers le fournisseur</span>
+                    </button>
+                    <button
+                      onClick={() => { setShowModal("recuperation_compte_courant"); setActionSuccess(""); }}
+                      className="flex flex-col items-center text-center bg-white border border-gray-200 rounded-3xl p-6 hover:border-teal-dark hover:bg-gray-50 transition"
+                    >
+                      <svg className="w-10 h-10 text-teal-dark mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v6h6M20 20v-6h-6M20 10A8 8 0 006 6M4 14a8 8 0 0014 4" />
+                      </svg>
+                      <span className="text-sm font-semibold">Demander la récupération du montant séquestre vers le compte courant</span>
+                    </button>
+                  </div>
+
+                  {actionSuccess && (
+                    <div className="mb-6 p-4 rounded-2xl bg-green-50 border border-green-200 text-green-700 text-sm">
+                      {actionSuccess}
+                    </div>
+                  )}
+
+                  {/* Demandes History */}
+                  {demandes.length > 0 && (
+                    <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-8 mb-6">
+                      <h3 className="text-lg font-semibold mb-4">Mes demandes</h3>
+                      <div className="space-y-3">
+                        {demandes.map((dm) => {
+                          const label =
+                            dm.type === "liberation_fournisseur"
+                              ? "Libération vers fournisseur"
+                              : "Récupération vers compte courant";
+                          const statutColor =
+                            dm.statut === "approuve"
+                              ? "bg-green-100 text-green-700"
+                              : dm.statut === "refuse"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-yellow-100 text-yellow-700";
+                          return (
+                            <div key={dm.id} className="py-3 border-b border-gray-100 last:border-b-0">
+                              <div className="flex items-center justify-between">
+                                <p className="text-sm font-medium">{label}</p>
+                                <span className={`text-xs px-2 py-1 rounded-full ${statutColor}`}>
+                                  {dm.statut === "en_attente" ? "En attente" : dm.statut === "approuve" ? "Approuvée" : "Refusée"}
+                                </span>
+                              </div>
+                              {dm.montant != null && (
+                                <p className="text-sm text-gray-600 mt-1">
+                                  {dm.montant.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                                </p>
+                              )}
+                              {dm.motif && <p className="text-xs text-gray-500 mt-1 italic">{dm.motif}</p>}
+                              <p className="text-xs text-gray-400 mt-1">
+                                {dm.date_demande ? new Date(dm.date_demande).toLocaleDateString("fr-FR") : ""}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
 
@@ -157,6 +282,60 @@ export default function ClientSpace() {
           ) : null}
         </div>
       </main>
+
+      {/* Modal for demande */}
+      {showModal && client && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setShowModal(null)}>
+          <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-xl font-bold mb-2">
+              {showModal === "liberation_fournisseur"
+                ? "Libération vers le fournisseur"
+                : "Récupération vers le compte courant"}
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              {showModal === "liberation_fournisseur"
+                ? "Demandez la libération du montant du compte séquestre vers le compte du fournisseur."
+                : "Demandez la récupération du montant séquestre vers votre compte courant."}
+            </p>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium mb-1">Montant (€)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={dmForm.montant}
+                  onChange={(e) => setDmForm({ ...dmForm, montant: e.target.value })}
+                  className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-teal-dark"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Motif / Note</label>
+                <textarea
+                  rows={3}
+                  value={dmForm.motif}
+                  onChange={(e) => setDmForm({ ...dmForm, motif: e.target.value })}
+                  className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-teal-dark"
+                />
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowModal(null)}
+                className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm font-medium hover:bg-gray-50 transition"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={() => submitDemande(showModal)}
+                disabled={actionLoading}
+                className="flex-1 bg-teal text-black rounded-full px-4 py-2 text-sm font-medium hover:bg-teal-dark hover:text-white transition disabled:opacity-50"
+              >
+                {actionLoading ? "Envoi..." : "Envoyer"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <Footer />
     </div>
   );

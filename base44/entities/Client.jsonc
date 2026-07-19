@@ -40,6 +40,11 @@
       "type": "string",
       "title": "Remarque"
     },
+    "contrat_pdf": {
+      "type": "string",
+      "title": "Contrat PDF",
+      "format": "uri"
+    },
     "derniere_connexion": {
       "type": "string",
       "title": "Derni\u00e8re connexion",

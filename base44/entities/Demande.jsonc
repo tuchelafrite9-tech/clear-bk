@@ -1,0 +1,86 @@
+{
+  "name": "Demande",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "title": "Type de demande",
+      "enum": [
+        "liberation_fournisseur",
+        "recuperation_compte_courant"
+      ]
+    },
+    "client_id": {
+      "type": "string",
+      "title": "Client"
+    },
+    "client_email": {
+      "type": "string",
+      "title": "Email client"
+    },
+    "statut": {
+      "type": "string",
+      "title": "Statut",
+      "enum": [
+        "en_attente",
+        "approuve",
+        "refuse"
+      ],
+      "default": "en_attente"
+    },
+    "montant": {
+      "type": "number",
+      "title": "Montant"
+    },
+    "motif": {
+      "type": "string",
+      "title": "Motif / Note"
+    },
+    "date_demande": {
+      "type": "string",
+      "title": "Date de la demande",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "type",
+    "client_id",
+    "client_email"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.client_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.client_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
