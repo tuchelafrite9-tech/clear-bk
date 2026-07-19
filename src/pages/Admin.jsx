@@ -397,6 +397,16 @@ export default function Admin() {
                 Demandes clients ({demandes.length})
               </button>
               <button
+                onClick={() => setActiveTab("codes")}
+                className={`px-5 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap ${
+                  activeTab === "codes"
+                    ? "border-teal-dark text-teal-dark"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                Codes de connexion
+              </button>
+              <button
                 onClick={() => setActiveTab("messages")}
                 className={`px-5 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap ${
                   activeTab === "messages"
@@ -778,6 +788,56 @@ export default function Admin() {
                 )}
                 </div>
                 )}
+
+                {/* Codes de connexion Section */}
+                {activeTab === "codes" && (
+                <div className="mt-6">
+                <h2 className="text-2xl md:text-3xl font-bold mb-2">
+                Codes de connexion à usage unique
+                </h2>
+                <p className="text-sm text-gray-500 mb-6">
+                Générez un code temporaire pour un client. Le code est envoyé automatiquement par email avec l'en-tête ClearBank et est valable une seule connexion.
+                </p>
+              {clients.length === 0 ? (
+                <div className="bg-gray-50 rounded-3xl p-12 text-center">
+                  <p className="text-sm text-gray-500">Aucun client pour le moment.</p>
+                </div>
+              ) : (
+              <div className="space-y-3">
+                {clients.map((client) => (
+                  <div key={client.id} className="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div>
+                      <h3 className="text-lg font-semibold">
+                        {client.prenom} {client.nom}
+                      </h3>
+                      <p className="text-sm text-gray-500">{client.mail}</p>
+                      {client.derniere_connexion && (
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          Dernière connexion: {new Date(client.derniere_connexion).toLocaleDateString("fr-FR")}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      {generatedCode && generatedCode.email === client.mail && (
+                        <div className="inline-flex items-center gap-2 bg-teal/10 border border-teal-dark rounded-full px-4 py-2">
+                          <span className="text-xs text-gray-600">Code généré :</span>
+                          <span className="text-sm font-bold text-teal-dark tracking-widest">{generatedCode.code}</span>
+                        </div>
+                      )}
+                      <button
+                        onClick={() => handleGenerateCode(client.mail)}
+                        disabled={codeLoading === client.mail}
+                        className="inline-flex items-center gap-2 bg-slate-900 text-white rounded-full px-5 py-2.5 text-sm font-medium hover:bg-teal-dark transition disabled:opacity-50"
+                      >
+                        {codeLoading === client.mail ? "Envoi en cours..." : "Envoyer le code"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              )}
+            </div>
+          )}
 
                 {/* Contact Messages Section */}
                 {activeTab === "messages" && (
