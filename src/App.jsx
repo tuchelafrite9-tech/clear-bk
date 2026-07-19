@@ -66,9 +66,9 @@ const AuthenticatedApp = () => {
         <Route path="/learn/:slug" element={<SubCategory />} />
         <Route path="/begin" element={<Begin />} />
         <Route path="/business-account" element={<BusinessAccount />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/my-account" element={<ClientSpace />} />
       </Route>
+      <Route path="/admin" element={<Admin />} />
+      <Route path="/my-account" element={<ClientSpace />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
