@@ -23,6 +23,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import CompleteProfile from './pages/CompleteProfile';
 import PendingValidation from './pages/PendingValidation';
+import AdminLogin from './pages/AdminLogin';
 import ProtectedRoute from '@/components/ProtectedRoute';
 // Add page imports here
 
@@ -59,6 +60,7 @@ const AuthenticatedApp = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/complete-profile" element={<CompleteProfile />} />
       <Route path="/pending-validation" element={<PendingValidation />} />
+      <Route path="/admin-login" element={<AdminLogin />} />
       <Route path="/" element={<Home />} />
       <Route element={<Layout />}>
         <Route path="/products" element={<Products />} />

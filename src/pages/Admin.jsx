@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import Header from "@/components/clearbank/Header";
 import Footer from "@/components/clearbank/Footer";
+import { ShieldCheck, LogOut } from "lucide-react";
 
 const ArrowRight = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="13" fill="none" className="inline-block ml-2">
@@ -236,6 +237,15 @@ export default function Admin() {
     setTxLoading(false);
   };
 
+  const handleAdminLogout = async () => {
+    try {
+      await base44.auth.logout();
+    } catch (e) {
+      // ignore
+    }
+    window.location.href = "/admin-login";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -278,19 +288,10 @@ export default function Admin() {
   }
 
   if (user && user.role !== "admin") {
+    window.location.href = "/admin-login";
     return (
-      <div className="min-h-screen bg-white">
-        <Header />
-        <div className="max-w-[1440px] mx-auto px-5 lg:px-8 pt-[140px] pb-20">
-          <div className="max-w-[600px] mx-auto text-center">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">Accès refusé</h1>
-            <p className="text-lg text-gray-600 mb-8">Vous devez être administrateur pour accéder à cette page.</p>
-            <Link to="/" className="inline-flex items-center bg-black text-white rounded-full px-6 py-3 text-lg hover:bg-teal-dark transition">
-              Retour à l'accueil <ArrowRight />
-            </Link>
-          </div>
-        </div>
-        <Footer />
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-slate-200 border-t-teal-dark rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -302,10 +303,22 @@ export default function Admin() {
         <div className="max-w-[1440px] mx-auto px-5 lg:px-8">
           <div className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-2">Administration</h1>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center">
+                  <ShieldCheck className="w-5 h-5 text-teal" />
+                </div>
+                <h1 className="text-4xl md:text-5xl font-bold">Administration</h1>
+              </div>
               <p className="text-lg md:text-xl text-gray-600">Gérez vos clients et créez de nouveaux comptes.</p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={handleAdminLogout}
+                className="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-2 text-sm font-medium text-gray-600 hover:border-red-400 hover:text-red-600 transition"
+              >
+                <LogOut className="w-4 h-4" />
+                Déconnexion
+              </button>
               {demandesOuverture.filter((d) => d.statut === "en_attente").length > 0 && (
                 <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-full px-4 py-2">
                   <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
