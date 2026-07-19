@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import Header from "@/components/clearbank/Header";
 import Footer from "@/components/clearbank/Footer";
 import ClientSidebar, { navItems } from "@/components/clearbank/ClientSidebar";
-import { Home, User, ArrowLeftRight, CreditCard, Wallet, PiggyBank, ShieldCheck, TrendingUp, FileText, ArrowUpRight, ArrowDownLeft, ArrowRight, Download, Bell, Phone } from "lucide-react";
+import { Home, User, ArrowLeftRight, CreditCard, Wallet, PiggyBank, ShieldCheck, TrendingUp, FileText, ArrowUpRight, ArrowDownLeft, ArrowRight, Download, Bell, Phone, LogOut } from "lucide-react";
 
 const sectionMeta = {
   accueil: { title: "Accueil", icon: Home },
@@ -256,6 +256,13 @@ export default function ClientSpace() {
                     <button className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:border-teal-dark transition relative">
                       <Bell className="w-5 h-5 text-gray-600" />
                       <span className="absolute top-2 right-2 w-2 h-2 bg-teal-dark rounded-full"></span>
+                    </button>
+                    <button
+                      onClick={() => base44.auth.logout("/login")}
+                      className="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-2 text-sm font-medium text-gray-600 hover:border-red-400 hover:text-red-600 transition"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Déconnexion
                     </button>
                   </div>
                 </div>
