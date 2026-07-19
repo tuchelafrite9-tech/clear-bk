@@ -15,7 +15,7 @@ const navItems = [
 
 export default function ClientSidebar({ active, onSelect }) {
   return (
-    <aside className="hidden lg:flex flex-col w-64 shrink-0 bg-white border-r border-gray-200 min-h-[calc(100vh-80px)] sticky top-[80px] py-6">
+    <aside className="flex flex-col w-56 md:w-64 shrink-0 bg-white border-r border-gray-200 min-h-[calc(100vh-80px)] sticky top-[80px] py-6">
       <nav className="flex-1 px-3">
         <ul className="space-y-1">
           {navItems.map((item) => {
