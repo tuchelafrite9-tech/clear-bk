@@ -15,7 +15,7 @@ const navItems = [
 
 export default function ClientSidebar({ active, onSelect }) {
   return (
-    <aside className="hidden lg:flex flex-col w-64 shrink-0 bg-gradient-to-b from-slate-900 to-slate-800 text-white min-h-[calc(100vh-80px)] sticky top-[80px] py-6 px-3">
+    <aside className="flex flex-col w-56 md:w-64 shrink-0 bg-gradient-to-b from-slate-900 to-slate-800 text-white min-h-[calc(100vh-80px)] sticky top-[80px] py-6 px-3">
       <div className="px-3 mb-6">
         <p className="text-xs uppercase tracking-wider text-slate-400 font-medium">Menu</p>
       </div>
