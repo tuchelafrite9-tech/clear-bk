@@ -85,31 +85,11 @@ const news = [
 ];
 
 const LogoTicker = ({ logos, direction }) => {
-  const scrollRef = useRef(null);
-  const [offset, setOffset] = useState(0);
-
-  useEffect(() => {
-    let animationFrame;
-    const animate = () => {
-      setOffset((prev) => {
-        const speed = direction === "left" ? 0.5 : -0.5;
-        const next = prev + speed;
-        return next;
-      });
-      animationFrame = requestAnimationFrame(animate);
-    };
-    animationFrame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrame);
-  }, [direction]);
-
+  const doubled = [...logos, ...logos];
   return (
     <div className="overflow-hidden py-2">
-      <div
-        className="flex items-center gap-14 whitespace-nowrap"
-        style={{ transform: `translateX(${offset % 50}%)` }}
-        ref={scrollRef}
-      >
-        {[...logos, ...logos, ...logos].map((src, i) => (
+      <div className={`flex items-center gap-14 whitespace-nowrap w-max ${direction === "left" ? "cb-marquee-left" : "cb-marquee-right"}`}>
+        {doubled.map((src, i) => (
           <img key={i} src={src} alt="partner logo" className="h-8 md:h-12 w-auto opacity-60 hover:opacity-100 transition" />
         ))}
       </div>
