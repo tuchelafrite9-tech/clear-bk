@@ -24,13 +24,14 @@ const findItem = (category, slug) => {
 };
 
 export default function SubCategory() {
-  const { category, slug } = useParams();
-  const catData = siteData[category];
+  const { slug } = useParams();
+  const pathname = window.location.pathname;
+  const category = pathname.split("/")[1] || "";
+  const catData = siteData[category] || siteData[category.replace(/-(.)/g, (_, c) => c.toUpperCase())];
   const item = catData ? findItem(catData, slug) : null;
 
   // Check if we have rich interior page data
-  const pageKey = `${category === "useCases" ? "use-cases" : category}/${slug}`;
-  const interiorData = interiorPages[pageKey];
+  const interiorData = interiorPages[`${category}/${slug}`];
 
   if (!item && !interiorData) {
     return (
