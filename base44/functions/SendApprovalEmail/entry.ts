@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
     <!-- Body -->
     <tr>
       <td style="padding:40px 40px 20px;">
-        <h1 style="font-family:'Inter',Arial,sans-serif;color:#0c7981;font-size:26px;font-weight:700;margin:0 0 8px;line-height:1.3;">Bienvenue chez ClearBank${fullName ? ', ' + fullName : ''} !</h1>
+        <h1 style="font-family:'Inter',Arial,sans-serif;color:#0c7981;font-size:26px;font-weight:700;margin:0 0 8px;line-height:1.3;">Bienvenue chez ClearBank !</h1>
         <p style="font-family:'Inter',Arial,sans-serif;color:#4a4a4a;font-size:16px;line-height:1.65;margin:0 0 20px;">Votre demande d'ouverture de compte a été <strong style="color:#0c7981;">validée</strong> par notre équipe. Votre compte est désormais actif.</p>
         
         <!-- Info card -->
