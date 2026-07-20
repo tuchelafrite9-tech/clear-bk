@@ -25,6 +25,7 @@ export default function Begin() {
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
     setSubmitting(true);
     setError("");
     try {
@@ -45,6 +46,7 @@ export default function Begin() {
 
   const handleAccountSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
     setSubmitting(true);
     setError("");
     try {
