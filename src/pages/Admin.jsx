@@ -43,6 +43,7 @@ export default function Admin() {
   const [editLoading, setEditLoading] = useState(false);
   const [generatedCode, setGeneratedCode] = useState(null);
   const [codeLoading, setCodeLoading] = useState(null);
+  const [sendAccessOnCreate, setSendAccessOnCreate] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -352,11 +353,19 @@ export default function Admin() {
         derniere_connexion: null,
       });
 
-      try {
-        await base44.users.inviteUser(form.mail, "user");
-        setSuccess(`Client ${form.prenom} ${form.nom} créé et invitation envoyée à ${form.mail}.`);
-      } catch (inviteErr) {
-        setSuccess(`Client ${form.prenom} ${form.nom} créé. L'invitation n'a pas pu être envoyée (l'utilisateur existe peut-être déjà).`);
+      if (sendAccessOnCreate) {
+        try {
+          await base44.functions.invoke("SendApprovalEmail", {
+            client_email: form.mail,
+            client_prenom: form.prenom,
+            client_nom: form.nom,
+          });
+          setSuccess(`Client ${form.prenom} ${form.nom} créé. Email d'accès envoyé à ${form.mail}.`);
+        } catch (emailErr) {
+          setSuccess(`Client ${form.prenom} ${form.nom} créé. L'email d'accès n'a pas pu être envoyé: ${emailErr.message || emailErr}.`);
+        }
+      } else {
+        setSuccess(`Client ${form.prenom} ${form.nom} créé avec succès.`);
       }
 
       setForm(emptyForm);
@@ -608,6 +617,15 @@ export default function Admin() {
                       className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-teal-dark"
                     />
                   </div>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={sendAccessOnCreate}
+                      onChange={(e) => setSendAccessOnCreate(e.target.checked)}
+                      className="w-5 h-5 rounded border-gray-300 text-teal-dark focus:ring-teal-dark"
+                    />
+                    <span className="text-sm font-medium">Envoyer l'email d'accès au client</span>
+                  </label>
                   <button
                     type="submit"
                     disabled={loading}
