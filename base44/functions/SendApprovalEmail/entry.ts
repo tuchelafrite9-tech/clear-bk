@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
 import { sendApprovalEmail } from '../../shared/approvalEmail.ts';
 
+// Uses the current account-opening email template.
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
