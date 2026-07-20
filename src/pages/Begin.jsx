@@ -13,7 +13,7 @@ export default function Begin() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [contactForm, setContactForm] = useState({ prenom: "", nom: "", email: "", message: "" });
-  const [accountForm, setAccountForm] = useState({ prenom: "", nom: "", email: "", telephone: "", iban: "", motif: "" });
+  const [accountForm, setAccountForm] = useState({ prenom: "", nom: "", email: "", telephone: "", motif: "" });
 
   const handleContactChange = (e) => {
     setContactForm({ ...contactForm, [e.target.name]: e.target.value });
@@ -53,13 +53,12 @@ export default function Begin() {
         nom: accountForm.nom,
         mail: accountForm.email,
         telephone: accountForm.telephone,
-        iban: accountForm.iban,
         motif: accountForm.motif,
         statut: "en_attente",
         date_demande: new Date().toISOString(),
       });
       setSubmitted(true);
-      setAccountForm({ prenom: "", nom: "", email: "", telephone: "", iban: "", motif: "" });
+      setAccountForm({ prenom: "", nom: "", email: "", telephone: "", motif: "" });
     } catch (err) {
       setError("Une erreur est survenue lors de l'envoi de votre demande. Veuillez réessayer.");
     }
@@ -175,10 +174,6 @@ export default function Begin() {
                 <div>
                   <label className="cb-body2 text-gray-600 mb-2 block">Téléphone</label>
                   <input type="tel" name="telephone" value={accountForm.telephone} onChange={handleAccountChange} placeholder="Votre numéro de téléphone" className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition" />
-                </div>
-                <div>
-                  <label className="cb-body2 text-gray-600 mb-2 block">IBAN</label>
-                  <input type="text" name="iban" value={accountForm.iban} onChange={handleAccountChange} placeholder="Votre IBAN (optionnel)" className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition" />
                 </div>
                 <div>
                   <label className="cb-body2 text-gray-600 mb-2 block">Motif / Note</label>
