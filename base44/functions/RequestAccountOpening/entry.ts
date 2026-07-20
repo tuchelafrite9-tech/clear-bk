@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
-import { sendApprovalEmail } from '../../shared/approvalEmail.ts';
+import { sendAccountOpeningEmail } from '../../shared/accountOpeningEmail.ts';
 
 // Uses the current account-opening email template.
 Deno.serve(async (req) => {
@@ -26,7 +26,7 @@ Deno.serve(async (req) => {
     });
 
     // 2. Send approval email with register link (Client record is created after registration)
-    const messageId = await sendApprovalEmail(base44, normalizedEmail, prenom, nom);
+    const messageId = await sendAccountOpeningEmail(base44, normalizedEmail, prenom, nom);
 
     return Response.json({ success: true, messageId });
   } catch (error) {

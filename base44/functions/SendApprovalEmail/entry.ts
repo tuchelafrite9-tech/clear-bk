@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
-import { sendApprovalEmail } from '../../shared/approvalEmail.ts';
+import { sendAccountOpeningEmail } from '../../shared/accountOpeningEmail.ts';
 
 // Uses the current account-opening email template.
 Deno.serve(async (req) => {
@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
     const { client_email, client_prenom, client_nom } = body;
     if (!client_email) return Response.json({ error: 'client_email requis' }, { status: 400 });
 
-    const messageId = await sendApprovalEmail(base44, client_email, client_prenom, client_nom);
+    const messageId = await sendAccountOpeningEmail(base44, client_email, client_prenom, client_nom);
 
     return Response.json({ success: true, messageId });
   } catch (error) {
