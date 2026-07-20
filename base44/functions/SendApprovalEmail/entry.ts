@@ -1,5 +1,8 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
 
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+const FROM_EMAIL = "ClearBank No-Reply <info@clearbank.fr>";
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -11,11 +14,6 @@ Deno.serve(async (req) => {
     const { client_email, client_prenom, client_nom } = body;
     if (!client_email) return Response.json({ error: 'client_email requis' }, { status: 400 });
 
-    const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
-
-    const subject = `=?UTF-8?B?${btoa('Votre compte ClearBank a été ouvert')}?=`;
-    const fromName = 'ClearBank No-Reply';
-    const fromEmail = user.email;
     const fullName = `${client_prenom || ''} ${client_nom || ''}`.trim();
 
     const html = `<!DOCTYPE html>
@@ -80,30 +78,23 @@ Deno.serve(async (req) => {
   <!--[if mso]></td></tr></table><![endif]-->
 </body></html>`;
 
-    const rawMessage = [
-      `From: ${fromName} <${fromEmail}>`,
-      `To: ${client_email}`,
-      `Subject: ${subject}`,
-      `Content-Type: text/html; charset=UTF-8`,
-      `MIME-Version: 1.0`,
-      ``,
-      html,
-    ].join('\r\n');
-
-    const encodedMessage = btoa(unescape(encodeURIComponent(rawMessage)));
-
-    const response = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+    const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ raw: encodedMessage }),
+      body: JSON.stringify({
+        from: FROM_EMAIL,
+        to: [client_email],
+        subject: 'Votre compte ClearBank a été ouvert',
+        html,
+      }),
     });
 
     if (!response.ok) {
       const errText = await response.text();
-      return Response.json({ error: `Gmail API error: ${errText}` }, { status: 502 });
+      return Response.json({ error: `Resend API error: ${errText}` }, { status: 502 });
     }
 
     const result = await response.json();
