@@ -132,14 +132,8 @@ export default function Admin() {
     setSuccess("");
     setGeneratedCode(null);
     try {
-      // Ensure the user exists in Base44 before sending reset email
-      try {
-        await base44.users.inviteUser(clientEmail, "user");
-      } catch (inviteErr) {
-        // User may already exist — continue to send reset email
-      }
-      await base44.auth.resetPasswordRequest(clientEmail);
-      setSuccess(`Email de réinitialisation envoyé à ${clientEmail}. Le client devra définir son mot de passe.`);
+      const result = await base44.functions.invoke("GenerateLoginCode", { client_email: clientEmail });
+      setSuccess(`Email d'accès envoyé à ${clientEmail}. Le client recevra son code de connexion à usage unique.`);
     } catch (err) {
       setError("Erreur lors de l'envoi de l'email: " + (err.message || err));
     }
@@ -214,19 +208,12 @@ export default function Admin() {
           // continue even if email fails
         }
 
-        // Invite the user to Base44 so they can receive a password reset email
+        // Send branded access code email via Gmail (custom ClearBank design)
         try {
-          await base44.users.inviteUser(dm.mail, "user");
-        } catch (inviteErr) {
-          // User may already exist — continue to send reset email
-        }
-
-        // Send password reset email so the client can set their own password
-        try {
-          await base44.auth.resetPasswordRequest(dm.mail);
-          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email de confirmation et lien de définition de mot de passe envoyés à ${dm.mail}.`);
+          await base44.functions.invoke("GenerateLoginCode", { client_email: dm.mail });
+          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email de confirmation et code d'accès envoyés à ${dm.mail}.`);
         } catch (resetErr) {
-          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email de réinitialisation non envoyé: ${resetErr.message || resetErr}. Utilisez l'onglet "Codes de connexion" pour le renvoyer.`);
+          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email d'accès non envoyé: ${resetErr.message || resetErr}. Utilisez l'onglet "Codes de connexion" pour le renvoyer.`);
         }
       }
 
