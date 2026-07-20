@@ -74,8 +74,8 @@ export default function Register() {
     return (
       <AuthLayout
         icon={Mail}
-        title="Verify your email"
-        subtitle={`We sent a code to ${email}`}
+        title="Vérifiez votre email"
+        subtitle={`Nous avons envoyé un code à ${email}`}
       >
         {error && (
           <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
@@ -101,23 +101,23 @@ export default function Register() {
           </InputOTP>
         </div>
         <Button
-          className="w-full h-12 font-medium"
+          className="w-full h-12 font-medium bg-teal text-black hover:bg-teal-dark hover:text-white"
           onClick={handleVerify}
           disabled={loading || otpCode.length < 6}
         >
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Verifying...
+              Vérification...
             </>
           ) : (
-            "Verify"
+            "Vérifier"
           )}
         </Button>
-        <p className="text-center text-sm text-muted-foreground mt-4">
-          Didn't receive the code?{" "}
-          <button onClick={handleResend} className="text-primary font-medium hover:underline">
-            Resend
+        <p className="text-center text-sm text-gray-600 mt-4">
+          Vous n'avez pas reçu le code ?{" "}
+          <button onClick={handleResend} className="text-teal-dark font-medium hover:underline">
+            Renvoyer
           </button>
         </p>
       </AuthLayout>
@@ -127,13 +127,13 @@ export default function Register() {
   return (
     <AuthLayout
       icon={UserPlus}
-      title="Create your account"
-      subtitle="Sign up to get started"
+      title="Créer votre compte"
+      subtitle="Inscrivez-vous pour commencer"
       footer={
         <>
-          Already have an account?{" "}
-          <Link to="/login" className="text-primary font-medium hover:underline">
-            Log in
+          Vous avez déjà un compte ?{" "}
+          <Link to="/login" className="text-teal-dark font-medium hover:underline">
+            Se connecter
           </Link>
         </>
       }
@@ -194,14 +194,14 @@ export default function Register() {
             />
           </div>
         </div>
-        <Button type="submit" className="w-full h-12 font-medium" disabled={loading}>
+        <Button type="submit" className="w-full h-12 font-medium bg-teal text-black hover:bg-teal-dark hover:text-white" disabled={loading}>
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Creating account...
+              Création du compte...
             </>
           ) : (
-            "Create account"
+            "Créer mon compte"
           )}
         </Button>
       </form>
