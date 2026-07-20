@@ -49,6 +49,24 @@
       "type": "string",
       "title": "Derni\u00e8re connexion",
       "format": "date-time"
+    },
+    "signature_acceptee": {
+      "type": "boolean",
+      "title": "Convention sign\u00e9e",
+      "default": false
+    },
+    "date_signature": {
+      "type": "string",
+      "title": "Date de signature",
+      "format": "date-time"
+    },
+    "documents_client": {
+      "type": "array",
+      "title": "Documents client",
+      "items": {
+        "type": "string"
+      },
+      "default": []
     }
   },
   "required": [
@@ -75,9 +93,16 @@
       }
     },
     "update": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.mail": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "delete": {
       "user_condition": {
