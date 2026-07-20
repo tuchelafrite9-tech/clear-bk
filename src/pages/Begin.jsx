@@ -58,8 +58,8 @@ export default function Begin() {
         statut: "en_attente",
         date_demande: new Date().toISOString(),
       });
-      setSubmitted(true);
-      setAccountForm({ prenom: "", nom: "", email: "", telephone: "" });
+      // Rediriger immédiatement vers la création du compte (mot de passe)
+      window.location.href = `/forgot-password?email=${encodeURIComponent(accountForm.email)}`;
     } catch (err) {
       setError("Une erreur est survenue lors de l'envoi de votre demande. Veuillez réessayer.");
     }

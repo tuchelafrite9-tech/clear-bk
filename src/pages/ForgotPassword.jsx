@@ -5,7 +5,9 @@ import { Mail, Lock, ArrowLeft, Loader2, CheckCircle2, Eye, EyeOff } from "lucid
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState("");
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialEmail = urlParams.get("email") || "";
+  const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,7 +32,12 @@ export default function ForgotPassword() {
       await base44.auth.register({ email, password });
       setStep("otp");
     } catch (err) {
-      setError(err.message || "Erreur lors de la création du compte.");
+      const msg = (err.message || "").toLowerCase();
+      if (msg.includes("exist") || msg.includes("déjà") || msg.includes("already")) {
+        setError("Un compte existe déjà avec cet email. Connectez-vous ou réinitialisez votre mot de passe.");
+      } else {
+        setError(err.message || "Erreur lors de la création du compte.");
+      }
     } finally {
       setLoading(false);
     }

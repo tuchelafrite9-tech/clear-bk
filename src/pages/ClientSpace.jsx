@@ -64,20 +64,6 @@ export default function ClientSpace() {
           await base44.entities.Client.update(records[0].id, {
             derniere_connexion: new Date().toISOString(),
           });
-          // Invalider le code à usage unique après connexion
-          try {
-            const codes = await base44.entities.LoginCode.filter({ client_email: me.email, used: false });
-            if (codes && codes.length > 0) {
-              for (const c of codes) {
-                await base44.entities.LoginCode.update(c.id, { used: true });
-              }
-              // Réinitialiser le mot de passe avec une valeur aléatoire inconnue
-              const randomPwd = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
-              await base44.auth.updateMe({ password: randomPwd });
-            }
-          } catch (e) {
-            // ignore
-          }
           const txs = await base44.entities.Transaction.filter({ client_id: records[0].id }, "-date", 100);
           setTransactions(txs || []);
           try {
