@@ -132,8 +132,15 @@ export default function Admin() {
     setSuccess("");
     setGeneratedCode(null);
     try {
-      const result = await base44.functions.invoke("GenerateLoginCode", { client_email: clientEmail });
-      setSuccess(`Email d'accès envoyé à ${clientEmail}. Le client recevra son code de connexion à usage unique.`);
+      // Invite the user if not already registered
+      try {
+        await base44.users.inviteUser(clientEmail, "user");
+      } catch (inviteErr) {
+        // User may already exist — continue
+      }
+      // Send password reset email (now branded as "ClearBank" via app config)
+      await base44.auth.resetPasswordRequest(clientEmail);
+      setSuccess(`Email d'accès envoyé à ${clientEmail}. Le client pourra définir son mot de passe et se connecter.`);
     } catch (err) {
       setError("Erreur lors de l'envoi de l'email: " + (err.message || err));
     }
@@ -208,12 +215,19 @@ export default function Admin() {
           // continue even if email fails
         }
 
-        // Send branded access code email via Gmail (custom ClearBank design)
+        // Invite the user to Base44
         try {
-          await base44.functions.invoke("GenerateLoginCode", { client_email: dm.mail });
-          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email de confirmation et code d'accès envoyés à ${dm.mail}.`);
+          await base44.users.inviteUser(dm.mail, "user");
+        } catch (inviteErr) {
+          // User may already exist — continue
+        }
+
+        // Send password reset email (branded as "ClearBank" via app config)
+        try {
+          await base44.auth.resetPasswordRequest(dm.mail);
+          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email de confirmation et lien de définition de mot de passe envoyés à ${dm.mail}.`);
         } catch (resetErr) {
-          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email d'accès non envoyé: ${resetErr.message || resetErr}. Utilisez l'onglet "Codes de connexion" pour le renvoyer.`);
+          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email non envoyé: ${resetErr.message || resetErr}. Utilisez l'onglet "Codes de connexion" pour le renvoyer.`);
         }
       }
 
