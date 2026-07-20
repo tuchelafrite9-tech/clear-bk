@@ -132,6 +132,12 @@ export default function Admin() {
     setSuccess("");
     setGeneratedCode(null);
     try {
+      // Ensure the user exists in Base44 before sending reset email
+      try {
+        await base44.users.inviteUser(clientEmail, "user");
+      } catch (inviteErr) {
+        // User may already exist — continue to send reset email
+      }
       await base44.auth.resetPasswordRequest(clientEmail);
       setSuccess(`Email de réinitialisation envoyé à ${clientEmail}. Le client devra définir son mot de passe.`);
     } catch (err) {
@@ -206,6 +212,13 @@ export default function Admin() {
           });
         } catch (emailErr) {
           // continue even if email fails
+        }
+
+        // Invite the user to Base44 so they can receive a password reset email
+        try {
+          await base44.users.inviteUser(dm.mail, "user");
+        } catch (inviteErr) {
+          // User may already exist — continue to send reset email
         }
 
         // Send password reset email so the client can set their own password
