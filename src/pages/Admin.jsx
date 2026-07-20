@@ -94,10 +94,20 @@ export default function Admin() {
         setDemandesOuverture((prev) => prev.filter((d) => d.id !== event.data.id));
       }
     });
+    const unsubscribeClients = base44.entities.Client.subscribe((event) => {
+      if (event.type === "create") {
+        setClients((prev) => [event.data, ...prev]);
+      } else if (event.type === "update") {
+        setClients((prev) => prev.map((client) => (client.id === event.data.id ? event.data : client)));
+      } else if (event.type === "delete") {
+        setClients((prev) => prev.filter((client) => client.id !== event.data.id));
+      }
+    });
     return () => {
       if (unsubscribeDemandes) unsubscribeDemandes();
       if (unsubscribeContacts) unsubscribeContacts();
       if (unsubscribeDemandesOuverture) unsubscribeDemandesOuverture();
+      if (unsubscribeClients) unsubscribeClients();
     };
   }, []);
 
@@ -403,10 +413,14 @@ export default function Admin() {
   const handleActivateClient = async (clientId) => {
     setError("");
     setSuccess("");
+    const client = clients.find((c) => c.id === clientId);
+    if (!client?.documents_client?.length) {
+      setError("Activation impossible : le client doit d'abord déposer ses documents.");
+      return;
+    }
     try {
       await base44.entities.Client.update(clientId, { compte_valide: true });
-      const client = clients.find((c) => c.id === clientId);
-      setSuccess(`Compte de ${client?.prenom} ${client?.nom} activé. Le client a désormais accès à son espace complet.`);
+      setSuccess(`Compte de ${client.prenom} ${client.nom} activé. Le client a désormais accès à son espace complet.`);
       await loadClients();
     } catch (err) {
       setError("Erreur lors de l'activation du compte: " + (err.message || err));
@@ -879,10 +893,12 @@ export default function Admin() {
                         {!client.compte_valide && (
                           <button
                             onClick={() => handleActivateClient(client.id)}
-                            className="inline-flex items-center gap-2 bg-green-600 text-white rounded-full px-4 py-2 text-xs font-medium hover:bg-green-700 transition"
+                            disabled={!client.documents_client?.length}
+                            title={!client.documents_client?.length ? "Le client doit d'abord déposer ses documents" : "Activer l'accès complet"}
+                            className="inline-flex items-center gap-2 bg-green-600 text-white rounded-full px-4 py-2 text-xs font-medium hover:bg-green-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
                           >
                             <CheckCircle2 className="w-3 h-3" />
-                            Activer le compte
+                            {client.documents_client?.length ? "Activer le compte" : "Documents requis"}
                           </button>
                         )}
                       </div>
