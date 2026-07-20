@@ -1,7 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
-import { sendAccountOpeningEmail } from '../../shared/accountOpeningEmail.ts';
 
-// Explicit ClearBank sender branding.
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -20,12 +18,11 @@ Deno.serve(async (req) => {
       telephone: telephone || '',
       iban: iban || '',
       motif: motif || '',
-      statut: 'approuve',
+      statut: 'en_attente',
       date_demande: new Date().toISOString(),
     });
 
-    const messageId = await sendAccountOpeningEmail(base44, normalizedEmail, prenom, nom);
-    return Response.json({ success: true, messageId });
+    return Response.json({ success: true, statut: 'en_attente' });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
