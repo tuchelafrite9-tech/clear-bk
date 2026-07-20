@@ -6,15 +6,16 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const email = user.email;
+    const email = user.email?.trim().toLowerCase();
+    if (!email) return Response.json({ error: 'Email utilisateur introuvable' }, { status: 400 });
 
-    // Check if Client record already exists
+    // Idempotent: return the existing profile instead of creating a duplicate.
     const existing = await base44.asServiceRole.entities.Client.filter({ mail: email });
-    if (existing && existing.length > 0) {
+    if (existing?.length > 0) {
       return Response.json({ success: true, clientId: existing[0].id, alreadyExisted: true });
     }
 
-    // Look up DemandeOuverture by email
+    // The opening request is created automatically before registration.
     const demandes = await base44.asServiceRole.entities.DemandeOuverture.filter({ mail: email });
     if (!demandes || demandes.length === 0) {
       return Response.json({ error: 'Aucune demande trouvée pour cet email' }, { status: 404 });
@@ -24,7 +25,7 @@ Deno.serve(async (req) => {
     const client = await base44.asServiceRole.entities.Client.create({
       nom: dm.nom,
       prenom: dm.prenom,
-      mail: dm.mail,
+      mail: email,
       iban: dm.iban || '',
       numero_de_compte: '',
       numero_de_compte_sequestre: '',

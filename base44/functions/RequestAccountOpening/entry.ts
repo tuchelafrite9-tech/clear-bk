@@ -10,12 +10,13 @@ Deno.serve(async (req) => {
     if (!nom || !prenom || !mail) {
       return Response.json({ error: 'nom, prenom et mail sont requis' }, { status: 400 });
     }
+    const normalizedEmail = mail.trim().toLowerCase();
 
-    // 1. Create or update DemandeOuverture (auto-approved)
+    // 1. Create the opening request automatically; admin account validation happens later.
     await base44.asServiceRole.entities.DemandeOuverture.create({
       nom,
       prenom,
-      mail,
+      mail: normalizedEmail,
       telephone: telephone || '',
       iban: iban || '',
       motif: motif || '',
@@ -24,7 +25,7 @@ Deno.serve(async (req) => {
     });
 
     // 2. Send approval email with register link (Client record is created after registration)
-    const messageId = await sendApprovalEmail(base44, mail, prenom, nom);
+    const messageId = await sendApprovalEmail(base44, normalizedEmail, prenom, nom);
 
     return Response.json({ success: true, messageId });
   } catch (error) {
