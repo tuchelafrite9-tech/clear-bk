@@ -43,7 +43,7 @@ export default function Admin() {
   const [editLoading, setEditLoading] = useState(false);
   const [generatedCode, setGeneratedCode] = useState(null);
   const [codeLoading, setCodeLoading] = useState(null);
-  const [sendAccessOnCreate, setSendAccessOnCreate] = useState(true);
+
   const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
@@ -441,19 +441,15 @@ export default function Admin() {
         compte_valide: false,
       });
 
-      if (sendAccessOnCreate) {
-        try {
-          await base44.functions.invoke("SendApprovalEmail", {
-            client_email: form.mail,
-            client_prenom: form.prenom,
-            client_nom: form.nom,
-          });
-          setSuccess(`Client ${form.prenom} ${form.nom} créé. Email d'accès envoyé à ${form.mail}.`);
-        } catch (emailErr) {
-          setSuccess(`Client ${form.prenom} ${form.nom} créé. L'email d'accès n'a pas pu être envoyé: ${emailErr.message || emailErr}.`);
-        }
-      } else {
-        setSuccess(`Client ${form.prenom} ${form.nom} créé avec succès.`);
+      try {
+        await base44.functions.invoke("SendApprovalEmail", {
+          client_email: form.mail,
+          client_prenom: form.prenom,
+          client_nom: form.nom,
+        });
+        setSuccess(`Client ${form.prenom} ${form.nom} créé. Email d'accès envoyé à ${form.mail}.`);
+      } catch (emailErr) {
+        setSuccess(`Client ${form.prenom} ${form.nom} créé. L'email d'accès n'a pas pu être envoyé: ${emailErr.message || emailErr}.`);
       }
 
       setForm(emptyForm);
@@ -705,15 +701,7 @@ export default function Admin() {
                       className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-teal-dark"
                     />
                   </div>
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={sendAccessOnCreate}
-                      onChange={(e) => setSendAccessOnCreate(e.target.checked)}
-                      className="w-5 h-5 rounded border-gray-300 text-teal-dark focus:ring-teal-dark"
-                    />
-                    <span className="text-sm font-medium">Envoyer l'email d'accès au client</span>
-                  </label>
+                  <p className="text-sm text-gray-500">L'email d'accès sera envoyé automatiquement au client.</p>
                   <button
                     type="submit"
                     disabled={loading}
