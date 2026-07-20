@@ -39,8 +39,20 @@ export default function ClientSpace() {
     } catch (e) {
       // ignore errors
     }
-    window.location.href = "/login";
+    window.location.assign("/login");
   };
+
+  // Déconnexion automatique à la fermeture de la page
+  useEffect(() => {
+    const handleUnload = () => {
+      // Envoi synchrone de déconnexion (best-effort) — pas d'await possible
+      try {
+        base44.auth.logout();
+      } catch (e) {}
+    };
+    window.addEventListener("beforeunload", handleUnload);
+    return () => window.removeEventListener("beforeunload", handleUnload);
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
