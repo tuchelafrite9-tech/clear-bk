@@ -50,13 +50,11 @@ export default function Begin() {
     setSubmitting(true);
     setError("");
     try {
-      await base44.entities.DemandeOuverture.create({
+      await base44.functions.invoke("RequestAccountOpening", {
         prenom: accountForm.prenom,
         nom: accountForm.nom,
         mail: accountForm.email,
         telephone: accountForm.telephone,
-        statut: "en_attente",
-        date_demande: new Date().toISOString(),
       });
       setSubmitted(true);
       setAccountForm({ prenom: "", nom: "", email: "", telephone: "" });
