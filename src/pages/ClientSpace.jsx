@@ -87,7 +87,7 @@ export default function ClientSpace() {
           } catch (e) {
             // ignore
           }
-          window.location.href = "/complete-profile";
+          setError("Aucun compte client associé à votre email. Contactez votre administrateur.");
         }
       } catch (err) {
         setError("Erreur lors du chargement de vos informations.");
