@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
 import { sendAccountOpeningEmail } from '../../shared/accountOpeningEmail.ts';
 
+// Explicit ClearBank sender branding.
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);

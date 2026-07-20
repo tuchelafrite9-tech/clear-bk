@@ -42,17 +42,25 @@ function buildAccountOpeningHtml(clientEmail: string): string {
 }
 
 export async function sendAccountOpeningEmail(base44: any, clientEmail: string, clientPrenom: string, clientNom: string): Promise<string> {
+  const { accessToken } = await base44.asServiceRole.connectors.getConnection("gmail");
+  const profileResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (!profileResponse.ok) throw new Error("Impossible de récupérer l'adresse Gmail d'envoi");
+  const profile = await profileResponse.json();
+  const senderEmail = String(profile.email || "").trim();
+  if (!senderEmail) throw new Error("Adresse Gmail d'envoi introuvable");
+
   const fullName = `${clientPrenom || ""} ${clientNom || ""}`.trim();
   const mimeMessage =
     `To: ${fullName} <${clientEmail}>\r\n` +
     `Subject: =?UTF-8?B?${utf8ToBase64(SUBJECT)}?=\r\n` +
-    `From: ${FROM_NAME}\r\n` +
+    `From: ${FROM_NAME} <${senderEmail}>\r\n` +
     `MIME-Version: 1.0\r\n` +
     `Content-Type: text/html; charset=UTF-8\r\n` +
     `Content-Transfer-Encoding: 8bit\r\n\r\n` +
     buildAccountOpeningHtml(clientEmail);
   const raw = utf8ToBase64(mimeMessage).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-  const { accessToken } = await base44.asServiceRole.connectors.getConnection("gmail");
   const response = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
     method: "POST",
     headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
