@@ -33,7 +33,12 @@ export default function Register() {
       await base44.auth.register({ email, password });
       setShowOtp(true);
     } catch (err) {
-      setError(err.message || "Registration failed");
+      const msg = err.message || "";
+      if (msg.toLowerCase().includes("already") || msg.toLowerCase().includes("exist") || msg.toLowerCase().includes("déjà")) {
+        setError("Un compte existe déjà avec cet email. Utilisez « Mot de passe oublié » pour le réinitialiser.");
+      } else {
+        setError(msg || "Registration failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -46,6 +51,12 @@ export default function Register() {
       const result = await base44.auth.verifyOtp({ email, otpCode });
       if (result?.access_token) {
         base44.auth.setToken(result.access_token);
+      }
+      // Create Client record now that the user has registered
+      try {
+        await base44.functions.invoke("CreateClientAfterRegistration", {});
+      } catch (e) {
+        // Non-blocking: ClientSpace will handle missing record
       }
       window.location.href = "/my-account";
     } catch (err) {
