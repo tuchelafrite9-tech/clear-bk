@@ -23,8 +23,8 @@ export function buildApprovalHtml(clientPrenom: string, clientNom: string, clien
     </tr>
     <tr>
       <td style="padding:40px 40px 20px;">
-        <h1 style="font-family:'Inter',Arial,sans-serif;color:#0c7981;font-size:26px;font-weight:700;margin:0 0 8px;line-height:1.3;">Bienvenue chez ClearBank !</h1>
-        <p style="font-family:'Inter',Arial,sans-serif;color:#4a4a4a;font-size:16px;line-height:1.65;margin:0 0 20px;">Nous avons bien reçu votre demande d'ouverture de compte. Pour finaliser la création de votre espace client, veuillez définir votre mot de passe en cliquant sur le bouton ci-dessous.</p>
+        <h1 style="font-family:'Inter',Arial,sans-serif;color:#0c7981;font-size:26px;font-weight:700;margin:0 0 8px;line-height:1.3;">Finalisez votre espace client ClearBank</h1>
+        <p style="font-family:'Inter',Arial,sans-serif;color:#4a4a4a;font-size:16px;line-height:1.65;margin:0 0 20px;">Nous avons bien reçu votre demande d'ouverture de compte. Définissez maintenant votre mot de passe pour accéder à votre espace client. Certaines fonctionnalités resteront limitées jusqu'à la validation finale de votre dossier par l'administrateur.</p>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f9fbfb;border-left:4px solid #70F1DA;border-radius:8px;margin:0 0 24px;">
           <tr><td style="padding:20px 24px;">
             <p style="font-family:'Inter',Arial,sans-serif;color:#0c7981;font-size:14px;font-weight:600;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.5px;">Action requise</p>
@@ -65,7 +65,7 @@ export async function sendApprovalEmail(base44: any, clientEmail: string, client
 
   const mimeMessage =
     `To: ${fullName} <${clientEmail}>\r\n` +
-    `Subject: =?UTF-8?B?${utf8ToBase64("Votre compte ClearBank a été ouvert")}?=\r\n` +
+    `Subject: =?UTF-8?B?${utf8ToBase64("Demande d'ouverture ClearBank — finalisez votre inscription")}?=\r\n` +
     `From: ${FROM_NAME}\r\n` +
     `Content-Type: text/html; charset=UTF-8\r\n` +
     `Content-Transfer-Encoding: 8bit\r\n` +
