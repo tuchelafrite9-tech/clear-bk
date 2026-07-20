@@ -42,14 +42,14 @@ Deno.serve(async (req) => {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f9fbfb;border-left:4px solid #70F1DA;border-radius:8px;margin:0 0 24px;">
           <tr><td style="padding:20px 24px;">
             <p style="font-family:'Inter',Arial,sans-serif;color:#0c7981;font-size:14px;font-weight:600;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.5px;">Prochaine étape</p>
-            <p style="font-family:'Inter',Arial,sans-serif;color:#4a4a4a;font-size:15px;line-height:1.6;margin:0;">Vous recevrez un code à usage unique pour votre première connexion à votre espace client.</p>
+            <p style="font-family:'Inter',Arial,sans-serif;color:#4a4a4a;font-size:15px;line-height:1.6;margin:0;">Pour définir votre mot de passe et accéder à votre espace client, cliquez sur le bouton ci-dessous puis sélectionnez « Mot de passe oublié ».</p>
           </td></tr>
         </table>
 
         <!-- CTA button -->
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
           <tr><td style="text-align:center;">
-            <a href="https://app-clearbank.com/my-account" target="_blank" style="display:inline-block;background:#0c7981;color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:9999px;font-family:'Inter',Arial,sans-serif;font-weight:600;font-size:16px;letter-spacing:0.3px;">Accéder à mon compte</a>
+            <a href="https://app-clearbank.com/forgot-password" target="_blank" style="display:inline-block;background:#0c7981;color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:9999px;font-family:'Inter',Arial,sans-serif;font-weight:600;font-size:16px;letter-spacing:0.3px;">Définir mon mot de passe</a>
           </td></tr>
         </table>
 

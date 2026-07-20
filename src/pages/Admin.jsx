@@ -132,15 +132,12 @@ export default function Admin() {
     setSuccess("");
     setGeneratedCode(null);
     try {
-      // Invite the user if not already registered
-      try {
-        await base44.users.inviteUser(clientEmail, "user");
-      } catch (inviteErr) {
-        // User may already exist — continue
-      }
-      // Send password reset email (now branded as "ClearBank" via app config)
-      await base44.auth.resetPasswordRequest(clientEmail);
-      setSuccess(`Email d'accès envoyé à ${clientEmail}. Le client pourra définir son mot de passe et se connecter.`);
+      await base44.functions.invoke("SendApprovalEmail", {
+        client_email: clientEmail,
+        client_prenom: "",
+        client_nom: "",
+      });
+      setSuccess(`Email d'accès envoyé à ${clientEmail}.`);
     } catch (err) {
       setError("Erreur lors de l'envoi de l'email: " + (err.message || err));
     }
@@ -215,17 +212,14 @@ export default function Admin() {
           // continue even if email fails
         }
 
-        // Invite the user to Base44
+        // Send branded confirmation email via Gmail (custom ClearBank design only)
         try {
-          await base44.users.inviteUser(dm.mail, "user");
-        } catch (inviteErr) {
-          // User may already exist — continue
-        }
-
-        // Send password reset email (branded as "ClearBank" via app config)
-        try {
-          await base44.auth.resetPasswordRequest(dm.mail);
-          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email de confirmation et lien de définition de mot de passe envoyés à ${dm.mail}.`);
+          await base44.functions.invoke("SendApprovalEmail", {
+            client_email: dm.mail,
+            client_prenom: dm.prenom,
+            client_nom: dm.nom,
+          });
+          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email de confirmation envoyé à ${dm.mail}.`);
         } catch (resetErr) {
           setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email non envoyé: ${resetErr.message || resetErr}. Utilisez l'onglet "Codes de connexion" pour le renvoyer.`);
         }
