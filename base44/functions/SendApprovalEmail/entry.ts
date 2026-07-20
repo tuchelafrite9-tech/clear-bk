@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const FROM_EMAIL = "ClearBank No-Reply <info@clearbank.fr>";
+const FROM_EMAIL = "ClearBank No-Reply <info@bk-clear.com>";
 
 Deno.serve(async (req) => {
   try {
