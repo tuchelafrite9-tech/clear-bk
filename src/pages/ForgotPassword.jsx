@@ -34,7 +34,13 @@ export default function ForgotPassword() {
     } catch (err) {
       const msg = (err.message || "").toLowerCase();
       if (msg.includes("exist") || msg.includes("déjà") || msg.includes("already")) {
-        setError("Un compte existe déjà avec cet email. Connectez-vous ou réinitialisez votre mot de passe.");
+        // Le compte existe déjà — on renvoie l'OTP pour qu'il puisse vérifier son email
+        try {
+          await base44.auth.resendOtp(email);
+          setStep("otp");
+        } catch (resendErr) {
+          setError("Un compte existe déjà avec cet email. Connectez-vous à partir de la page de connexion.");
+        }
       } else {
         setError(err.message || "Erreur lors de la création du compte.");
       }
@@ -185,6 +191,9 @@ export default function ForgotPassword() {
 
             {step === "otp" && (
               <div className="space-y-6">
+                <p className="text-center text-xs text-gray-500 bg-gray-50 rounded-xl p-3">
+                  💡 Vérifiez vos spams. L'email provient de app@base44.com.
+                </p>
                 <div className="flex justify-center">
                   <InputOTP
                     maxLength={6}
