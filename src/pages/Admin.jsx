@@ -134,6 +134,12 @@ export default function Admin() {
     setSuccess("");
     setGeneratedCode(null);
     try {
+      // Ensure auth account exists so the client can set a password
+      try {
+        await base44.users.inviteUser(clientEmail, "user");
+      } catch (inviteErr) {
+        // User may already exist — that's fine
+      }
       await base44.functions.invoke("SendApprovalEmail", {
         client_email: clientEmail,
         client_prenom: "",
@@ -239,6 +245,13 @@ export default function Admin() {
             remarque: dm.motif || "",
             derniere_connexion: null,
           });
+        }
+
+        // Create auth account so the client can set a password via forgot-password
+        try {
+          await base44.users.inviteUser(dm.mail, "user");
+        } catch (inviteErr) {
+          // User may already exist — that's fine, they can still reset their password
         }
 
         // Send branded confirmation email with link to create client space
@@ -425,6 +438,13 @@ export default function Admin() {
         ...form,
         derniere_connexion: null,
       });
+
+      // Create auth account so the client can set a password
+      try {
+        await base44.users.inviteUser(form.mail, "user");
+      } catch (inviteErr) {
+        // User may already exist — that's fine
+      }
 
       if (sendAccessOnCreate) {
         try {
