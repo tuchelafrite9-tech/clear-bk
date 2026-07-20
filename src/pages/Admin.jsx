@@ -203,6 +203,18 @@ export default function Admin() {
     }
   };
 
+  const handleDeleteContact = async (contactId) => {
+    if (!window.confirm("Supprimer ce message ? Cette action est irréversible.")) return;
+    setError("");
+    setSuccess("");
+    try {
+      await base44.entities.Contact.delete(contactId);
+      setSuccess("Message supprimé.");
+    } catch (err) {
+      setError("Erreur lors de la suppression du message: " + (err.message || err));
+    }
+  };
+
   const handleDemandeOuverture = async (demandeId, action) => {
     setError("");
     setSuccess("");
@@ -1077,6 +1089,12 @@ export default function Admin() {
                               Traiter
                             </button>
                           )}
+                          <button
+                            onClick={() => handleDeleteContact(ct.id)}
+                            className="text-xs bg-white border border-red-300 text-red-600 rounded-full px-3 py-1 hover:bg-red-50 hover:border-red-400 transition"
+                          >
+                            Supprimer
+                          </button>
                         </div>
                       </div>
                     </div>
