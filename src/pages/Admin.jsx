@@ -160,6 +160,32 @@ export default function Admin() {
     setUploadingFor(null);
   };
 
+  const handleDeleteDemande = async (demandeId) => {
+    if (!window.confirm("Supprimer cette demande client ? Cette action est irréversible.")) return;
+    setError("");
+    setSuccess("");
+    try {
+      await base44.entities.Demande.delete(demandeId);
+      setSuccess("Demande client supprimée.");
+      await loadClients();
+    } catch (err) {
+      setError("Erreur lors de la suppression de la demande: " + (err.message || err));
+    }
+  };
+
+  const handleDeleteDemandeOuverture = async (demandeId) => {
+    if (!window.confirm("Supprimer cette demande d'ouverture ? Cette action est irréversible.")) return;
+    setError("");
+    setSuccess("");
+    try {
+      await base44.entities.DemandeOuverture.delete(demandeId);
+      setSuccess("Demande d'ouverture supprimée.");
+      await loadClients();
+    } catch (err) {
+      setError("Erreur lors de la suppression de la demande: " + (err.message || err));
+    }
+  };
+
   const handleDemandeStatut = async (demandeId, nouveauStatut) => {
     try {
       await base44.entities.Demande.update(demandeId, { statut: nouveauStatut });
@@ -938,6 +964,12 @@ export default function Admin() {
                               </button>
                             </>
                           )}
+                          <button
+                            onClick={() => handleDeleteDemandeOuverture(dm.id)}
+                            className="text-xs bg-white border border-red-300 text-red-600 rounded-full px-3 py-1 hover:bg-red-50 hover:border-red-400 transition"
+                          >
+                            Supprimer
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -1120,6 +1152,12 @@ export default function Admin() {
                               </button>
                             </>
                           )}
+                          <button
+                            onClick={() => handleDeleteDemande(dm.id)}
+                            className="text-xs bg-white border border-red-300 text-red-600 rounded-full px-3 py-1 hover:bg-red-50 hover:border-red-400 transition"
+                          >
+                            Supprimer
+                          </button>
                         </div>
                       </div>
                     </div>
