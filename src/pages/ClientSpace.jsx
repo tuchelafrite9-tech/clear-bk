@@ -61,9 +61,13 @@ export default function ClientSpace() {
         const records = await base44.entities.Client.filter({ mail: me.email });
         if (records && records.length > 0) {
           setClient(records[0]);
-          await base44.entities.Client.update(records[0].id, {
-            derniere_connexion: new Date().toISOString(),
-          });
+          try {
+            await base44.entities.Client.update(records[0].id, {
+              derniere_connexion: new Date().toISOString(),
+            });
+          } catch (e) {
+            // RLS: seuls les admins peuvent mettre à jour — on ignore l'erreur
+          }
           const txs = await base44.entities.Transaction.filter({ client_id: records[0].id }, "-date", 100);
           setTransactions(txs || []);
           try {
