@@ -44,6 +44,7 @@ export default function Admin() {
   const [generatedCode, setGeneratedCode] = useState(null);
   const [codeLoading, setCodeLoading] = useState(null);
   const [sendAccessOnCreate, setSendAccessOnCreate] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -354,16 +355,48 @@ export default function Admin() {
   };
 
   const handleDeleteClient = async (clientId) => {
-    if (!window.confirm("Supprimer ce client ? Cette action est irréversible.")) return;
+    if (!window.confirm("Supprimer ce client et toutes ses données (transactions, demandes, demandes d'ouverture) ? Cette action est irréversible.")) return;
     setError("");
     setSuccess("");
+    setDeletingId(clientId);
     try {
+      const client = clients.find((c) => c.id === clientId);
+      const clientEmail = client?.mail;
+
+      // 1. Supprimer les transactions liées
+      try {
+        const txs = await base44.entities.Transaction.filter({ client_id: clientId });
+        if (txs && txs.length > 0) {
+          await base44.entities.Transaction.deleteMany({ client_id: clientId });
+        }
+      } catch (e) { /* ignore */ }
+
+      // 2. Supprimer les demandes liées
+      try {
+        const dms = await base44.entities.Demande.filter({ client_id: clientId });
+        if (dms && dms.length > 0) {
+          await base44.entities.Demande.deleteMany({ client_id: clientId });
+        }
+      } catch (e) { /* ignore */ }
+
+      // 3. Supprimer les demandes d'ouverture liées (par email)
+      if (clientEmail) {
+        try {
+          const dsos = await base44.entities.DemandeOuverture.filter({ mail: clientEmail });
+          if (dsos && dsos.length > 0) {
+            await base44.entities.DemandeOuverture.deleteMany({ mail: clientEmail });
+          }
+        } catch (e) { /* ignore */ }
+      }
+
+      // 4. Supprimer la fiche Client
       await base44.entities.Client.delete(clientId);
-      setSuccess("Client supprimé avec succès.");
+      setSuccess(`Client supprimé. Toutes les données associées (transactions, demandes) ont été effacées.`);
       await loadClients();
     } catch (err) {
       setError("Erreur lors de la suppression du client: " + (err.message || err));
     }
+    setDeletingId(null);
   };
 
   const handleAdminLogout = async () => {
@@ -796,9 +829,10 @@ export default function Admin() {
                         </button>
                         <button
                           onClick={() => handleDeleteClient(client.id)}
-                          className="inline-flex items-center gap-2 bg-white border border-red-300 text-red-600 rounded-full px-4 py-2 text-xs font-medium hover:bg-red-50 hover:border-red-400 transition"
+                          disabled={deletingId === client.id}
+                          className="inline-flex items-center gap-2 bg-white border border-red-300 text-red-600 rounded-full px-4 py-2 text-xs font-medium hover:bg-red-50 hover:border-red-400 transition disabled:opacity-50"
                         >
-                          Supprimer
+                          {deletingId === client.id ? "Suppression..." : "Supprimer"}
                         </button>
                       </div>
                       {editingId === client.id && (
