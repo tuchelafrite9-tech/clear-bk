@@ -38,6 +38,9 @@ export default function Admin() {
   const [demandesOuverture, setDemandesOuverture] = useState([]);
   const [uploadingFor, setUploadingFor] = useState(null);
   const [activeTab, setActiveTab] = useState("ouverture");
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState(emptyForm);
+  const [editLoading, setEditLoading] = useState(false);
   const [generatedCode, setGeneratedCode] = useState(null);
   const [codeLoading, setCodeLoading] = useState(null);
 
@@ -264,6 +267,56 @@ export default function Admin() {
       setError("Erreur lors de la création de la transaction: " + (err.message || err));
     }
     setTxLoading(false);
+  };
+
+  const handleEditClient = (client) => {
+    setEditingId(client.id);
+    setEditForm({
+      nom: client.nom || "",
+      prenom: client.prenom || "",
+      mail: client.mail || "",
+      iban: client.iban || "",
+      numero_de_compte: client.numero_de_compte || "",
+      numero_de_compte_sequestre: client.numero_de_compte_sequestre || "",
+      reference_dossier_sequestre: client.reference_dossier_sequestre || "",
+      date_liberation_comite_sequestre: client.date_liberation_comite_sequestre || "",
+      remarque: client.remarque || "",
+    });
+    setError("");
+    setSuccess("");
+  };
+
+  const handleEditCancel = () => {
+    setEditingId(null);
+    setEditForm(emptyForm);
+  };
+
+  const handleEditChange = (e) => {
+    setEditForm({ ...editForm, [e.target.name]: e.target.value });
+  };
+
+  const handleEditSubmit = async (e, clientId) => {
+    e.preventDefault();
+    setEditLoading(true);
+    setError("");
+    setSuccess("");
+
+    if (!editForm.nom || !editForm.prenom || !editForm.mail) {
+      setError("Le nom, le prénom et l'email sont obligatoires.");
+      setEditLoading(false);
+      return;
+    }
+
+    try {
+      await base44.entities.Client.update(clientId, { ...editForm });
+      setSuccess(`Client ${editForm.prenom} ${editForm.nom} mis à jour avec succès.`);
+      setEditingId(null);
+      setEditForm(emptyForm);
+      await loadClients();
+    } catch (err) {
+      setError("Erreur lors de la mise à jour du client: " + (err.message || err));
+    }
+    setEditLoading(false);
   };
 
   const handleAdminLogout = async () => {
@@ -665,6 +718,12 @@ export default function Admin() {
                       )}
                       <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap items-center gap-3">
                         <button
+                          onClick={() => handleEditClient(client)}
+                          className="inline-flex items-center gap-2 bg-white border border-gray-300 text-gray-700 rounded-full px-4 py-2 text-xs font-medium hover:border-teal-dark hover:text-teal-dark transition"
+                        >
+                          Modifier les informations
+                        </button>
+                        <button
                           onClick={() => handleGenerateCode(client.mail)}
                           disabled={codeLoading === client.mail}
                           className="inline-flex items-center gap-2 bg-slate-900 text-white rounded-full px-4 py-2 text-xs font-medium hover:bg-teal-dark transition disabled:opacity-50"
@@ -678,6 +737,63 @@ export default function Admin() {
                           </div>
                         )}
                       </div>
+                      {editingId === client.id && (
+                        <div className="mt-3 pt-3 border-t border-gray-100 bg-gray-50 rounded-xl p-4 -mx-1">
+                          <h4 className="text-base font-semibold mb-3">Modifier les informations</h4>
+                          <form onSubmit={(e) => handleEditSubmit(e, client.id)} className="space-y-3">
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-xs font-medium mb-1">Nom *</label>
+                                <input type="text" name="nom" value={editForm.nom} onChange={handleEditChange} required className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-dark text-sm" />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-medium mb-1">Prénom *</label>
+                                <input type="text" name="prenom" value={editForm.prenom} onChange={handleEditChange} required className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-dark text-sm" />
+                              </div>
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium mb-1">Email *</label>
+                              <input type="email" name="mail" value={editForm.mail} onChange={handleEditChange} required className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-dark text-sm" />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium mb-1">IBAN</label>
+                              <input type="text" name="iban" value={editForm.iban} onChange={handleEditChange} className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-dark text-sm" />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-xs font-medium mb-1">Numéro de compte</label>
+                                <input type="text" name="numero_de_compte" value={editForm.numero_de_compte} onChange={handleEditChange} className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-dark text-sm" />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-medium mb-1">N° compte séquestre</label>
+                                <input type="text" name="numero_de_compte_sequestre" value={editForm.numero_de_compte_sequestre} onChange={handleEditChange} className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-dark text-sm" />
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-xs font-medium mb-1">Réf. dossier séquestre</label>
+                                <input type="text" name="reference_dossier_sequestre" value={editForm.reference_dossier_sequestre} onChange={handleEditChange} className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-dark text-sm" />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-medium mb-1">Date libération comité</label>
+                                <input type="date" name="date_liberation_comite_sequestre" value={editForm.date_liberation_comite_sequestre} onChange={handleEditChange} className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-dark text-sm" />
+                              </div>
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium mb-1">Remarque</label>
+                              <textarea name="remarque" value={editForm.remarque} onChange={handleEditChange} rows={2} className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-dark text-sm" />
+                            </div>
+                            <div className="flex items-center gap-3 pt-2">
+                              <button type="submit" disabled={editLoading} className="inline-flex items-center justify-center bg-teal text-black rounded-full px-5 py-2 text-sm font-medium hover:bg-teal-dark hover:text-white transition disabled:opacity-50">
+                                {editLoading ? "Enregistrement..." : "Enregistrer"}
+                              </button>
+                              <button type="button" onClick={handleEditCancel} className="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-600 rounded-full px-5 py-2 text-sm font-medium hover:border-gray-400 transition">
+                                Annuler
+                              </button>
+                            </div>
+                          </form>
+                        </div>
+                      )}
                       <div className="mt-3 pt-3 border-t border-gray-100">
                         <label className="block text-sm font-medium mb-1">Contrat PDF</label>
                         {client.contrat_pdf ? (
