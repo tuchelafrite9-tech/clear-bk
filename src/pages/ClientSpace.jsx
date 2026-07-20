@@ -96,14 +96,14 @@ export default function ClientSpace() {
           try {
             const dso = await base44.entities.DemandeOuverture.filter({ mail: me.email }, "-created_date", 5);
             if (dso && dso.length > 0) {
-              window.location.href = "/pending-validation";
+              navigate("/pending-validation");
               return;
             }
           } catch (e) {
             // ignore
           }
           // No client record and no pending request — redirect to account opening page
-          window.location.href = "/begin";
+          navigate("/begin");
           return;
         }
       } catch (err) {
