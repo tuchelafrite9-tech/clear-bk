@@ -132,11 +132,10 @@ export default function Admin() {
     setSuccess("");
     setGeneratedCode(null);
     try {
-      const res = await base44.functions.invoke("GenerateLoginCode", { client_email: clientEmail });
-      setGeneratedCode({ email: clientEmail, code: res.data.code });
-      setSuccess(`Code à usage unique généré pour ${clientEmail}.`);
+      await base44.auth.resetPasswordRequest(clientEmail);
+      setSuccess(`Email de réinitialisation envoyé à ${clientEmail}. Le client devra définir son mot de passe.`);
     } catch (err) {
-      setError("Erreur lors de la génération du code: " + (err?.response?.data?.error || err.message || err));
+      setError("Erreur lors de l'envoi de l'email: " + (err.message || err));
     }
     setCodeLoading(null);
   };
@@ -209,13 +208,12 @@ export default function Admin() {
           // continue even if email fails
         }
 
-        // Auto-generate and send one-time login code
+        // Send password reset email so the client can set their own password
         try {
-          const codeRes = await base44.functions.invoke("GenerateLoginCode", { client_email: dm.mail });
-          setGeneratedCode({ email: dm.mail, code: codeRes.data.code });
-          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email de confirmation et code de connexion envoyés à ${dm.mail}.`);
-        } catch (codeErr) {
-          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Code non envoyé: ${codeErr?.response?.data?.error || codeErr.message || codeErr}. Générez-le manuellement.`);
+          await base44.auth.resetPasswordRequest(dm.mail);
+          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email de confirmation et lien de définition de mot de passe envoyés à ${dm.mail}.`);
+        } catch (resetErr) {
+          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email de réinitialisation non envoyé: ${resetErr.message || resetErr}. Utilisez l'onglet "Codes de connexion" pour le renvoyer.`);
         }
       }
 
@@ -728,14 +726,8 @@ export default function Admin() {
                           disabled={codeLoading === client.mail}
                           className="inline-flex items-center gap-2 bg-slate-900 text-white rounded-full px-4 py-2 text-xs font-medium hover:bg-teal-dark transition disabled:opacity-50"
                         >
-                          {codeLoading === client.mail ? "Génération..." : "Générer un code à usage unique"}
+                          {codeLoading === client.mail ? "Envoi..." : "Envoyer l'accès"}
                         </button>
-                        {generatedCode && generatedCode.email === client.mail && (
-                          <div className="inline-flex items-center gap-2 bg-teal/10 border border-teal-dark rounded-full px-4 py-2">
-                            <span className="text-xs text-gray-600">Code :</span>
-                            <span className="text-sm font-bold text-teal-dark tracking-widest">{generatedCode.code}</span>
-                          </div>
-                        )}
                       </div>
                       {editingId === client.id && (
                         <div className="mt-3 pt-3 border-t border-gray-100 bg-gray-50 rounded-xl p-4 -mx-1">
@@ -926,10 +918,10 @@ export default function Admin() {
                 {activeTab === "codes" && (
                 <div className="mt-6">
                 <h2 className="text-2xl md:text-3xl font-bold mb-2">
-                Codes de connexion à usage unique
+                Accès client
                 </h2>
                 <p className="text-sm text-gray-500 mb-6">
-                Générez un code temporaire pour un client. Le code est envoyé automatiquement par email avec l'en-tête ClearBank et est valable une seule connexion.
+                Envoyez un email de réinitialisation de mot de passe au client. Il pourra ainsi définir son propre mot de passe et se connecter à son espace.
                 </p>
               {clients.length === 0 ? (
                 <div className="bg-gray-50 rounded-3xl p-12 text-center">
@@ -951,18 +943,12 @@ export default function Admin() {
                       )}
                     </div>
                     <div className="flex flex-wrap items-center gap-3">
-                      {generatedCode && generatedCode.email === client.mail && (
-                        <div className="inline-flex items-center gap-2 bg-teal/10 border border-teal-dark rounded-full px-4 py-2">
-                          <span className="text-xs text-gray-600">Code généré :</span>
-                          <span className="text-sm font-bold text-teal-dark tracking-widest">{generatedCode.code}</span>
-                        </div>
-                      )}
                       <button
                         onClick={() => handleGenerateCode(client.mail)}
                         disabled={codeLoading === client.mail}
                         className="inline-flex items-center gap-2 bg-slate-900 text-white rounded-full px-5 py-2.5 text-sm font-medium hover:bg-teal-dark transition disabled:opacity-50"
                       >
-                        {codeLoading === client.mail ? "Envoi en cours..." : "Envoyer le code"}
+                        {codeLoading === client.mail ? "Envoi en cours..." : "Envoyer l'email d'accès"}
                       </button>
                     </div>
                   </div>
