@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import ClientSidebar, { navItems } from "@/components/clearbank/ClientSidebar";
+import ConventionSign from "@/components/clearbank/ConventionSign";
 import { InfoRow, SectionHeader, PlaceholderSection } from "@/components/clearbank/ClientSpaceParts";
-import { Home, User, ArrowLeftRight, CreditCard, Wallet, PiggyBank, ShieldCheck, TrendingUp, FileText, ArrowUpRight, ArrowDownLeft, ArrowRight, Download, Bell, Phone, LogOut, Receipt, Search } from "lucide-react";
+import { Home, User, ArrowLeftRight, CreditCard, Wallet, PiggyBank, ShieldCheck, TrendingUp, FileText, ArrowUpRight, ArrowDownLeft, ArrowRight, Download, Bell, Phone, LogOut, Receipt, Search, PenTool } from "lucide-react";
 
 const sectionMeta = {
   accueil: { title: "Accueil", icon: Home },
   compte: { title: "Mon compte", icon: User },
+  convention: { title: "Convention de séquestre", icon: PenTool },
   virement: { title: "Virement", icon: ArrowLeftRight },
   paiement: { title: "Paiements", icon: CreditCard },
   transactions: { title: "Historique des transactions", icon: Receipt },
@@ -463,6 +465,14 @@ export default function ClientSpace() {
                       )}
                     </div>
                   </div>
+                )}
+
+                {/* CONVENTION */}
+                {activeSection === "convention" && (
+                  <ConventionSign
+                    client={client}
+                    onUpdated={(updated) => setClient(updated)}
+                  />
                 )}
 
                 {/* VIREMENT */}

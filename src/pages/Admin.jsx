@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import Header from "@/components/clearbank/Header";
 import Footer from "@/components/clearbank/Footer";
-import { ShieldCheck, LogOut } from "lucide-react";
+import { ShieldCheck, LogOut, PenTool, FileText, CheckCircle2 } from "lucide-react";
 
 const ArrowRight = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="13" fill="none" className="inline-block ml-2">
@@ -812,6 +812,33 @@ export default function Admin() {
                       </div>
                       {client.remarque && (
                         <p className="text-sm text-gray-500 mt-2 italic">{client.remarque}</p>
+                      )}
+                      {/* Signature status */}
+                      {client.signature_acceptee && (
+                        <div className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-green-700 bg-green-50 rounded-full px-3 py-1">
+                          <CheckCircle2 className="w-3 h-3" />
+                          Convention signée le {client.date_signature ? new Date(client.date_signature).toLocaleDateString("fr-FR") : ""}
+                        </div>
+                      )}
+                      {/* Client documents */}
+                      {client.documents_client && client.documents_client.length > 0 && (
+                        <div className="mt-3">
+                          <p className="text-xs font-medium text-gray-500 mb-1">Documents client ({client.documents_client.length})</p>
+                          <div className="flex flex-wrap gap-2">
+                            {client.documents_client.map((docUrl, idx) => (
+                              <a
+                                key={idx}
+                                href={docUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-xs text-teal-dark bg-teal/5 border border-teal/20 rounded-full px-3 py-1 hover:bg-teal/10 transition"
+                              >
+                                <FileText className="w-3 h-3" />
+                                Document {idx + 1}
+                              </a>
+                            ))}
+                          </div>
+                        </div>
                       )}
                       <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap items-center gap-3">
                         <button

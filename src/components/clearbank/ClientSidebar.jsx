@@ -1,9 +1,10 @@
 import React from "react";
-import { Home, User, ArrowLeftRight, CreditCard, Wallet, PiggyBank, ShieldCheck, TrendingUp, FileText, Receipt } from "lucide-react";
+import { Home, User, ArrowLeftRight, CreditCard, Wallet, PiggyBank, ShieldCheck, TrendingUp, FileText, Receipt, PenTool } from "lucide-react";
 
 const navItems = [
   { id: "accueil", label: "Accueil", icon: Home },
   { id: "compte", label: "Compte", icon: User },
+  { id: "convention", label: "Convention", icon: PenTool },
   { id: "transactions", label: "Transactions", icon: Receipt },
   { id: "virement", label: "Virement", icon: ArrowLeftRight },
   { id: "paiement", label: "Paiement", icon: CreditCard },
@@ -11,7 +12,7 @@ const navItems = [
   { id: "epargne", label: "Épargne", icon: PiggyBank },
   { id: "assurance", label: "Assurance", icon: ShieldCheck },
   { id: "bourse", label: "Bourse", icon: TrendingUp },
-  { id: "document", label: "Document", icon: FileText },
+  { id: "document", label: "Documents", icon: FileText },
 ];
 
 export default function ClientSidebar({ active, onSelect }) {
