@@ -202,13 +202,6 @@ export default function Admin() {
           });
         }
 
-        // Create the user account so the client can define their password
-        try {
-          await base44.users.inviteUser(dm.mail, "user");
-        } catch (inviteErr) {
-          // User may already exist — continue
-        }
-
         // Send branded confirmation email with link to create client space
         try {
           await base44.functions.invoke("SendApprovalEmail", {
@@ -361,13 +354,6 @@ export default function Admin() {
         ...form,
         derniere_connexion: null,
       });
-
-      // Create the user account so the client can define their password
-      try {
-        await base44.users.inviteUser(form.mail, "user");
-      } catch (inviteErr) {
-        // User may already exist — continue
-      }
 
       if (sendAccessOnCreate) {
         try {
