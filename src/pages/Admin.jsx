@@ -326,6 +326,19 @@ export default function Admin() {
     setEditLoading(false);
   };
 
+  const handleDeleteClient = async (clientId) => {
+    if (!window.confirm("Supprimer ce client ? Cette action est irréversible.")) return;
+    setError("");
+    setSuccess("");
+    try {
+      await base44.entities.Client.delete(clientId);
+      setSuccess("Client supprimé avec succès.");
+      await loadClients();
+    } catch (err) {
+      setError("Erreur lors de la suppression du client: " + (err.message || err));
+    }
+  };
+
   const handleAdminLogout = async () => {
     try {
       await base44.auth.logout();
@@ -753,6 +766,12 @@ export default function Admin() {
                           className="inline-flex items-center gap-2 bg-slate-900 text-white rounded-full px-4 py-2 text-xs font-medium hover:bg-teal-dark transition disabled:opacity-50"
                         >
                           {codeLoading === client.mail ? "Envoi..." : "Envoyer l'accès"}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClient(client.id)}
+                          className="inline-flex items-center gap-2 bg-white border border-red-300 text-red-600 rounded-full px-4 py-2 text-xs font-medium hover:bg-red-50 hover:border-red-400 transition"
+                        >
+                          Supprimer
                         </button>
                       </div>
                       {editingId === client.id && (
