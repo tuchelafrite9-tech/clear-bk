@@ -45,7 +45,7 @@ export default function Register() {
       if (result?.access_token) {
         base44.auth.setToken(result.access_token);
       }
-      window.location.href = "/complete-profile";
+      window.location.href = "/begin";
     } catch (err) {
       setError(err.message || "Invalid verification code");
     } finally {
