@@ -191,9 +191,6 @@ export default function ForgotPassword() {
 
             {step === "otp" && (
               <div className="space-y-6">
-                <p className="text-center text-xs text-gray-500 bg-gray-50 rounded-xl p-3">
-                  💡 Vérifiez vos spams. L'email provient de app@base44.com.
-                </p>
                 <div className="flex justify-center">
                   <InputOTP
                     maxLength={6}
