@@ -12,7 +12,7 @@ import { toast } from "@/components/ui/use-toast";
 
 export default function Register() {
   const urlParams = new URLSearchParams(window.location.search);
-  const prefillEmail = urlParams.get("email") || "";
+  const prefillEmail = (urlParams.get("email") || "").trim().toLowerCase();
   const [email, setEmail] = useState(prefillEmail);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -30,7 +30,9 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      await base44.auth.register({ email, password });
+      const normalizedEmail = email.trim().toLowerCase();
+      setEmail(normalizedEmail);
+      await base44.auth.register({ email: normalizedEmail, password });
       setShowOtp(true);
     } catch (err) {
       const msg = err.message || "";
@@ -48,16 +50,11 @@ export default function Register() {
     setError("");
     setLoading(true);
     try {
-      const result = await base44.auth.verifyOtp({ email, otpCode });
-      if (result?.access_token) {
-        base44.auth.setToken(result.access_token);
+      const result = await base44.auth.verifyOtp({ email: email.trim().toLowerCase(), otpCode });
+      if (!result?.access_token) {
+        throw new Error("La vérification n'a pas retourné de session valide.");
       }
-      // Create Client record now that the user has registered
-      try {
-        await base44.functions.invoke("CreateClientAfterRegistration", {});
-      } catch (e) {
-        // Non-blocking: ClientSpace will handle missing record
-      }
+      base44.auth.setToken(result.access_token);
       window.location.href = "/my-account";
     } catch (err) {
       setError(err.message || "Invalid verification code");
@@ -82,6 +79,23 @@ export default function Register() {
   const handleGoogle = () => {
     base44.auth.loginWithProvider("google", "/");
   };
+
+  if (!prefillEmail && !showOtp) {
+    return (
+      <AuthLayout
+        icon={UserPlus}
+        title="Inscription sur invitation"
+        subtitle="Votre demande doit d'abord être approuvée par un administrateur."
+      >
+        <p className="text-sm text-gray-600 mb-5">
+          Après approbation, vous recevrez un email contenant votre lien personnel de création de compte.
+        </p>
+        <Button asChild className="w-full h-12 font-medium bg-teal text-black hover:bg-teal-dark hover:text-white">
+          <Link to="/begin">Faire une demande d'ouverture</Link>
+        </Button>
+      </AuthLayout>
+    );
+  }
 
   if (showOtp) {
     return (

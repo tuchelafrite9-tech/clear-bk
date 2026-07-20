@@ -98,8 +98,8 @@ export default function Login() {
 
               <div className="mt-8 text-center text-sm text-gray-600">
                 Pas encore de compte ?{" "}
-                <Link to="/register" className="text-teal-dark hover:underline font-medium">
-                  Créer un compte
+                <Link to="/begin" className="text-teal-dark hover:underline font-medium">
+                  Faire une demande d'ouverture
                 </Link>
               </div>
             </div>
