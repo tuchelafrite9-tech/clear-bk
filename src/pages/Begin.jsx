@@ -58,8 +58,8 @@ export default function Begin() {
         statut: "en_attente",
         date_demande: new Date().toISOString(),
       });
-      // Rediriger immédiatement vers la création du compte (mot de passe)
-      window.location.href = `/forgot-password?email=${encodeURIComponent(accountForm.email)}`;
+      setSubmitted(true);
+      setAccountForm({ prenom: "", nom: "", email: "", telephone: "" });
     } catch (err) {
       setError("Une erreur est survenue lors de l'envoi de votre demande. Veuillez réessayer.");
     }
@@ -117,7 +117,7 @@ export default function Begin() {
                 <p className="cb-body1 mb-6">
                   {activeTab === "contact"
                     ? "We've received your enquiry and our team will be in touch shortly."
-                    : "Votre demande d'ouverture de compte a bien été reçue. Notre équipe vous contactera dans les meilleurs délais."}
+                    : "Votre demande d'ouverture de compte a bien été reçue. Une fois votre demande validée par notre équipe, vous recevrez un email pour créer votre espace client."}
                 </p>
                 <button onClick={resetForm} className="cb-btn-black">
                   Nouvelle demande <ArrowRight />
