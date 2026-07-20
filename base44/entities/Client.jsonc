@@ -67,6 +67,11 @@
         "type": "string"
       },
       "default": []
+    },
+    "compte_valide": {
+      "type": "boolean",
+      "title": "Compte valid\u00e9 par l'administrateur",
+      "default": false
     }
   },
   "required": [

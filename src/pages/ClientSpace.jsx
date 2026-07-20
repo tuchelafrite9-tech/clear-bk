@@ -35,6 +35,19 @@ export default function ClientSpace() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const navigate = useNavigate();
 
+  const isAccountValid = client?.compte_valide === true;
+  const visibleNavItems = client
+    ? isAccountValid
+      ? navItems
+      : navItems.filter((item) => ["convention", "document"].includes(item.id))
+    : navItems;
+
+  useEffect(() => {
+    if (client && !client.compte_valide && !["convention", "document"].includes(activeSection)) {
+      setActiveSection("convention");
+    }
+  }, [client]);
+
   const handleLogout = async () => {
     try {
       await base44.auth.logout();
@@ -201,7 +214,7 @@ export default function ClientSpace() {
     <div className="min-h-screen bg-slate-50">
       <main>
         <div className="w-full mx-auto flex">
-          <ClientSidebar active={activeSection} onSelect={selectSection} />
+          <ClientSidebar active={activeSection} onSelect={selectSection} items={visibleNavItems} />
 
           {/* Mobile nav toggle */}
           <div className="lg:hidden fixed bottom-4 right-4 z-40">
@@ -288,6 +301,17 @@ export default function ClientSpace() {
                   <div className="mb-6 p-4 rounded-2xl bg-green-50 border border-green-200 text-green-700 text-sm flex items-center gap-2">
                     <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                     {actionSuccess}
+                  </div>
+                )}
+                {!isAccountValid && (
+                  <div className="mb-6 p-5 rounded-2xl bg-orange-50 border border-orange-200 flex items-start gap-3">
+                    <ShieldCheck className="w-5 h-5 text-orange-600 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-semibold text-orange-800">Votre compte est en attente de validation</p>
+                      <p className="text-sm text-orange-700 mt-1">
+                        Vous pouvez téléverser vos documents et signer la convention de séquestre. Une fois ces étapes complétées, votre administrateur validera votre compte pour un accès complet à vos services bancaires.
+                      </p>
+                    </div>
                   </div>
                 )}
 

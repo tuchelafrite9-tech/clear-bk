@@ -15,7 +15,8 @@ const navItems = [
   { id: "document", label: "Documents", icon: FileText },
 ];
 
-export default function ClientSidebar({ active, onSelect }) {
+export default function ClientSidebar({ active, onSelect, items }) {
+  const navList = items || navItems;
   return (
     <aside className="flex flex-col w-56 md:w-64 shrink-0 bg-gradient-to-b from-slate-900 to-slate-800 text-white min-h-[calc(100vh-80px)] sticky top-[80px] py-6 px-3">
       <div className="px-3 mb-6">
@@ -23,7 +24,7 @@ export default function ClientSidebar({ active, onSelect }) {
       </div>
       <nav className="flex-1">
         <ul className="space-y-1">
-          {navItems.map((item) => {
+          {navList.map((item) => {
             const Icon = item.icon;
             const isActive = active === item.id;
             return (

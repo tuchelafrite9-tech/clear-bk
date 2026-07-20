@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
         </table>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
           <tr><td style="text-align:center;">
-            <a href="https://clear-bk.com/forgot-password" target="_blank" style="display:inline-block;background:#0c7981;color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:9999px;font-family:'Inter',Arial,sans-serif;font-weight:600;font-size:16px;letter-spacing:0.3px;">Créer mon espace client</a>
+            <a href="https://clear-bk.com/register?email=${encodeURIComponent(client_email)}" target="_blank" style="display:inline-block;background:#0c7981;color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:9999px;font-family:'Inter',Arial,sans-serif;font-weight:600;font-size:16px;letter-spacing:0.3px;">Créer mon espace client</a>
           </td></tr>
         </table>
         <p style="font-family:'Inter',Arial,sans-serif;color:#999999;font-size:14px;line-height:1.65;margin:0;">Si vous avez des questions, notre équipe reste à votre entière disposition.</p>

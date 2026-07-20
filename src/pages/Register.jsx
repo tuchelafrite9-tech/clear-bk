@@ -11,7 +11,9 @@ import GoogleIcon from "@/components/GoogleIcon";
 import { toast } from "@/components/ui/use-toast";
 
 export default function Register() {
-  const [email, setEmail] = useState("");
+  const urlParams = new URLSearchParams(window.location.search);
+  const prefillEmail = urlParams.get("email") || "";
+  const [email, setEmail] = useState(prefillEmail);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -45,7 +47,7 @@ export default function Register() {
       if (result?.access_token) {
         base44.auth.setToken(result.access_token);
       }
-      window.location.href = "/begin";
+      window.location.href = "/my-account";
     } catch (err) {
       setError(err.message || "Invalid verification code");
     } finally {
@@ -153,11 +155,12 @@ export default function Register() {
               id="email"
               type="email"
               autoComplete="email"
-              autoFocus
+              autoFocus={!prefillEmail}
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="pl-10 h-12"
+              readOnly={!!prefillEmail}
               required
             />
           </div>

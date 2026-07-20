@@ -134,12 +134,6 @@ export default function Admin() {
     setSuccess("");
     setGeneratedCode(null);
     try {
-      // Ensure auth account exists so the client can set a password
-      try {
-        await base44.users.inviteUser(clientEmail, "user");
-      } catch (inviteErr) {
-        // User may already exist — that's fine
-      }
       await base44.functions.invoke("SendApprovalEmail", {
         client_email: clientEmail,
         client_prenom: "",
@@ -244,17 +238,11 @@ export default function Admin() {
             date_liberation_comite_sequestre: "",
             remarque: dm.motif || "",
             derniere_connexion: null,
+            compte_valide: false,
           });
         }
 
-        // Create auth account so the client can set a password via forgot-password
-        try {
-          await base44.users.inviteUser(dm.mail, "user");
-        } catch (inviteErr) {
-          // User may already exist — that's fine, they can still reset their password
-        }
-
-        // Send branded confirmation email with link to create client space
+        // Send branded confirmation email with link to register
         try {
           await base44.functions.invoke("SendApprovalEmail", {
             client_email: dm.mail,
@@ -412,6 +400,19 @@ export default function Admin() {
     setDeletingId(null);
   };
 
+  const handleActivateClient = async (clientId) => {
+    setError("");
+    setSuccess("");
+    try {
+      await base44.entities.Client.update(clientId, { compte_valide: true });
+      const client = clients.find((c) => c.id === clientId);
+      setSuccess(`Compte de ${client?.prenom} ${client?.nom} activé. Le client a désormais accès à son espace complet.`);
+      await loadClients();
+    } catch (err) {
+      setError("Erreur lors de l'activation du compte: " + (err.message || err));
+    }
+  };
+
   const handleAdminLogout = async () => {
     try {
       await base44.auth.logout();
@@ -437,14 +438,8 @@ export default function Admin() {
       await base44.entities.Client.create({
         ...form,
         derniere_connexion: null,
+        compte_valide: false,
       });
-
-      // Create auth account so the client can set a password
-      try {
-        await base44.users.inviteUser(form.mail, "user");
-      } catch (inviteErr) {
-        // User may already exist — that's fine
-      }
 
       if (sendAccessOnCreate) {
         try {
@@ -833,6 +828,18 @@ export default function Admin() {
                       {client.remarque && (
                         <p className="text-sm text-gray-500 mt-2 italic">{client.remarque}</p>
                       )}
+                      {/* Account validation status */}
+                      {client.compte_valide ? (
+                        <div className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-green-700 bg-green-50 rounded-full px-3 py-1">
+                          <CheckCircle2 className="w-3 h-3" />
+                          Compte validé
+                        </div>
+                      ) : (
+                        <div className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-orange-700 bg-orange-50 rounded-full px-3 py-1">
+                          <ShieldCheck className="w-3 h-3" />
+                          Compte non validé — accès limité
+                        </div>
+                      )}
                       {/* Signature status */}
                       {client.signature_acceptee && (
                         <div className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-green-700 bg-green-50 rounded-full px-3 py-1">
@@ -881,6 +888,15 @@ export default function Admin() {
                         >
                           {deletingId === client.id ? "Suppression..." : "Supprimer"}
                         </button>
+                        {!client.compte_valide && (
+                          <button
+                            onClick={() => handleActivateClient(client.id)}
+                            className="inline-flex items-center gap-2 bg-green-600 text-white rounded-full px-4 py-2 text-xs font-medium hover:bg-green-700 transition"
+                          >
+                            <CheckCircle2 className="w-3 h-3" />
+                            Activer le compte
+                          </button>
+                        )}
                       </div>
                       {editingId === client.id && (
                         <div className="mt-3 pt-3 border-t border-gray-100 bg-gray-50 rounded-xl p-4 -mx-1">
