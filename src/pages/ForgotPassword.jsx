@@ -22,8 +22,19 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-[460px]">
+    <div className="min-h-screen bg-white flex flex-col md:flex-row">
+      <div className="hidden md:block md:w-1/2 overflow-hidden">
+        <video
+          className="w-full h-full object-cover"
+          src="https://media.base44.com/videos/public/6a5ca42fae10cd7334263f3b/e3a1e4537_animation.mp4"
+          autoPlay
+          playsInline
+          loop
+          muted
+        />
+      </div>
+      <div className="w-full md:w-1/2 flex items-center justify-center px-4 py-12 md:py-0">
+        <div className="w-full max-w-[460px]">
         <div className="bg-white border border-gray-200 rounded-3xl shadow-sm p-8 md:p-10">
           <div className="text-center mb-8">
             <div className="w-14 h-14 rounded-2xl bg-teal/20 flex items-center justify-center mx-auto mb-5">
@@ -86,6 +97,7 @@ export default function ForgotPassword() {
             Retour à la connexion
           </Link>
         </div>
+      </div>
       </div>
     </div>
   );
