@@ -87,7 +87,9 @@ export default function ClientSpace() {
           } catch (e) {
             // ignore
           }
-          setError("Aucun compte client associé à votre email. Contactez votre administrateur.");
+          // No client record and no pending request — redirect to account opening page
+          window.location.href = "/begin";
+          return;
         }
       } catch (err) {
         setError("Erreur lors du chargement de vos informations.");
