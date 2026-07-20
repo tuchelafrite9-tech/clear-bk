@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { base44 } from "@/api/base44Client";
-import { PenTool, CheckCircle2, FileText, Upload, Loader2, Download, X } from "lucide-react";
+import { PenTool, CheckCircle2, FileText, Upload, Loader2, Download, X, ImageIcon } from "lucide-react";
 
 const CONVENTION_PDF_URL = "https://media.base44.com/files/public/6a5ca42fae10cd7334263f3b/ca30799b1_Convention_Sequestre_CLEAR_BANK_Haut_de_Gamme.pdf";
 
@@ -11,6 +11,8 @@ export default function ConventionSign({ client, onUpdated }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [docs, setDocs] = useState(client.documents_client || []);
+  const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef(null);
 
   const handleSign = async () => {
     if (!accepted) {
@@ -51,6 +53,56 @@ export default function ConventionSign({ client, onUpdated }) {
       setError("Erreur lors du téléversement: " + (err.message || err));
     }
     setUploading(false);
+  };
+
+  const handleUploadMultiple = async (files) => {
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    setError("");
+    setSuccess("");
+    try {
+      const uploaded = [];
+      for (const file of files) {
+        const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        uploaded.push(file_url);
+      }
+      const updatedDocs = [...docs, ...uploaded];
+      await base44.entities.Client.update(client.id, {
+        documents_client: updatedDocs,
+      });
+      setDocs(updatedDocs);
+      setSuccess(
+        uploaded.length === 1
+          ? "Document téléversé avec succès."
+          : `${uploaded.length} documents téléversés avec succès.`
+      );
+      if (onUpdated) onUpdated({ ...client, documents_client: updatedDocs });
+    } catch (err) {
+      setError("Erreur lors du téléversement: " + (err.message || err));
+    }
+    setUploading(false);
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(true);
+  };
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+  };
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    const files = Array.from(e.dataTransfer.files || []);
+    handleUploadMultiple(files);
   };
 
   const handleDeleteDoc = async (index) => {
@@ -180,33 +232,62 @@ export default function ConventionSign({ client, onUpdated }) {
 
       {/* Documents upload section */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold">Mes documents justificatifs</h3>
-          <label className="cursor-pointer inline-flex items-center gap-2 bg-teal text-black rounded-full px-5 py-2.5 text-sm font-medium hover:bg-teal-dark hover:text-white transition">
-            {uploading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Téléversement...
-              </>
-            ) : (
-              <>
-                <Upload className="w-4 h-4" />
-                Ajouter un document
-              </>
-            )}
-            <input
-              type="file"
-              accept="image/*,application/pdf"
-              className="hidden"
-              onChange={(e) => e.target.files[0] && handleUploadDoc(e.target.files[0])}
-            />
-          </label>
-        </div>
+        <h3 className="text-lg font-bold mb-4">Mes documents justificatifs</h3>
 
         <p className="text-sm text-gray-500 mb-4">
-          Téléversez vos pièces justificatives (pièce d'identité, justificatif de domicile, etc.). 
+          Téléversez vos pièces justificatives (pièce d'identité, justificatif de domicile, etc.).
           Ces documents seront transmis à votre administrateur.
         </p>
+
+        {/* Drop zone */}
+        <div
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onClick={() => !uploading && fileInputRef.current?.click()}
+          className={`relative cursor-pointer rounded-2xl border-2 border-dashed transition-all duration-200 p-8 text-center ${
+            dragActive
+              ? "border-teal-dark bg-teal/5 scale-[1.01]"
+              : "border-gray-300 hover:border-teal-dark hover:bg-gray-50"
+          }`}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,application/pdf"
+            multiple
+            className="hidden"
+            onChange={(e) => {
+              const files = Array.from(e.target.files || []);
+              handleUploadMultiple(files);
+              e.target.value = "";
+            }}
+          />
+          {uploading ? (
+            <>
+              <Loader2 className="w-10 h-10 text-teal-dark mx-auto mb-3 animate-spin" />
+              <p className="text-sm font-medium text-gray-700">Téléversement en cours...</p>
+            </>
+          ) : (
+            <>
+              <div className="w-14 h-14 rounded-2xl bg-teal/10 flex items-center justify-center mx-auto mb-3">
+                {dragActive ? (
+                  <Upload className="w-7 h-7 text-teal-dark" />
+                ) : (
+                  <ImageIcon className="w-7 h-7 text-teal-dark" />
+                )}
+              </div>
+              <p className="text-sm font-semibold text-gray-800 mb-1">
+                {dragActive ? "Déposez vos fichiers ici" : "Glissez vos fichiers ici"}
+              </p>
+              <p className="text-xs text-gray-500">
+                ou <span className="text-teal-dark font-medium underline">cliquez pour parcourir</span>
+              </p>
+              <p className="text-xs text-gray-400 mt-2">Images (JPG, PNG) ou PDF — plusieurs fichiers acceptés</p>
+            </>
+          )}
+        </div>
 
         {docs.length === 0 ? (
           <div className="bg-gray-50 border border-gray-200 rounded-2xl p-8 text-center">
