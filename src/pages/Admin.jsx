@@ -202,25 +202,21 @@ export default function Admin() {
           });
         }
 
-        // Send branded confirmation email via Gmail
+        // Create the user account so the client can define their password
         try {
-          await base44.functions.invoke("SendApprovalEmail", {
-            client_email: dm.mail,
-            client_prenom: dm.prenom,
-            client_nom: dm.nom,
-          });
-        } catch (emailErr) {
-          // continue even if email fails
+          await base44.users.inviteUser(dm.mail, "user");
+        } catch (inviteErr) {
+          // User may already exist — continue
         }
 
-        // Send branded confirmation email via Gmail (custom ClearBank design only)
+        // Send branded confirmation email with link to create client space
         try {
           await base44.functions.invoke("SendApprovalEmail", {
             client_email: dm.mail,
             client_prenom: dm.prenom,
             client_nom: dm.nom,
           });
-          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email de confirmation envoyé à ${dm.mail}.`);
+          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email d'accès envoyé à ${dm.mail}.`);
         } catch (resetErr) {
           setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email non envoyé: ${resetErr.message || resetErr}. Utilisez l'onglet "Codes de connexion" pour le renvoyer.`);
         }
@@ -365,6 +361,13 @@ export default function Admin() {
         ...form,
         derniere_connexion: null,
       });
+
+      // Create the user account so the client can define their password
+      try {
+        await base44.users.inviteUser(form.mail, "user");
+      } catch (inviteErr) {
+        // User may already exist — continue
+      }
 
       if (sendAccessOnCreate) {
         try {
