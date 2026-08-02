@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
+import { sendAccountOpeningReceipt } from '../../shared/accountOpeningReceiptEmail.ts';
 
 Deno.serve(async (req) => {
   try {
@@ -39,6 +40,12 @@ Deno.serve(async (req) => {
       statut: 'en_attente',
       date_demande: new Date().toISOString(),
     });
+
+    try {
+      await sendAccountOpeningReceipt(base44, normalizedEmail, prenom);
+    } catch (emailError) {
+      console.error('Account-opening receipt email failed:', emailError);
+    }
 
     return Response.json({ success: true, statut: 'en_attente' });
   } catch (error) {
