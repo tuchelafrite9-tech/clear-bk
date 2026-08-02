@@ -49,11 +49,13 @@ export default function Begin() {
     if (submitting) return;
     setSubmitting(true);
     setError("");
+    let step = "téléversement des pièces d’identité";
     try {
       const [recto, verso] = await Promise.all([
         base44.integrations.Core.UploadFile({ file: accountForm.idRecto }),
         base44.integrations.Core.UploadFile({ file: accountForm.idVerso }),
       ]);
+      step = "enregistrement de la demande";
       await base44.functions.invoke("RequestAccountOpening", {
         prenom: accountForm.prenom,
         nom: accountForm.nom,
@@ -66,7 +68,9 @@ export default function Begin() {
       setSubmitted(true);
       setAccountForm({ prenom: "", nom: "", email: "", telephone: "", dateNaissance: "", idRecto: null, idVerso: null });
     } catch (err) {
-      setError("Une erreur est survenue lors de l'envoi de votre demande. Veuillez réessayer.");
+      const detail = err?.response?.data?.error || err?.message || "Erreur inconnue";
+      console.error(`Échec lors du ${step}`, err);
+      setError(`Erreur lors du ${step} : ${detail}`);
     }
     setSubmitting(false);
   };
