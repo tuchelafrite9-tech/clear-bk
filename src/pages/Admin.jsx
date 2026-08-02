@@ -1051,6 +1051,14 @@ export default function Admin() {
                           </h3>
                           <p className="text-sm text-gray-500">{dm.mail}</p>
                           {dm.telephone && <p className="text-sm text-gray-600 mt-0.5">Tél: {dm.telephone}</p>}
+                          {dm.date_naissance && <p className="text-sm text-gray-600 mt-0.5">Date de naissance : {new Date(`${dm.date_naissance}T00:00:00`).toLocaleDateString("fr-FR")}</p>}
+                          {(dm.id_recto_url || dm.id_verso_url) && (
+                            <p className="text-sm text-gray-600 mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                              Pièce d’identité :
+                              {dm.id_recto_url && <a href={dm.id_recto_url} target="_blank" rel="noreferrer" className="text-teal-dark underline">recto</a>}
+                              {dm.id_verso_url && <a href={dm.id_verso_url} target="_blank" rel="noreferrer" className="text-teal-dark underline">verso</a>}
+                            </p>
+                          )}
                           {dm.iban && <p className="text-sm text-gray-600 mt-0.5">IBAN: {dm.iban}</p>}
                           {dm.motif && <p className="text-sm text-gray-600 mt-1 italic">{dm.motif}</p>}
                           <p className="text-xs text-gray-400 mt-1">
