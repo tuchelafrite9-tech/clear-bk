@@ -252,20 +252,22 @@ export default function Admin() {
           });
         }
 
-        // Send branded confirmation email with link to register
+        // Send the access e-mail before marking the request approved.
         try {
           await base44.functions.invoke("SendApprovalEmail", {
             client_email: dm.mail,
             client_prenom: dm.prenom,
             client_nom: dm.nom,
           });
-          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email d'accès envoyé à ${dm.mail}.`);
-        } catch (resetErr) {
-          setSuccess(`Compte validé pour ${dm.prenom} ${dm.nom}. Email non envoyé: ${resetErr.message || resetErr}. Utilisez l'onglet "Codes de connexion" pour le renvoyer.`);
+        } catch (emailError) {
+          const detail = emailError?.response?.data?.error || emailError?.message || String(emailError);
+          setError(`E-mail non envoyé : ${detail}`);
+          return;
         }
       }
 
       await base44.entities.DemandeOuverture.update(demandeId, { statut: action });
+      setSuccess(action === "approuve" ? `Compte validé pour ${dm.prenom} ${dm.nom}. E-mail d'accès envoyé à ${dm.mail}.` : "Demande refusée.");
       await loadClients();
     } catch (err) {
       setError("Erreur lors du traitement de la demande: " + (err.message || err));
