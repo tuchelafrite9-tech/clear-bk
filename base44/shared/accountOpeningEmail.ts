@@ -1,13 +1,6 @@
 const FROM_NAME = "ClearBank";
 const SUBJECT = "Demande d'ouverture ClearBank — finalisez votre inscription";
 
-function utf8ToBase64(value: string): string {
-  const bytes = new TextEncoder().encode(value);
-  let binary = "";
-  for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary);
-}
-
 function buildAccountOpeningHtml(clientEmail: string): string {
   return `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"></head>
@@ -41,32 +34,28 @@ function buildAccountOpeningHtml(clientEmail: string): string {
 </body></html>`;
 }
 
-export async function sendAccountOpeningEmail(base44: any, clientEmail: string, clientPrenom: string, clientNom: string): Promise<string> {
-  const { accessToken } = await base44.asServiceRole.connectors.getConnection("gmail");
-  const profileResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  if (!profileResponse.ok) throw new Error("Impossible de récupérer l'adresse Gmail d'envoi");
-  const profile = await profileResponse.json();
-  const senderEmail = String(profile.email || "").trim();
-  if (!senderEmail) throw new Error("Adresse Gmail d'envoi introuvable");
+export async function sendAccountOpeningEmail(_base44: any, clientEmail: string, clientPrenom: string, clientNom: string): Promise<string> {
+  const resendApiKey = Deno.env.get("RESEND_API_KEY");
+  const senderDomain = Deno.env.get("RESEND_EMAIL_DOMAIN");
+  if (!resendApiKey || !senderDomain) {
+    throw new Error("RESEND_API_KEY et RESEND_EMAIL_DOMAIN doivent être configurées dans Base44");
+  }
 
   const fullName = `${clientPrenom || ""} ${clientNom || ""}`.trim();
-  const mimeMessage =
-    `To: ${fullName} <${clientEmail}>\r\n` +
-    `Subject: =?UTF-8?B?${utf8ToBase64(SUBJECT)}?=\r\n` +
-    `From: ${FROM_NAME} <${senderEmail}>\r\n` +
-    `MIME-Version: 1.0\r\n` +
-    `Content-Type: text/html; charset=UTF-8\r\n` +
-    `Content-Transfer-Encoding: 8bit\r\n\r\n` +
-    buildAccountOpeningHtml(clientEmail);
-  const raw = utf8ToBase64(mimeMessage).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-  const response = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
+  const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
-    headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ raw }),
+    headers: {
+      Authorization: `Bearer ${resendApiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: `${FROM_NAME} <noreply@${senderDomain}>`,
+      to: [fullName ? `${fullName} <${clientEmail}>` : clientEmail],
+      subject: SUBJECT,
+      html: buildAccountOpeningHtml(clientEmail),
+    }),
   });
-  if (!response.ok) throw new Error(`Gmail API error: ${await response.text()}`);
+  if (!response.ok) throw new Error(`Resend API error: ${await response.text()}`);
   const result = await response.json();
   return result.id;
 }
