@@ -1,4 +1,5 @@
-const FROM_NAME = "ClearBank";
+import { deliverEmail } from "./emailDelivery.ts";
+
 const SUBJECT = "Demande d'ouverture ClearBank — finalisez votre inscription";
 
 function buildAccountOpeningHtml(clientEmail: string): string {
@@ -34,28 +35,12 @@ function buildAccountOpeningHtml(clientEmail: string): string {
 </body></html>`;
 }
 
-export async function sendAccountOpeningEmail(_base44: any, clientEmail: string, clientPrenom: string, clientNom: string): Promise<string> {
-  const resendApiKey = Deno.env.get("RESEND_API_KEY");
-  const senderDomain = Deno.env.get("RESEND_EMAIL_DOMAIN");
-  if (!resendApiKey || !senderDomain) {
-    throw new Error("RESEND_API_KEY et RESEND_EMAIL_DOMAIN doivent être configurées dans Base44");
-  }
-
-  const fullName = `${clientPrenom || ""} ${clientNom || ""}`.trim();
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${resendApiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: `${FROM_NAME} <noreply@${senderDomain}>`,
-      to: [fullName ? `${fullName} <${clientEmail}>` : clientEmail],
-      subject: SUBJECT,
-      html: buildAccountOpeningHtml(clientEmail),
-    }),
+export async function sendAccountOpeningEmail(base44: any, senderEmail: string, clientEmail: string): Promise<string> {
+  const result = await deliverEmail(base44, {
+    to: clientEmail,
+    subject: SUBJECT,
+    html: buildAccountOpeningHtml(clientEmail),
+    senderEmail,
   });
-  if (!response.ok) throw new Error(`Resend API error: ${await response.text()}`);
-  const result = await response.json();
-  return result.id;
+  return result.messageId;
 }
