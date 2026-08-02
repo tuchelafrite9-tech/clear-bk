@@ -171,6 +171,12 @@ export default function Header() {
               </li>
 
               <li>
+                <Link to="/admin" className="block text-sm py-2 md:py-0 text-gray-600 hover:text-teal-dark transition">
+                  Administration
+                </Link>
+              </li>
+
+              <li>
                 <Link to="/begin" className="inline-flex items-center bg-teal text-black px-5 py-2 text-lg rounded-full hover:bg-teal-dark hover:text-white transition">
                   <span>Begin</span>
                   <span className="ml-2"><ArrowIcon /></span>
