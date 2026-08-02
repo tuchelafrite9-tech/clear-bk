@@ -170,6 +170,21 @@ export default function ConventionSign({ client, onUpdated }) {
             className="w-full h-[400px] md:h-[600px]"
           />
         </div>
+
+        <div className="mt-6 rounded-xl border border-gray-200 p-5">
+          <h3 className="text-base font-bold text-gray-800">Signature de l’établissement</h3>
+          <div className="mt-5 grid gap-8 border-t border-gray-200 pt-6 md:grid-cols-2">
+            <div>
+              <p className="text-sm font-semibold text-gray-800">ClearBank Europe N.V.</p>
+              <p className="mt-1 text-sm leading-relaxed text-gray-500">
+                Signataire autorisé de l’établissement bancaire
+              </p>
+            </div>
+            <div className="border-b border-gray-400 pb-2 text-sm text-gray-500">
+              Signature autorisée et cachet de l’établissement
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Signature section */}
