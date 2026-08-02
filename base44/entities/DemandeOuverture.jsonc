@@ -19,6 +19,21 @@
       "type": "string",
       "title": "T\u00e9l\u00e9phone"
     },
+    "date_naissance": {
+      "type": "string",
+      "title": "Date de naissance",
+      "format": "date"
+    },
+    "id_recto_url": {
+      "type": "string",
+      "title": "Pièce d’identité — recto",
+      "format": "uri"
+    },
+    "id_verso_url": {
+      "type": "string",
+      "title": "Pièce d’identité — verso",
+      "format": "uri"
+    },
     "iban": {
       "type": "string",
       "title": "IBAN"
@@ -46,7 +61,10 @@
   "required": [
     "nom",
     "prenom",
-    "mail"
+    "mail",
+    "date_naissance",
+    "id_recto_url",
+    "id_verso_url"
   ],
   "rls": {
     "read": {

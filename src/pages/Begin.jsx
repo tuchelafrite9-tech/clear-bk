@@ -13,7 +13,7 @@ export default function Begin() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [contactForm, setContactForm] = useState({ prenom: "", nom: "", email: "", message: "" });
-  const [accountForm, setAccountForm] = useState({ prenom: "", nom: "", email: "", telephone: "" });
+  const [accountForm, setAccountForm] = useState({ prenom: "", nom: "", email: "", telephone: "", dateNaissance: "", idRecto: null, idVerso: null });
 
   const handleContactChange = (e) => {
     setContactForm({ ...contactForm, [e.target.name]: e.target.value });
@@ -49,17 +49,28 @@ export default function Begin() {
     if (submitting) return;
     setSubmitting(true);
     setError("");
+    let step = "téléversement des pièces d’identité";
     try {
+      const [recto, verso] = await Promise.all([
+        base44.integrations.Core.UploadFile({ file: accountForm.idRecto }),
+        base44.integrations.Core.UploadFile({ file: accountForm.idVerso }),
+      ]);
+      step = "enregistrement de la demande";
       await base44.functions.invoke("RequestAccountOpening", {
         prenom: accountForm.prenom,
         nom: accountForm.nom,
         mail: accountForm.email,
         telephone: accountForm.telephone,
+        date_naissance: accountForm.dateNaissance,
+        id_recto_url: recto.file_url,
+        id_verso_url: verso.file_url,
       });
       setSubmitted(true);
-      setAccountForm({ prenom: "", nom: "", email: "", telephone: "" });
+      setAccountForm({ prenom: "", nom: "", email: "", telephone: "", dateNaissance: "", idRecto: null, idVerso: null });
     } catch (err) {
-      setError("Une erreur est survenue lors de l'envoi de votre demande. Veuillez réessayer.");
+      const detail = err?.response?.data?.error || err?.message || "Erreur inconnue";
+      console.error(`Échec lors du ${step}`, err);
+      setError(`Erreur lors du ${step} : ${detail}`);
     }
     setSubmitting(false);
   };
@@ -173,6 +184,20 @@ export default function Begin() {
                 <div>
                   <label className="cb-body2 text-gray-600 mb-2 block">Téléphone</label>
                   <input type="tel" name="telephone" value={accountForm.telephone} onChange={handleAccountChange} placeholder="Votre numéro de téléphone" className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition" />
+                </div>
+                <div>
+                  <label className="cb-body2 text-gray-600 mb-2 block">Date de naissance *</label>
+                  <input required type="date" name="dateNaissance" value={accountForm.dateNaissance} onChange={handleAccountChange} className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="cb-body2 text-gray-600 mb-2 block">Pièce d’identité — recto *</label>
+                    <input required type="file" accept="image/*,.pdf" onChange={(e) => setAccountForm({ ...accountForm, idRecto: e.target.files?.[0] || null })} className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition" />
+                  </div>
+                  <div>
+                    <label className="cb-body2 text-gray-600 mb-2 block">Pièce d’identité — verso *</label>
+                    <input required type="file" accept="image/*,.pdf" onChange={(e) => setAccountForm({ ...accountForm, idVerso: e.target.files?.[0] || null })} className="w-full border border-gray-300 rounded-xl px-4 py-3 cb-body1 focus:border-black focus:outline-none transition" />
+                  </div>
                 </div>
                 <p className="cb-body3 text-gray-500">
                   Learn how we use your information in our Privacy Notice. You can opt out at any time.
