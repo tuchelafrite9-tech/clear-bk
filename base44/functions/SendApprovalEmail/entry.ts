@@ -10,14 +10,13 @@ Deno.serve(async (req) => {
     if (user.role !== 'admin') return Response.json({ error: 'Forbidden' }, { status: 403 });
 
     const body = await req.json();
-    const { client_email, client_prenom, client_nom } = body;
+    const { client_email } = body;
     if (!client_email) return Response.json({ error: 'client_email requis' }, { status: 400 });
 
     const messageId = await sendAccountOpeningEmail(
       base44,
+      user.email,
       client_email.trim().toLowerCase(),
-      client_prenom,
-      client_nom,
     );
     return Response.json({ success: true, messageId });
   } catch (error) {
