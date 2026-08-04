@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { appApi } from "@/api/appClient";
 
 const ArrowRight = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="13" fill="none" className="inline-block ml-2">
@@ -29,7 +29,7 @@ export default function Begin() {
     setSubmitting(true);
     setError("");
     try {
-      await base44.entities.Contact.create({
+      await appApi.entities.Contact.create({
         prenom: contactForm.prenom,
         nom: contactForm.nom,
         email: contactForm.email,
@@ -50,7 +50,7 @@ export default function Begin() {
     setSubmitting(true);
     setError("");
     try {
-      await base44.functions.invoke("RequestAccountOpening", {
+      await appApi.functions.invoke("RequestAccountOpening", {
         prenom: accountForm.prenom,
         nom: accountForm.nom,
         mail: accountForm.email,

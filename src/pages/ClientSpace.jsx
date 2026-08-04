@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { appApi } from "@/api/appClient";
 import ClientSidebar, { navItems } from "@/components/clearbank/ClientSidebar";
 import ConventionSign from "@/components/clearbank/ConventionSign";
 import { InfoRow, SectionHeader, PlaceholderSection } from "@/components/clearbank/ClientSpaceParts";
@@ -50,7 +50,7 @@ export default function ClientSpace() {
 
   const handleLogout = async () => {
     try {
-      await base44.auth.logout();
+      await appApi.auth.logout();
     } catch (e) {
       // ignore errors
     }
@@ -62,7 +62,7 @@ export default function ClientSpace() {
     const handleUnload = () => {
       // Envoi synchrone de déconnexion (best-effort) — pas d'await possible
       try {
-        base44.auth.logout();
+        appApi.auth.logout();
       } catch (e) {}
     };
     window.addEventListener("beforeunload", handleUnload);
@@ -72,21 +72,21 @@ export default function ClientSpace() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const me = await base44.auth.me();
-        const records = await base44.entities.Client.filter({ mail: me.email });
+        const me = await appApi.auth.me();
+        const records = await appApi.entities.Client.filter({ mail: me.email });
         if (records && records.length > 0) {
           setClient(records[0]);
           try {
-            await base44.entities.Client.update(records[0].id, {
+            await appApi.entities.Client.update(records[0].id, {
               derniere_connexion: new Date().toISOString(),
             });
           } catch (e) {
             // RLS: seuls les admins peuvent mettre à jour — on ignore l'erreur
           }
-          const txs = await base44.entities.Transaction.filter({ client_id: records[0].id }, "-date", 100);
+          const txs = await appApi.entities.Transaction.filter({ client_id: records[0].id }, "-date", 100);
           setTransactions(txs || []);
           try {
-            const dms = await base44.entities.Demande.filter({ client_id: records[0].id }, "-created_date", 50);
+            const dms = await appApi.entities.Demande.filter({ client_id: records[0].id }, "-created_date", 50);
             setDemandes(dms || []);
           } catch (e) {
             setDemandes([]);
@@ -94,7 +94,7 @@ export default function ClientSpace() {
         } else {
           // No Client record — check if there's a pending account opening request
           try {
-            const dso = await base44.entities.DemandeOuverture.filter({ mail: me.email }, "-created_date", 5);
+            const dso = await appApi.entities.DemandeOuverture.filter({ mail: me.email }, "-created_date", 5);
             if (dso && dso.length > 0) {
               navigate("/pending-validation");
               return;
@@ -119,7 +119,7 @@ export default function ClientSpace() {
     setActionSuccess("");
     setError("");
     try {
-      await base44.entities.Demande.create({
+      await appApi.entities.Demande.create({
         type,
         client_id: client.id,
         client_email: client.mail,
@@ -128,7 +128,7 @@ export default function ClientSpace() {
         date_demande: new Date().toISOString(),
         statut: "en_attente",
       });
-      const dms = await base44.entities.Demande.filter({ client_id: client.id }, "-created_date", 50);
+      const dms = await appApi.entities.Demande.filter({ client_id: client.id }, "-created_date", 50);
       setDemandes(dms || []);
       setShowModal(null);
       setDmForm({ montant: "", motif: "" });
@@ -185,7 +185,7 @@ export default function ClientSpace() {
             </div>
           </div>
         `;
-        await base44.integrations.Core.SendEmail({
+        await appApi.integrations.Core.SendEmail({
           to: client.mail,
           subject: `Confirmation de votre demande — ${opLabel}`,
           body: emailBody,

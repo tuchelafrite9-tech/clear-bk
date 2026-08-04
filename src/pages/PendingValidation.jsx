@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { appApi } from "@/api/appClient";
 import { CheckCircle2, Clock, XCircle, ArrowRight, User, Mail, Phone, Building2 } from "lucide-react";
 
 export default function PendingValidation() {
@@ -10,8 +10,8 @@ export default function PendingValidation() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const me = await base44.auth.me();
-        const records = await base44.entities.DemandeOuverture.filter({ mail: me.email }, "-created_date", 10);
+        const me = await appApi.auth.me();
+        const records = await appApi.entities.DemandeOuverture.filter({ mail: me.email }, "-created_date", 10);
         if (records && records.length > 0) {
           setDemande(records[0]);
         }

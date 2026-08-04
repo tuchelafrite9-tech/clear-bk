@@ -146,7 +146,7 @@ async function invoke(name, payload) {
   return data;
 }
 
-export const base44 = {
+export const appApi = {
   auth,
   entities: new Proxy({}, { get: (_, name) => entity(name) }),
   functions: { invoke },

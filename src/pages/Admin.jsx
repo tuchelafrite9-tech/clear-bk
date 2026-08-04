@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { appApi } from "@/api/appClient";
 import Header from "@/components/clearbank/Header";
 import Footer from "@/components/clearbank/Footer";
-import { ShieldCheck, LogOut, PenTool, FileText, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, LogOut, FileText, CheckCircle2 } from "lucide-react";
 
 const ArrowRight = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="13" fill="none" className="inline-block ml-2">
@@ -49,7 +48,7 @@ export default function Admin() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const me = await base44.auth.me();
+        const me = await appApi.auth.me();
         setUser(me);
         if (me.role !== "admin") {
           setError("Accès refusé. Vous devez être administrateur.");
@@ -65,7 +64,7 @@ export default function Admin() {
     checkAuth();
 
     // Real-time subscription for new demandes
-    const unsubscribeDemandes = base44.entities.Demande.subscribe((event) => {
+    const unsubscribeDemandes = appApi.entities.Demande.subscribe((event) => {
       if (event.type === "create") {
         setDemandes((prev) => [event.data, ...prev]);
       } else if (event.type === "update") {
@@ -75,7 +74,7 @@ export default function Admin() {
       }
     });
     // Real-time subscription for new contact messages
-    const unsubscribeContacts = base44.entities.Contact.subscribe((event) => {
+    const unsubscribeContacts = appApi.entities.Contact.subscribe((event) => {
       if (event.type === "create") {
         setContacts((prev) => [event.data, ...prev]);
       } else if (event.type === "update") {
@@ -85,7 +84,7 @@ export default function Admin() {
       }
     });
     // Real-time subscription for account opening requests
-    const unsubscribeDemandesOuverture = base44.entities.DemandeOuverture.subscribe((event) => {
+    const unsubscribeDemandesOuverture = appApi.entities.DemandeOuverture.subscribe((event) => {
       if (event.type === "create") {
         setDemandesOuverture((prev) => [event.data, ...prev]);
       } else if (event.type === "update") {
@@ -94,7 +93,7 @@ export default function Admin() {
         setDemandesOuverture((prev) => prev.filter((d) => d.id !== event.data.id));
       }
     });
-    const unsubscribeClients = base44.entities.Client.subscribe((event) => {
+    const unsubscribeClients = appApi.entities.Client.subscribe((event) => {
       if (event.type === "create") {
         setClients((prev) => [event.data, ...prev]);
       } else if (event.type === "update") {
@@ -113,22 +112,22 @@ export default function Admin() {
 
   const loadClients = async () => {
     try {
-      const list = await base44.entities.Client.list("-created_date", 200);
+      const list = await appApi.entities.Client.list("-created_date", 200);
       setClients(list);
       try {
-        const dms = await base44.entities.Demande.list("-created_date", 200);
+        const dms = await appApi.entities.Demande.list("-created_date", 200);
         setDemandes(dms || []);
       } catch (e2) {
         setDemandes([]);
       }
       try {
-        const dso = await base44.entities.DemandeOuverture.list("-created_date", 200);
+        const dso = await appApi.entities.DemandeOuverture.list("-created_date", 200);
         setDemandesOuverture(dso || []);
       } catch (e2b) {
         setDemandesOuverture([]);
       }
       try {
-        const msgs = await base44.entities.Contact.list("-created_date", 200);
+        const msgs = await appApi.entities.Contact.list("-created_date", 200);
         setContacts(msgs || []);
       } catch (e3) {
         setContacts([]);
@@ -144,7 +143,7 @@ export default function Admin() {
     setSuccess("");
     setGeneratedCode(null);
     try {
-      await base44.functions.invoke("SendApprovalEmail", {
+      await appApi.functions.invoke("SendApprovalEmail", {
         client_email: clientEmail,
         client_prenom: "",
         client_nom: "",
@@ -161,8 +160,8 @@ export default function Admin() {
     setError("");
     setSuccess("");
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      await base44.entities.Client.update(clientId, { contrat_pdf: file_url });
+      const { file_url } = await appApi.integrations.Core.UploadFile({ file });
+      await appApi.entities.Client.update(clientId, { contrat_pdf: file_url });
       setSuccess("Contrat PDF mis en ligne avec succès.");
       await loadClients();
     } catch (err) {
@@ -176,7 +175,7 @@ export default function Admin() {
     setError("");
     setSuccess("");
     try {
-      await base44.entities.Demande.delete(demandeId);
+      await appApi.entities.Demande.delete(demandeId);
       setSuccess("Demande client supprimée.");
       await loadClients();
     } catch (err) {
@@ -189,7 +188,7 @@ export default function Admin() {
     setError("");
     setSuccess("");
     try {
-      await base44.entities.DemandeOuverture.delete(demandeId);
+      await appApi.entities.DemandeOuverture.delete(demandeId);
       setSuccess("Demande d'ouverture supprimée.");
       await loadClients();
     } catch (err) {
@@ -199,7 +198,7 @@ export default function Admin() {
 
   const handleDemandeStatut = async (demandeId, nouveauStatut) => {
     try {
-      await base44.entities.Demande.update(demandeId, { statut: nouveauStatut });
+      await appApi.entities.Demande.update(demandeId, { statut: nouveauStatut });
       await loadClients();
     } catch (err) {
       setError("Erreur lors de la mise à jour de la demande: " + (err.message || err));
@@ -208,7 +207,7 @@ export default function Admin() {
 
   const handleContactStatut = async (contactId, nouveauStatut) => {
     try {
-      await base44.entities.Contact.update(contactId, { statut: nouveauStatut });
+      await appApi.entities.Contact.update(contactId, { statut: nouveauStatut });
     } catch (err) {
       setError("Erreur lors de la mise à jour du message: " + (err.message || err));
     }
@@ -219,7 +218,7 @@ export default function Admin() {
     setError("");
     setSuccess("");
     try {
-      await base44.entities.Contact.delete(contactId);
+      await appApi.entities.Contact.delete(contactId);
       setSuccess("Message supprimé.");
     } catch (err) {
       setError("Erreur lors de la suppression du message: " + (err.message || err));
@@ -237,7 +236,7 @@ export default function Admin() {
         // Check if a Client record already exists for this email
         const existing = clients.filter((c) => c.mail === dm.mail);
         if (existing.length === 0) {
-          await base44.entities.Client.create({
+          await appApi.entities.Client.create({
             nom: dm.nom,
             prenom: dm.prenom,
             mail: dm.mail,
@@ -254,7 +253,7 @@ export default function Admin() {
 
         // Send branded confirmation email with link to register
         try {
-          await base44.functions.invoke("SendApprovalEmail", {
+          await appApi.functions.invoke("SendApprovalEmail", {
             client_email: dm.mail,
             client_prenom: dm.prenom,
             client_nom: dm.nom,
@@ -265,7 +264,7 @@ export default function Admin() {
         }
       }
 
-      await base44.entities.DemandeOuverture.update(demandeId, { statut: action });
+      await appApi.entities.DemandeOuverture.update(demandeId, { statut: action });
       await loadClients();
     } catch (err) {
       setError("Erreur lors du traitement de la demande: " + (err.message || err));
@@ -300,7 +299,7 @@ export default function Admin() {
     }
 
     try {
-      await base44.entities.Transaction.create({
+      await appApi.entities.Transaction.create({
         montant: parseFloat(txForm.montant),
         transaction: txForm.transaction,
         date: txForm.date,
@@ -354,7 +353,7 @@ export default function Admin() {
     }
 
     try {
-      await base44.entities.Client.update(clientId, { ...editForm });
+      await appApi.entities.Client.update(clientId, { ...editForm });
       setSuccess(`Client ${editForm.prenom} ${editForm.nom} mis à jour avec succès.`);
       setEditingId(null);
       setEditForm(emptyForm);
@@ -376,32 +375,32 @@ export default function Admin() {
 
       // 1. Supprimer les transactions liées
       try {
-        const txs = await base44.entities.Transaction.filter({ client_id: clientId });
+        const txs = await appApi.entities.Transaction.filter({ client_id: clientId });
         if (txs && txs.length > 0) {
-          await base44.entities.Transaction.deleteMany({ client_id: clientId });
+          await appApi.entities.Transaction.deleteMany({ client_id: clientId });
         }
       } catch (e) { /* ignore */ }
 
       // 2. Supprimer les demandes liées
       try {
-        const dms = await base44.entities.Demande.filter({ client_id: clientId });
+        const dms = await appApi.entities.Demande.filter({ client_id: clientId });
         if (dms && dms.length > 0) {
-          await base44.entities.Demande.deleteMany({ client_id: clientId });
+          await appApi.entities.Demande.deleteMany({ client_id: clientId });
         }
       } catch (e) { /* ignore */ }
 
       // 3. Supprimer les demandes d'ouverture liées (par email)
       if (clientEmail) {
         try {
-          const dsos = await base44.entities.DemandeOuverture.filter({ mail: clientEmail });
+          const dsos = await appApi.entities.DemandeOuverture.filter({ mail: clientEmail });
           if (dsos && dsos.length > 0) {
-            await base44.entities.DemandeOuverture.deleteMany({ mail: clientEmail });
+            await appApi.entities.DemandeOuverture.deleteMany({ mail: clientEmail });
           }
         } catch (e) { /* ignore */ }
       }
 
       // 4. Supprimer la fiche Client
-      await base44.entities.Client.delete(clientId);
+      await appApi.entities.Client.delete(clientId);
       setSuccess(`Client supprimé. Toutes les données associées (transactions, demandes) ont été effacées.`);
       await loadClients();
     } catch (err) {
@@ -419,7 +418,7 @@ export default function Admin() {
       return;
     }
     try {
-      await base44.entities.Client.update(clientId, { compte_valide: true });
+      await appApi.entities.Client.update(clientId, { compte_valide: true });
       setSuccess(`Compte de ${client.prenom} ${client.nom} activé. Le client a désormais accès à son espace complet.`);
       await loadClients();
     } catch (err) {
@@ -429,7 +428,7 @@ export default function Admin() {
 
   const handleAdminLogout = async () => {
     try {
-      await base44.auth.logout();
+      await appApi.auth.logout();
     } catch (e) {
       // ignore
     }
@@ -449,14 +448,14 @@ export default function Admin() {
     }
 
     try {
-      await base44.entities.Client.create({
+      await appApi.entities.Client.create({
         ...form,
         derniere_connexion: null,
         compte_valide: false,
       });
 
       try {
-        await base44.functions.invoke("SendApprovalEmail", {
+        await appApi.functions.invoke("SendApprovalEmail", {
           client_email: form.mail,
           client_prenom: form.prenom,
           client_nom: form.nom,

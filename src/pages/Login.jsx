@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { appApi } from "@/api/appClient";
 import Header from "@/components/clearbank/Header";
 import Footer from "@/components/clearbank/Footer";
 
@@ -21,7 +21,7 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      await base44.auth.loginViaEmailPassword(email, password);
+      await appApi.auth.loginViaEmailPassword(email, password);
       window.location.href = "/my-account";
     } catch (err) {
       setError(err.message || "Email ou mot de passe invalide.");
@@ -39,7 +39,7 @@ export default function Login() {
           <div className="hidden md:block md:w-1/2 overflow-hidden">
             <video
               className="w-full h-full object-cover"
-              src="https://media.base44.com/videos/public/6a5ca42fae10cd7334263f3b/e3a1e4537_animation.mp4"
+              src="https://clear.bank/uploads/assets/CB_Homepage_H264_3-1_v03.mp4"
               autoPlay
               playsInline
               loop

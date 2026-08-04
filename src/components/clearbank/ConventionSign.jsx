@@ -1,10 +1,9 @@
 import React, { useState, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+import { appApi } from "@/api/appClient";
 import { PenTool, CheckCircle2, FileText, Upload, Loader2, Download, X, ImageIcon } from "lucide-react";
 
-const CONVENTION_PDF_URL = "https://media.base44.com/files/public/6a5ca42fae10cd7334263f3b/ca30799b1_Convention_Sequestre_CLEAR_BANK_Haut_de_Gamme.pdf";
-
 export default function ConventionSign({ client, onUpdated }) {
+  const conventionPdfUrl = client.contrat_pdf || "";
   const [accepted, setAccepted] = useState(client.signature_acceptee || false);
   const [signing, setSigning] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -24,7 +23,7 @@ export default function ConventionSign({ client, onUpdated }) {
     setSuccess("");
     try {
       const now = new Date().toISOString();
-      await base44.entities.Client.update(client.id, {
+      await appApi.entities.Client.update(client.id, {
         signature_acceptee: true,
         date_signature: now,
       });
@@ -41,9 +40,9 @@ export default function ConventionSign({ client, onUpdated }) {
     setError("");
     setSuccess("");
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await appApi.integrations.Core.UploadFile({ file });
       const updatedDocs = [...docs, file_url];
-      await base44.entities.Client.update(client.id, {
+      await appApi.entities.Client.update(client.id, {
         documents_client: updatedDocs,
       });
       setDocs(updatedDocs);
@@ -63,11 +62,11 @@ export default function ConventionSign({ client, onUpdated }) {
     try {
       const uploaded = [];
       for (const file of files) {
-        const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        const { file_url } = await appApi.integrations.Core.UploadFile({ file });
         uploaded.push(file_url);
       }
       const updatedDocs = [...docs, ...uploaded];
-      await base44.entities.Client.update(client.id, {
+      await appApi.entities.Client.update(client.id, {
         documents_client: updatedDocs,
       });
       setDocs(updatedDocs);
@@ -109,7 +108,7 @@ export default function ConventionSign({ client, onUpdated }) {
     if (!window.confirm("Supprimer ce document ?")) return;
     const updatedDocs = docs.filter((_, i) => i !== index);
     try {
-      await base44.entities.Client.update(client.id, {
+      await appApi.entities.Client.update(client.id, {
         documents_client: updatedDocs,
       });
       setDocs(updatedDocs);
@@ -151,25 +150,35 @@ export default function ConventionSign({ client, onUpdated }) {
               <p className="text-sm text-gray-500">Document PDF à consulter et signer</p>
             </div>
           </div>
-          <a
-            href={CONVENTION_PDF_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-teal text-black rounded-full px-5 py-2.5 text-sm font-medium hover:bg-teal-dark hover:text-white transition"
-          >
-            <Download className="w-4 h-4" />
-            Consulter
-          </a>
+          {conventionPdfUrl ? (
+            <a
+              href={conventionPdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-teal text-black rounded-full px-5 py-2.5 text-sm font-medium hover:bg-teal-dark hover:text-white transition"
+            >
+              <Download className="w-4 h-4" />
+              Consulter
+            </a>
+          ) : (
+            <span className="text-sm text-gray-500">Document en cours de mise à disposition</span>
+          )}
         </div>
 
         {/* Embedded PDF viewer */}
-        <div className="rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
-          <iframe
-            src={CONVENTION_PDF_URL}
-            title="Convention de Séquestre"
-            className="w-full h-[400px] md:h-[600px]"
-          />
-        </div>
+        {conventionPdfUrl ? (
+          <div className="rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
+            <iframe
+              src={conventionPdfUrl}
+              title="Convention de Séquestre"
+              className="w-full h-[400px] md:h-[600px]"
+            />
+          </div>
+        ) : (
+          <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-sm text-gray-500">
+            La convention sera disponible dès que l’administrateur l’aura ajoutée dans Supabase.
+          </div>
+        )}
       </div>
 
       {/* Signature section */}
