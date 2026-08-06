@@ -15,7 +15,7 @@ const ArrowIcon = () => (
 
 const ChevronDown = () => (
   <svg className="w-3 mt-0.5 ml-[9px]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 13 8">
-    <path d="m11.727 1.5-5 5-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="m11.727 1.5-5 5-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 

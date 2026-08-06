@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/clearbank/Header";
 import Footer from "@/components/clearbank/Footer";
