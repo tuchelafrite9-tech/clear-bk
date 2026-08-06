@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import Header from "@/components/clearbank/Header";
 import Footer from "@/components/clearbank/Footer";
-import { ShieldCheck, LogOut, PenTool, FileText, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, LogOut, FileText, CheckCircle2 } from "lucide-react";
 
 const ArrowRight = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="13" fill="none" className="inline-block ml-2">
