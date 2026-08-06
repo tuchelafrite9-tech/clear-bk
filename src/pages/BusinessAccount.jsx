@@ -35,7 +35,7 @@ export default function BusinessAccount() {
             <div className="md:w-1/2 md:h-[calc(100vh-60px)] overflow-hidden">
               <video
                 className="w-full h-full object-cover"
-                src="https://media.base44.com/videos/public/6a5ca42fae10cd7334263f3b/e3a1e4537_animation.mp4"
+                src="https://clear.bank/uploads/assets/CB_Homepage_H264_3-1_v03.mp4"
                 autoPlay
                 playsInline
                 loop

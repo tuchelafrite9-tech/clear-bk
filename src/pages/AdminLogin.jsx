@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { appApi } from "@/api/appClient";
 import { ShieldCheck, ArrowRight, Lock, Mail, Eye, EyeOff, AlertCircle } from "lucide-react";
 
 export default function AdminLogin() {
@@ -23,11 +23,11 @@ export default function AdminLogin() {
     }
 
     try {
-      await base44.auth.loginViaEmailPassword(email, password);
-      const me = await base44.auth.me();
+      await appApi.auth.loginViaEmailPassword(email, password);
+      const me = await appApi.auth.me();
 
       if (me.role !== "admin") {
-        await base44.auth.logout();
+        await appApi.auth.logout();
         setError("Accès refusé. Cette page est réservée aux administrateurs.");
         setLoading(false);
         return;
@@ -124,7 +124,7 @@ export default function AdminLogin() {
             <button
               type="button"
               onClick={async () => {
-                try { await base44.auth.logout(); } catch (e) {}
+                try { await appApi.auth.logout(); } catch (e) {}
                 window.location.href = "/forgot-password";
               }}
               className="text-sm text-gray-500 hover:text-teal-dark transition"

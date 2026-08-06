@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { appApi } from "@/api/appClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UserPlus, Mail, Lock, Loader2 } from "lucide-react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import AuthLayout from "@/components/AuthLayout";
-import GoogleIcon from "@/components/GoogleIcon";
 import { toast } from "@/components/ui/use-toast";
 
 export default function Register() {
@@ -32,7 +31,7 @@ export default function Register() {
     try {
       const normalizedEmail = email.trim().toLowerCase();
       setEmail(normalizedEmail);
-      await base44.auth.register({ email: normalizedEmail, password });
+      await appApi.auth.register({ email: normalizedEmail, password });
       setShowOtp(true);
     } catch (err) {
       const msg = err.message || "";
@@ -50,11 +49,11 @@ export default function Register() {
     setError("");
     setLoading(true);
     try {
-      const result = await base44.auth.verifyOtp({ email: email.trim().toLowerCase(), otpCode });
+      const result = await appApi.auth.verifyOtp({ email: email.trim().toLowerCase(), otpCode });
       if (!result?.access_token) {
         throw new Error("La vérification n'a pas retourné de session valide.");
       }
-      base44.auth.setToken(result.access_token);
+      appApi.auth.setToken(result.access_token);
       window.location.href = "/my-account";
     } catch (err) {
       setError(err.message || "Invalid verification code");
@@ -66,7 +65,7 @@ export default function Register() {
   const handleResend = async () => {
     setError("");
     try {
-      await base44.auth.resendOtp(email);
+      await appApi.auth.resendOtp(email);
       toast({
         title: "Code sent",
         description: "Check your email for the new code.",
@@ -77,7 +76,7 @@ export default function Register() {
   };
 
   const handleGoogle = () => {
-    base44.auth.loginWithProvider("google", "/");
+    appApi.auth.loginWithProvider("google", "/");
   };
 
   if (!prefillEmail && !showOtp) {

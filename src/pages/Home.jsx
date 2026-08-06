@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/clearbank/Header";
 import Footer from "@/components/clearbank/Footer";
@@ -9,18 +9,7 @@ const ArrowRight = () => (
   </svg>
 );
 
-const partnerLogos = {
-  Tide: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/3b3edea86_logo9tide.svg",
-  "Allica Bank": "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/37bbbdc7f_logo2allica.svg",
-  Airwallex: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/3455fd4a1_logo3airwallex.svg",
-  TrueLayer: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/8c2149521_logo10truelayer.svg",
-  "Capital on Tap": "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/17424d3e2_logo3capital.svg",
-  Wealthify: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/3192ff4fa_logo11Wealthify-logo.svg",
-  eToro: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/c31eb6bef_logo12eToro-logo.svg",
-  Lemfi: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/8050c0345_logo6lemfi.svg",
-  Raisin: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/0e9b287d4_logo8raisin.svg",
-  Pingpong: "https://media.base44.com/images/public/6a5ca42fae10cd7334263f3b/a29488ae6_logo7pingpong.svg",
-};
+const partnerLogos = {};
 
 const PartnerLogo = ({ name }) => {
   const src = partnerLogos[name];
